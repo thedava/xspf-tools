@@ -1,7 +1,7 @@
-<track>
-    <location><!-- REPLACE:LOCATION --></location>
-    <duration><!-- REPLACE:DURATION --></duration>
-    <extension application="http://www.videolan.org/vlc/playlist/0">
-        <vlc:id><!-- REPLACE:VLC_ID --></vlc:id>
-    </extension>
-</track>
+        <track>
+            <location><!-- REPLACE:LOCATION --></location>
+            <duration><!-- REPLACE:DURATION --></duration>
+            <extension application="http://www.videolan.org/vlc/playlist/0">
+                <vlc:id><!-- REPLACE:VLC_ID --></vlc:id>
+            </extension>
+        </track>

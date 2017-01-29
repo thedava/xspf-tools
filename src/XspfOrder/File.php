@@ -92,12 +92,32 @@ class File
 
         // Trim whitespaces
         $template = rtrim($template);
+        $template = str_replace('    ', "\t", $template);
 
         // Force CRLF
         $template = str_replace("\r\n", "\n", $template);
         $template = str_replace("\n", "\r\n", $template);
 
         return $template;
+    }
+
+    /**
+     * @param string $location
+     *
+     * @return mixed
+     */
+    protected function encodeLocation($location)
+    {
+//        $blackList = ['\''];
+//        $length = strlen($location);
+//
+//        for ($i = 0; $i < $length; $i++) {
+//            if (in_array($location[$i], $blackList)) {
+//                $location[$i] = '&#' . ord($location[$i]) . ';';
+//            }
+//        }
+
+        return htmlspecialchars($location);
     }
 
     /**
@@ -121,7 +141,7 @@ class File
                 '<!-- REPLACE:DURATION -->',
                 '<!-- REPLACE:VLC_ID -->',
             ], [
-                $track->getLocation(),
+                $this->encodeLocation($track->getLocation()),
                 $track->getDuration(),
                 $vlcId,
             ], $tplTrack);
@@ -145,7 +165,7 @@ class File
             'Tracklist',
             implode("\r\n", $tracks),
             implode("\r\n", $extensions),
-        ], $tplLayout);
+        ], $tplLayout) . "\r\n";
     }
 
     public function save()

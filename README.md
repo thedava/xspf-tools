@@ -25,6 +25,8 @@ All entries will be sorted in a random order
 
 ```bash
 user@machine:~$ php order-xspf.phar
+Version 0.2
+
 Usage: php order-xspf.phar <order_type> <playlist_file>
 
 Order Types:
