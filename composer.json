@@ -1,0 +1,11 @@
+{
+    "name": "thedava/xspf-order",
+    "description": "Order *.xspf Playlists",
+    "type": "project",
+    "license": "GPL 3.0",
+    "autoload": {
+        "psr-4": {
+            "XspfOrder\\": "src/XspfOrder"
+        }
+    }
+}
