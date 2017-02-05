@@ -1,6 +1,6 @@
 <?php
 
-namespace XspfOrder;
+namespace Xspf\Order;
 
 class OrderTypeAsc extends AbstractOrderTypeSorting
 {

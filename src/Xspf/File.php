@@ -1,6 +1,6 @@
 <?php
 
-namespace XspfOrder;
+namespace Xspf;
 
 class File
 {
@@ -158,14 +158,14 @@ class File
 
         // Create full xml file
         return str_replace([
-            '<!-- REPLACE:TITLE -->',
-            '<!-- REPLACE:TRACKLIST -->',
-            '<!-- REPLACE:EXTENSION -->',
-        ], [
-            'Tracklist',
-            implode("\r\n", $tracks),
-            implode("\r\n", $extensions),
-        ], $tplLayout) . "\r\n";
+                '<!-- REPLACE:TITLE -->',
+                '<!-- REPLACE:TRACKLIST -->',
+                '<!-- REPLACE:EXTENSION -->',
+            ], [
+                'Tracklist',
+                implode("\r\n", $tracks),
+                implode("\r\n", $extensions),
+            ], $tplLayout) . "\r\n";
     }
 
     public function save()

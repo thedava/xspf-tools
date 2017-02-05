@@ -1,10 +1,16 @@
 <?php
 
-if (file_exists('order-xspf.phar')) {
-    unlink('order-xspf.phar');
+require_once 'vendor/autoload.php';
+
+$pharFile = 'xspf.phar';
+$includePattern = '/(VERSION|src|tpl|vendor|xspf\.php)/';
+$version = \Xspf\Utils::getVersion();
+
+if (file_exists($pharFile)) {
+    unlink($pharFile);
 }
 
-$phar = new Phar('order-xspf.phar');
-$phar->setMetadata(['version' => (float)trim(file_get_contents(__DIR__ . '/VERSION'))]);
-$phar->buildFromDirectory(__DIR__, '/(src|tpl|vendor|order-xspf\.php)/');
-$phar->setStub($phar->createDefaultStub('order-xspf.php'));
+$phar = new Phar($pharFile);
+$phar->setMetadata(['version' => $version]);
+$phar->buildFromDirectory(__DIR__, $includePattern);
+$phar->setStub($phar->createDefaultStub('xspf.php'));

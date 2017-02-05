@@ -1,6 +1,8 @@
 <?php
 
-namespace XspfOrder;
+namespace Xspf\Order;
+
+use Xspf\File;
 
 abstract class AbstractOrderType
 {

@@ -1,11 +1,14 @@
 {
-    "name": "thedava/xspf-order",
-    "description": "Order *.xspf Playlists",
+    "name": "thedava/xspf-tools",
+    "description": "Tools for manipulating *.xspf Playlists",
     "type": "project",
     "license": "GPL 3.0",
     "autoload": {
         "psr-4": {
-            "XspfOrder\\": "src/XspfOrder"
+            "Xspf\\": "src/Xspf"
         }
+    },
+    "require": {
+        "james-heinrich/getid3": "^1.9"
     }
 }

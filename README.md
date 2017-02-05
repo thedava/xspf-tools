@@ -1,9 +1,18 @@
-# xspf-order
+# xspf-tools
+Tools for manipulating and creating xspf playlists (VLC Player Playlists)
+
+This tool will always create a *.bak file if a playlist will be modified (just in case).
+
+
+
+## Order
+
+```php xspf.phar order <order_type> <file_name>```
+
 Order xspf playlists using the available order types
 
-The old file will be saved in a .bak-file (just in case)
 
-
+Available order types:
 
 **asc**
 
@@ -20,17 +29,12 @@ Same as *asc* but in opposite order
 All entries will be sorted in a random order
 
 
+**asc-length** (not available yet)
 
-### Usage
+All entries in the playlist will be sorted by their video length (shortest first, longest last).
 
-```bash
-user@machine:~$ php order-xspf.phar
-Version 0.2
+**desc-length** (not available yet)
 
-Usage: php order-xspf.phar <order_type> <playlist_file>
+All entries in the playlist will be sorted by their video length (longest first, shortest last).
 
-Order Types:
-    asc:    The file will be ordered by video file names in ascending order
-    desc:   The file will be ordered by video file names in descending order
-    random: The file will be ordered in random order
-```
+
