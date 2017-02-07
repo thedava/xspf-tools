@@ -37,8 +37,6 @@ class OrderCommand extends AbstractCommand
 
     public function printUsage(\Exception $error = null)
     {
-        echo 'Version ', Utils::getVersion(), PHP_EOL, PHP_EOL;
-
         if (!$this->isHelpCommand()) {
             echo 'Following error(s) occurred: ', PHP_EOL;
             if ($this->determineOrderType() === null) {

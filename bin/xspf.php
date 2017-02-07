@@ -1,14 +1,20 @@
 <?php
 
 use Xspf\AbstractCommand;
+use Xspf\Utils;
 
-require_once __DIR__ . '/vendor/autoload.php';
+ini_set('display_errors', 'On');
+error_reporting(-1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
 
 set_error_handler(function($errno, $errstr, $errfile, $errline, array $errcontext) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });
 
 try {
+    echo 'Version ', Utils::getVersion(), PHP_EOL, PHP_EOL;
+
     AbstractCommand::setArguments($argv);
     $cmd = AbstractCommand::getCommandArg();
     $command = AbstractCommand::factory($cmd);
@@ -27,7 +33,9 @@ try {
         }
     }
 
-    echo 'done', PHP_EOL;
+    if (!($command instanceof \Xspf\Help\HelpCommand)) {
+        echo 'done', PHP_EOL;
+    }
 }
 catch (Exception $error) {
     echo 'An unexpected error occured!', PHP_EOL, PHP_EOL;

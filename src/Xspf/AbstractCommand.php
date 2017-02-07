@@ -12,11 +12,17 @@ abstract class AbstractCommand
     /** @var array */
     protected static $arguments;
 
+    /** @var array|static[] */
+    protected static $commands = [];
+
     /** @var array */
     protected static $map = [
         self::COMMAND_HELP => HelpCommand::class,
         'order'            => OrderCommand::class,
     ];
+
+    /** @var bool */
+    protected $isHelpCommand = false;
 
     /**
      * @param array $argv
@@ -46,13 +52,20 @@ abstract class AbstractCommand
      */
     public static function factory($command)
     {
-        if (!isset(self::$map[$command])) {
-            throw new \Exception('Command "' . $command . '" not found!');
+        if (isset(self::$commands[$command])) {
+            return self::$commands[$command];
         }
 
-        /** @var $this $cmdObj */
-        $cmdObj = new self::$map[$command]();
-        return $cmdObj;
+        if (!isset(self::$map[$command])) {
+            if (static::determineHelpArgs()) {
+                $command = static::COMMAND_HELP;
+            } else {
+                throw new \Exception('Command "' . $command . '" not found!');
+            }
+        }
+
+        self::$commands[$command] = new self::$map[$command]();
+        return self::$commands[$command];
     }
 
     /**
@@ -66,13 +79,33 @@ abstract class AbstractCommand
     }
 
     /**
+     * @param boolean $isHelpCommand
+     */
+    public function setIsHelpCommand($isHelpCommand)
+    {
+        $this->isHelpCommand = $isHelpCommand;
+    }
+
+    /**
+     * @return bool
+     */
+    protected static function determineHelpArgs()
+    {
+        foreach (['--help', '-h', '/h', '/?'] as $arg) {
+            if (in_array($arg, self::$arguments)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return bool
      */
     public function isHelpCommand()
     {
-        return count(self::$arguments) <= 1 || isset(self::$arguments[1]) && in_array(self::$arguments[1], [
-                '--help', '-h', '/h', '/?', 'help',
-            ]);
+        return $this->isHelpCommand || static::determineHelpArgs();
     }
 
     public function getExecutedFileName()
