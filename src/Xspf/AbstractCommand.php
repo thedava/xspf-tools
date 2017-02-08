@@ -2,11 +2,14 @@
 
 namespace Xspf;
 
+use Xspf\Create\CreateCommand;
 use Xspf\Help\HelpCommand;
 use Xspf\Order\OrderCommand;
 
 abstract class AbstractCommand
 {
+    use UsagePrinterTrait;
+
     const COMMAND_HELP = 'help';
 
     /** @var array */
@@ -19,6 +22,7 @@ abstract class AbstractCommand
     protected static $map = [
         self::COMMAND_HELP => HelpCommand::class,
         'order'            => OrderCommand::class,
+        'create'           => CreateCommand::class,
     ];
 
     /** @var bool */

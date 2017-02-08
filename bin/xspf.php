@@ -13,7 +13,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline, array $errcontex
 });
 
 try {
-    echo 'Version ', Utils::getVersion(), PHP_EOL, PHP_EOL;
+    echo 'XSPF Tools Version ', Utils::getVersion(), PHP_EOL, PHP_EOL;
 
     AbstractCommand::setArguments($argv);
     $cmd = AbstractCommand::getCommandArg();

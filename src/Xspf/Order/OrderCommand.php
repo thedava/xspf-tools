@@ -4,7 +4,6 @@ namespace Xspf\Order;
 
 use Xspf\AbstractCommand;
 use Xspf\File;
-use Xspf\Utils;
 
 class OrderCommand extends AbstractCommand
 {
@@ -48,13 +47,12 @@ class OrderCommand extends AbstractCommand
             echo PHP_EOL;
         }
 
-        echo 'Usage: php ', $this->getExecutedFileName(), ' order <order_type> <playlist_file>', PHP_EOL, PHP_EOL;
-
-        echo 'Order Types:', PHP_EOL;
-        echo '    asc:    The file will be ordered by video file names in ascending order', PHP_EOL;
-        echo '    desc:   The file will be ordered by video file names in descending order', PHP_EOL;
-        echo '    random: The file will be ordered in random order', PHP_EOL;
-
-        echo PHP_EOL;
+        $this->printDescription('Orders the given playlist using the given order type');
+        $this->printUsageCommand(['order', '<order_type>', '<playlist_file>']);
+        $this->printUsageList('Order Types', [
+            'asc:    The file will be ordered by video file names in ascending order',
+            'desc:   The file will be ordered by video file names in descending order',
+            'random: The file will be ordered in random order',
+        ]);
     }
 }

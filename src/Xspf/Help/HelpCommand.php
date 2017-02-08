@@ -30,13 +30,11 @@ class HelpCommand extends AbstractCommand
 
     public function printUsage(\Exception $error = null)
     {
-        echo 'Usage: php ', $this->getExecutedFileName(), ' <command>', PHP_EOL;
-        echo '       php ', $this->getExecutedFileName(), ' help <command>', PHP_EOL, PHP_EOL;
+        $this->printDescription('A toolset for creating and manipulating XSPF playlists');
 
-        echo 'Available commands: ', PHP_EOL;
-        foreach (self::$map as $command => $class) {
-            echo '    - ', $command, PHP_EOL;
-        }
-        echo PHP_EOL;
+        $this->printUsageCommand(['<command>'], true, false);
+        $this->printUsageCommand(['help', '<command>'], false);
+
+        $this->printUsageList('Available commands', array_keys(self::$map));
     }
 }
