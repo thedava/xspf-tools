@@ -4,6 +4,7 @@ namespace Xspf;
 
 class File
 {
+    const BACKUP_SUFFIX = '.bak';
     /** @var string */
     protected $fileName;
 
@@ -118,10 +119,10 @@ class File
     {
         // Create backup
         if ($backup && file_exists($this->fileName)) {
-            if (file_exists($this->fileName . '.bak')) {
-                unlink($this->fileName . '.bak');
+            if (file_exists($this->fileName . self::BACKUP_SUFFIX)) {
+                unlink($this->fileName . self::BACKUP_SUFFIX);
             }
-            copy($this->fileName, $this->fileName . '.bak');
+            copy($this->fileName, $this->fileName . self::BACKUP_SUFFIX);
         }
 
         // Save new file

@@ -3,4 +3,7 @@
 *.stackdump
 .idea
 *.xspf
+test/data/*
+
 !test/fixtures/*.xspf
+!.gitkeep
