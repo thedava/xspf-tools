@@ -4,5 +4,6 @@ return [
     "Xspf\\Backup\\CleanCommand",
     "Xspf\\Create\\CreateCommand",
     "Xspf\\Merge\\MergeCommand",
-    "Xspf\\Order\\OrderCommand"
+    "Xspf\\Order\\OrderCommand",
+    "Xspf\\Validate\\ValidateCommand"
 ];
