@@ -94,7 +94,7 @@ class File
     /**
      * @return string
      */
-    protected function createContent()
+    public function toXml()
     {
         $playlist = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><playlist></playlist>');
         $playlist->addAttribute('version', 1);
@@ -125,6 +125,6 @@ class File
         }
 
         // Save new file
-        file_put_contents($this->fileName, $this->createContent());
+        file_put_contents($this->fileName, $this->toXml());
     }
 }
