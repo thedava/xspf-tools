@@ -3,5 +3,6 @@
 return [
     "Xspf\\Backup\\CleanCommand",
     "Xspf\\Create\\CreateCommand",
+    "Xspf\\Merge\\MergeCommand",
     "Xspf\\Order\\OrderCommand"
 ];

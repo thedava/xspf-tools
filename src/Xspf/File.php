@@ -58,6 +58,10 @@ class File
         return $this;
     }
 
+    /**
+     * @return $this
+     * @throws \Exception
+     */
     public function load()
     {
         $eMsg = 'Invalid or malformed xspf!';
@@ -83,6 +87,8 @@ class File
 
             $this->tracks[] = $trackObj;
         }
+
+        return $this;
     }
 
     /**
@@ -105,13 +111,18 @@ class File
         return $dom->ownerDocument->saveXML();
     }
 
-    public function save()
+    /**
+     * @param bool $backup
+     */
+    public function save($backup = true)
     {
         // Create backup
-        if (file_exists($this->fileName . '.bak')) {
-            unlink($this->fileName . '.bak');
+        if ($backup && file_exists($this->fileName)) {
+            if (file_exists($this->fileName . '.bak')) {
+                unlink($this->fileName . '.bak');
+            }
+            copy($this->fileName, $this->fileName . '.bak');
         }
-        copy($this->fileName, $this->fileName . '.bak');
 
         // Save new file
         file_put_contents($this->fileName, $this->createContent());

@@ -3,3 +3,4 @@
 *.stackdump
 .idea
 *.xspf
+!test/fixtures/*.xspf
