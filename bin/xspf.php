@@ -13,29 +13,15 @@ set_error_handler(function($errno, $errstr, $errfile, $errline, array $errcontex
 });
 
 try {
-    echo 'XSPF Tools Version ', Utils::getVersion(), PHP_EOL, PHP_EOL;
+    $application = new \Symfony\Component\Console\Application('XSPF Tools', Utils::getVersion());
 
-    AbstractCommand::setArguments($argv);
-    $cmd = AbstractCommand::getCommandArg();
-    $command = AbstractCommand::factory($cmd);
-
-    // Display help or invoke command
-    if ($command->isHelpCommand()) {
-        $command->printUsage();
-        exit(0);
-    } else {
-        try {
-            $command->invoke();
-        }
-        catch (\Exception $err) {
-            $command->printUsage($err);
-            exit(1);
-        }
+    // Append commands
+    foreach (require_once __DIR__.'/../data/console-commands.php' as $command) {
+        $application->add(new $command());
     }
 
-    if (!($command instanceof \Xspf\Help\HelpCommand)) {
-        echo 'done', PHP_EOL;
-    }
+    $application->run();
+    exit(0);
 }
 catch (Exception $error) {
     echo 'An unexpected error occured!', PHP_EOL, PHP_EOL;

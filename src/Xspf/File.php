@@ -72,52 +72,17 @@ class File
         $this->tracks = [];
         foreach ($xml->{'trackList'}->{'track'} as $track) {
             if (!isset($track->{'location'})) {
-                throw new \Exception($eMsg . ' Field trackList.track.location is missing.');
-            } elseif (!isset($track->{'duration'})) {
-                throw new \Exception($eMsg . ' Field trackList.track.duration is missing.');
+                $trackObj = new Track((string)$track);
+            } else {
+                $trackObj = new Track((string)$track->{'location'});
+
+                if (isset($track->{'duration'})) {
+                    $trackObj->setDuration((int)(string)$track->{'duration'});
+                }
             }
 
-            $this->tracks[] = new Track((string)$track->{'location'}, (int)(string)$track->{'duration'});
+            $this->tracks[] = $trackObj;
         }
-    }
-
-    /**
-     * @param string $templateName
-     *
-     * @return string
-     */
-    protected function loadTemplate($templateName)
-    {
-        $template = file_get_contents(__DIR__ . '/../../tpl/' . $templateName . '.xml');
-
-        // Trim whitespaces
-        $template = rtrim($template);
-        $template = str_replace('    ', "\t", $template);
-
-        // Force CRLF
-        $template = str_replace("\r\n", "\n", $template);
-        $template = str_replace("\n", "\r\n", $template);
-
-        return $template;
-    }
-
-    /**
-     * @param string $location
-     *
-     * @return mixed
-     */
-    protected function encodeLocation($location)
-    {
-//        $blackList = ['\''];
-//        $length = strlen($location);
-//
-//        for ($i = 0; $i < $length; $i++) {
-//            if (in_array($location[$i], $blackList)) {
-//                $location[$i] = '&#' . ord($location[$i]) . ';';
-//            }
-//        }
-
-        return htmlspecialchars($location);
     }
 
     /**
@@ -125,47 +90,19 @@ class File
      */
     protected function createContent()
     {
-        $vlcId = 0;
+        $playlist = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><playlist></playlist>');
+        $playlist->addAttribute('version', 1);
+        $playlist->addAttribute('xmlns', 'http://xspf.org/ns/0/');
 
-        $tracks = [];
-        $extensions = [];
-
-        $tplLayout = $this->loadTemplate('layout');
-        $tplTrack = $this->loadTemplate('track');
-        $tplExtension = $this->loadTemplate('extension');
-
+        $trackList = $playlist->addChild('trackList');
         foreach ($this->tracks as $track) {
-            // Add track
-            $tracks[] = str_replace([
-                '<!-- REPLACE:LOCATION -->',
-                '<!-- REPLACE:DURATION -->',
-                '<!-- REPLACE:VLC_ID -->',
-            ], [
-                $this->encodeLocation($track->getLocation()),
-                $track->getDuration(),
-                $vlcId,
-            ], $tplTrack);
-
-            // Add extension
-            $extensions[] = str_replace([
-                '<!-- REPLACE:VLC_ID -->',
-            ], [
-                $vlcId,
-            ], $tplExtension);
-
-            $vlcId++;
+            $track->toXml($trackList->addChild('track'));
         }
 
-        // Create full xml file
-        return str_replace([
-                '<!-- REPLACE:TITLE -->',
-                '<!-- REPLACE:TRACKLIST -->',
-                '<!-- REPLACE:EXTENSION -->',
-            ], [
-                'Tracklist',
-                implode("\r\n", $tracks),
-                implode("\r\n", $extensions),
-            ], $tplLayout) . "\r\n";
+        $dom = dom_import_simplexml($playlist);
+        $dom->ownerDocument->formatOutput = true;
+
+        return $dom->ownerDocument->saveXML();
     }
 
     public function save()

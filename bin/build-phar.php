@@ -17,7 +17,7 @@ if (file_exists($pharFile)) {
 
 $phar = new Phar($pharFile);
 $phar->setMetadata(['version' => $version]);
-$phar->buildFromDirectory(dirname(__DIR__), '/(VERSION|src|tpl|vendor|xspf\.php)/');
+$phar->buildFromDirectory(dirname(__DIR__), '/(VERSION|src|vendor|xspf\.php|data)/');
 $phar->setStub($phar->createDefaultStub('bin/xspf.php'));
 
 echo 'File size: ', round(filesize($pharFile) / 1024, 2), ' kB', PHP_EOL;

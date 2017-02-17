@@ -7,19 +7,26 @@ class Track
     /** @var string */
     protected $location;
 
-    /** @var int */
-    protected $duration;
+    /** @var int|null */
+    protected $duration = null;
 
     /**
      * Track constructor.
      *
      * @param string $location
-     * @param int    $duration
      */
-    public function __construct($location, $duration)
+    public function __construct($location)
     {
         $this->location = $location;
-        $this->duration = $duration;
+    }
+
+    /**
+     * @param \SimpleXMLElement $track
+     */
+    public function toXml(\SimpleXMLElement $track)
+    {
+        $track->addChild('location', htmlspecialchars($this->getLocation()));
+        $this->getDuration() && $track->addChild('duration', (int)$this->getDuration());
     }
 
     /**
@@ -42,7 +49,7 @@ class Track
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDuration()
     {
@@ -50,7 +57,7 @@ class Track
     }
 
     /**
-     * @param int $duration
+     * @param int|null $duration
      *
      * @return $this
      */

@@ -2,57 +2,58 @@
 
 namespace Xspf\Order;
 
+use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\AbstractCommand;
 use Xspf\File;
 
 class OrderCommand extends AbstractCommand
 {
-    /**
-     * @return string|null
-     */
-    protected function determineOrderType()
+    protected function configure()
     {
-        return (isset(self::$arguments[2]) && in_array(self::$arguments[2], AbstractOrderType::getOrderTypes()))
-            ? self::$arguments[2] : null;
+        $this->setName('order')
+            ->setDescription('Orders the given playlist using the given order type')
+            ->addArgument('order-type', InputArgument::OPTIONAL, 'The order type')
+            ->addArgument('playlist-file', InputArgument::OPTIONAL, 'The playlist file');
     }
 
-    /**
-     * @return string|null
-     */
-    protected function determineFileName()
+    protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        return (isset(self::$arguments[3]) && file_exists(self::$arguments[3]) && filesize(self::$arguments[3]) > 32)
-            ? self::$arguments[3] : null;
+        // Force help command if no order-type is set
+        if (!$input->hasArgument('order-type') || $input->getArgument('order-type') == '') {
+            $input->setArgument('order-type', 'help');
+
+        } elseif (!in_array($input->getArgument('order-type'), AbstractOrderType::getOrderTypes())) {
+            throw new RuntimeException('<error>Unknown or invalid order type given! Use "help" as order type for more information.</error>');
+
+        } elseif (!$input->hasArgument('playlist-file')) {
+            throw new RuntimeException('Playlist file is missing');
+        }
     }
 
-    public function invoke()
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $order = AbstractOrderType::factory($this->determineOrderType());
-        $file = new File($this->determineFileName());
+        $orderType = $input->getArgument('order-type');
+
+        // Special command help
+        if ($orderType == 'help') {
+            $output->writeln($this->getSynopsis());
+            $output->writeln('');
+
+            $output->writeln('asc:    The file will be ordered by video file names in ascending order');
+            $output->writeln('desc:   The file will be ordered by video file names in descending order');
+            $output->writeln('random: The file will be ordered in random order');
+            return 0;
+        }
+
+        $order = AbstractOrderType::factory($orderType);
+        $file = new File($input->getArgument('playlist-file'));
         $file->load();
         $order->order($file);
         $file->save();
-    }
 
-    public function printUsage(\Exception $error = null)
-    {
-        if (!$this->isHelpCommand()) {
-            echo 'Following error(s) occurred: ', PHP_EOL;
-            if ($this->determineOrderType() === null) {
-                echo 'Unknown or invalid order type given!', PHP_EOL;
-            }
-            if ($this->determineFileName() === null) {
-                echo 'The given file does not exist or is empty!', PHP_EOL;
-            }
-            echo PHP_EOL;
-        }
-
-        $this->printDescription('Orders the given playlist using the given order type');
-        $this->printUsageCommand(['order', '<order_type>', '<playlist_file>']);
-        $this->printUsageList('Order Types', [
-            'asc:    The file will be ordered by video file names in ascending order',
-            'desc:   The file will be ordered by video file names in descending order',
-            'random: The file will be ordered in random order',
-        ]);
+        return 0;
     }
 }

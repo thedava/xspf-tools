@@ -9,7 +9,8 @@
         }
     },
     "require": {
-        "james-heinrich/getid3": "^1.9"
+        "james-heinrich/getid3": "^1.9",
+        "symfony/console": "^3.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^4"
@@ -18,6 +19,10 @@
         "./bin/xspf.php"
     ],
     "scripts": {
-        "phplint": "bin/phplint.sh"
+        "phplint": "bin/phplint.sh",
+        "build": [
+            "php bin/build-console.php",
+            "php bin/build-phar.php"
+        ]
     }
 }

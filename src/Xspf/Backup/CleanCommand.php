@@ -2,16 +2,27 @@
 
 namespace Xspf\Backup;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\AbstractCommand;
 use Xspf\File;
 use Xspf\Utils;
 
 class CleanCommand extends AbstractCommand
 {
+    protected function configure()
+    {
+        $this->setName('clean')
+            ->setDescription('Removes all backup files');
+    }
+
     /**
-     * @return void
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int
      */
-    public function invoke()
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = Utils::determinePath('./');
         foreach (glob($path . DIRECTORY_SEPARATOR . '*.bak') as $file) {
@@ -23,18 +34,7 @@ class CleanCommand extends AbstractCommand
                 echo 'Skipped file "', basename($file), '"', PHP_EOL;
             }
         }
-    }
 
-    /**
-     * Print out the usage of this command
-     *
-     * @param \Exception $error
-     *
-     * @return void
-     */
-    public function printUsage(\Exception $error = null)
-    {
-        $this->printDescription('Removes all backup files');
-        $this->printUsageCommand(['clean']);
+        return 0;
     }
 }

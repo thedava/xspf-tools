@@ -3,28 +3,23 @@
 namespace Xspf\Create;
 
 
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\AbstractCommand;
 
 class CreateCommand extends AbstractCommand
 {
-    /**
-     * @return void
-     */
-    public function invoke()
+    protected function configure()
     {
-        throw new \Exception('Not implemented yet!');
+        $this->setName('create')
+            ->setDescription('Create a new playlist')
+            ->addArgument('playlist-file', InputArgument::REQUIRED, 'The playlist file that should be created')
+            ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added');
     }
 
-    /**
-     * Print out the usage of this command
-     *
-     * @param \Exception $error
-     *
-     * @return void
-     */
-    public function printUsage(\Exception $error = null)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->printDescription('Create a new playlist');
-        $this->printUsageCommand(['create', '<playlist_file>', '<file_or_folder>...']);
+
     }
 }
