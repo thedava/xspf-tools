@@ -2,13 +2,29 @@
 
 namespace Xspf;
 
+use getID3;
+
 class Track
 {
+    /** @var getID3 */
+    protected static $id3;
+
     /** @var string */
     protected $location;
 
     /** @var int|null */
     protected $duration = null;
+
+    /**
+     * @return getID3
+     */
+    public static function getId3() {
+        if (!self::$id3) {
+            self::$id3 = new \getID3();
+        }
+
+        return self::$id3;
+    }
 
     /**
      * Track constructor.
@@ -25,8 +41,22 @@ class Track
      */
     public function toXml(\SimpleXMLElement $track)
     {
-        $track->addChild('location', htmlspecialchars($this->getLocation()));
+        $track->addChild('location', $this->getLocation());
         $this->getDuration() && $track->addChild('duration', (int)$this->getDuration());
+    }
+
+    public function update()
+    {
+        $location = LocationFilter::filter($this->getLocation());
+        if ($location === false) {
+            return false;
+        }
+
+        $result = self::getId3()->analyze($location);
+
+        $this->setDuration(isset($result['playtime_seconds']) ? (int)$result['playtime_seconds'] : $this->getDuration());
+
+        return true;
     }
 
     /**

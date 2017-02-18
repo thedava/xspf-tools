@@ -5,6 +5,7 @@ namespace Xspf;
 class File
 {
     const BACKUP_SUFFIX = '.bak';
+
     /** @var string */
     protected $fileName;
 
@@ -77,9 +78,9 @@ class File
         $this->tracks = [];
         foreach ($xml->{'trackList'}->{'track'} as $track) {
             if (!isset($track->{'location'})) {
-                $trackObj = new Track((string)$track);
+                $trackObj = new Track(LocationFilter::filter((string)$track));
             } else {
-                $trackObj = new Track((string)$track->{'location'});
+                $trackObj = new Track(LocationFilter::filter((string)$track->{'location'}));
 
                 if (isset($track->{'duration'})) {
                     $trackObj->setDuration((int)(string)$track->{'duration'});

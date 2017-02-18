@@ -2,7 +2,6 @@
 
 namespace XspfTest;
 
-
 use Xspf\File;
 use Xspf\Track;
 use Xspf\XspfSchemeValidator;
