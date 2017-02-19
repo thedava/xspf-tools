@@ -8,6 +8,12 @@
       <location>C:\Users\Dava\Documents\PhpStormProjects\xspf-tools\src\Xspf\Create\CreateCommand.php</location>
     </track>
     <track>
+      <location>C:\Users\Dava\Documents\PhpStormProjects\xspf-tools\src\Xspf\File\Structure.php</location>
+    </track>
+    <track>
+      <location>C:\Users\Dava\Documents\PhpStormProjects\xspf-tools\src\Xspf\Merge\MergeCommand.php</location>
+    </track>
+    <track>
       <location>C:\Users\Dava\Documents\PhpStormProjects\xspf-tools\src\Xspf\Order\AbstractOrderType.php</location>
     </track>
     <track>
@@ -24,6 +30,12 @@
     </track>
     <track>
       <location>C:\Users\Dava\Documents\PhpStormProjects\xspf-tools\src\Xspf\Order\OrderTypeRandom.php</location>
+    </track>
+    <track>
+      <location>C:\Users\Dava\Documents\PhpStormProjects\xspf-tools\src\Xspf\Update\UpdateCommand.php</location>
+    </track>
+    <track>
+      <location>C:\Users\Dava\Documents\PhpStormProjects\xspf-tools\src\Xspf\Validate\ValidateCommand.php</location>
     </track>
   </trackList>
 </playlist>
