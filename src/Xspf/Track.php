@@ -37,22 +37,20 @@ class Track
     }
 
     /**
-     * @param \SimpleXMLElement $track
+     * @return array
      */
-    public function toXml(\SimpleXMLElement $track)
+    public function toArray()
     {
-        $track->addChild('location', $this->getLocation());
-        $this->getDuration() && $track->addChild('duration', (int)$this->getDuration());
+        $result = [];
+        $result['location'] = $this->getLocation();
+        $this->getDuration() && $result['duration'] = (int)$this->getDuration();
+
+        return $result;
     }
 
     public function update()
     {
-        $location = LocationFilter::filter($this->getLocation());
-        if ($location === false) {
-            return false;
-        }
-
-        $result = self::getId3()->analyze($location);
+        $result = self::getId3()->analyze($this->getLocation());
 
         $this->setDuration(isset($result['playtime_seconds']) ? (int)$result['playtime_seconds'] : $this->getDuration());
 

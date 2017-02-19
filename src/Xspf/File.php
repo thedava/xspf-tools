@@ -2,6 +2,9 @@
 
 namespace Xspf;
 
+use Xspf\File\Structure;
+use Xspf\File\Type\AbstractFileType;
+
 class File
 {
     const BACKUP_SUFFIX = '.bak';
@@ -12,6 +15,9 @@ class File
     /** @var array|Track[] */
     protected $tracks = [];
 
+    /** @var AbstractFileType */
+    protected $fileType;
+
     /**
      * File constructor.
      *
@@ -20,6 +26,7 @@ class File
     public function __construct($fileName)
     {
         $this->fileName = $fileName;
+        $this->fileType = AbstractFileType::factory($fileName);
     }
 
     /**
@@ -61,56 +68,35 @@ class File
     }
 
     /**
-     * @return $this
-     * @throws \Exception
+     * @return AbstractFileType
      */
-    public function load()
+    public function getFileType()
     {
-        $eMsg = 'Invalid or malformed xspf!';
-        $xml = simplexml_load_file($this->fileName);
+        return $this->fileType;
+    }
 
-        if (!isset($xml->{'trackList'})) {
-            throw new \Exception($eMsg . ' Field trackList is missing.');
-        } elseif (!isset($xml->{'trackList'}->{'track'})) {
-            throw new \Exception($eMsg . ' Field trackList.track is missing.');
-        }
-
-        $this->tracks = [];
-        foreach ($xml->{'trackList'}->{'track'} as $track) {
-            if (!isset($track->{'location'})) {
-                $trackObj = new Track(LocationFilter::filter((string)$track));
-            } else {
-                $trackObj = new Track(LocationFilter::filter((string)$track->{'location'}));
-
-                if (isset($track->{'duration'})) {
-                    $trackObj->setDuration((int)(string)$track->{'duration'});
-                }
-            }
-
-            $this->tracks[] = $trackObj;
-        }
-
+    /**
+     * @param AbstractFileType $fileType
+     *
+     * @return $this
+     */
+    public function setFileType($fileType)
+    {
+        $this->fileType = $fileType;
         return $this;
     }
 
     /**
-     * @return string
+     * @return $this
      */
-    public function toXml()
+    public function load()
     {
-        $playlist = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><playlist></playlist>');
-        $playlist->addAttribute('version', 1);
-        $playlist->addAttribute('xmlns', 'http://xspf.org/ns/0/');
+        $data = file_get_contents($this->getFileName());
+        $structure = $this->fileType->decode($data);
 
-        $trackList = $playlist->addChild('trackList');
-        foreach ($this->tracks as $track) {
-            $track->toXml($trackList->addChild('track'));
-        }
+        $this->setTracks($structure->getTracks());
 
-        $dom = dom_import_simplexml($playlist);
-        $dom->ownerDocument->formatOutput = true;
-
-        return $dom->ownerDocument->saveXML();
+        return $this;
     }
 
     /**
@@ -126,7 +112,10 @@ class File
             copy($this->fileName, $this->fileName . self::BACKUP_SUFFIX);
         }
 
+        $structure = new Structure();
+        $structure->setTracks($this->getTracks());
+
         // Save new file
-        file_put_contents($this->fileName, $this->toXml());
+        file_put_contents($this->fileName, $this->fileType->encode($structure));
     }
 }
