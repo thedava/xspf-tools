@@ -4,7 +4,6 @@ namespace XspfTest;
 
 use Xspf\File;
 use Xspf\Track;
-use Xspf\XspfSchemeValidator;
 
 class FileTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,8 +20,6 @@ class FileTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $file->getTracks());
         $this->assertFileExists($file->getFileName());
         $this->assertFileNotExists($file->getFileName() . File::BACKUP_SUFFIX);
-        $result = file_get_contents($file->getFileName());
-        $this->assertTrue(XspfSchemeValidator::isValid($result));
 
         // Create backup
         $file->save();

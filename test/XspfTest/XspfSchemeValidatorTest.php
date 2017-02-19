@@ -9,11 +9,21 @@ class XspfSchemeValidatorTest extends \PHPUnit_Framework_TestCase
 {
     public function testIsValid_Success()
     {
-        $this->assertTrue(XspfSchemeValidator::isValid(file_get_contents(XSPF_FIXTURE_ASC)));
+        $isValid = XspfSchemeValidator::isValid(file_get_contents(XSPF_FIXTURE_ASC));
+        if ($isValid === null) {
+            $this->markTestIncomplete('Invalid validation result');
+        }
+
+        $this->assertTrue($isValid);
     }
 
     public function testIsValid_Failure()
     {
-        $this->assertFalse(XspfSchemeValidator::isValid(file_get_contents(XSPF_FIXTURE_INVALID)));
+        $isValid = XspfSchemeValidator::isValid(file_get_contents(XSPF_FIXTURE_INVALID));
+        if ($isValid === null) {
+            $this->markTestIncomplete('Invalid validation result');
+        }
+
+        $this->assertFalse($isValid);
     }
 }
