@@ -6,7 +6,7 @@ $pharFile = __DIR__ . '/../xspf.phar';
 $version = \Xspf\Utils::getVersion();
 
 // Dirty checks
-if (is_dir(__DIR__.'/../vendor/phpunit')) {
+if (is_dir(__DIR__ . '/../vendor/phpunit')) {
     echo 'Attention: dev-dependencies detected!', PHP_EOL;
 }
 

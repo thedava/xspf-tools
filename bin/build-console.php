@@ -34,4 +34,4 @@ $content = implode(PHP_EOL, [
     'return ' . json_encode($commands, JSON_PRETTY_PRINT) . ';',
 ]);
 
-file_put_contents(__DIR__.'/../data/console-commands.php', $content);
+file_put_contents(__DIR__ . '/../data/console-commands.php', $content);

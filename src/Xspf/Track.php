@@ -18,7 +18,8 @@ class Track
     /**
      * @return getID3
      */
-    public static function getId3() {
+    public static function getId3()
+    {
         if (!self::$id3) {
             self::$id3 = new \getID3();
         }
