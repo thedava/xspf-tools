@@ -21,8 +21,8 @@
     "scripts": {
         "phplint": "bin/phplint.sh",
         "build": [
-            "php bin/build-console.php",
-            "php bin/build-phar.php"
+            "@php bin/build-console.php",
+            "@php -d phar.readonly=0 bin/build-phar.php"
         ]
     }
 }
