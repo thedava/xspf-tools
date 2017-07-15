@@ -21,7 +21,8 @@
     "scripts": {
         "phplint": "bin/phplint.sh",
         "build": [
-            "@composer install --no-dev -o",
+            "@composer self-update",
+            "@php composer.phar install --no-dev -o",
             "@php bin/build-console.php",
             "@php -d phar.readonly=0 bin/build-phar.php"
         ]
