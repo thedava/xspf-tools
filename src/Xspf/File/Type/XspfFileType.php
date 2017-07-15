@@ -3,7 +3,8 @@
 namespace Xspf\File\Type;
 
 use Xspf\File\Structure;
-use Xspf\LocationFilter;
+use Xspf\Filter\FileUrlFilter;
+use Xspf\Filter\LocalFileFilter;
 use Xspf\Track;
 
 class XspfFileType extends AbstractFileType
@@ -32,9 +33,9 @@ class XspfFileType extends AbstractFileType
         $tracks = [];
         foreach ($xml->{'trackList'}->{'track'} as $track) {
             if (!isset($track->{'location'})) {
-                $trackObj = new Track(LocationFilter::filter((string)$track));
+                $trackObj = new Track(LocalFileFilter::filter((string)$track));
             } else {
-                $trackObj = new Track(LocationFilter::filter((string)$track->{'location'}));
+                $trackObj = new Track(LocalFileFilter::filter((string)$track->{'location'}));
 
                 if (isset($track->{'duration'})) {
                     $trackObj->setDuration((int)(string)$track->{'duration'});
@@ -64,7 +65,10 @@ class XspfFileType extends AbstractFileType
         foreach ($structure->getTracks() as $track) {
             $eTrack = $trackList->addChild('track');
 
-            foreach ($track->toArray(true) as $key => $value) {
+            foreach ($track->toArray() as $key => $value) {
+                if ($key === 'location') {
+                    $value = FileUrlFilter::filter($value);
+                }
                 $eTrack->addChild($key, htmlspecialchars($value));
             }
         }

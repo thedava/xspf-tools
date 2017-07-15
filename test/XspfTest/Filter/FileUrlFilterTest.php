@@ -1,10 +1,10 @@
 <?php
 
-namespace XspfTest;
+namespace XspfTest\Filter;
 
-use Xspf\Track;
+use Xspf\Filter\FileUrlFilter;
 
-class TrackTest extends \PHPUnit_Framework_TestCase
+class FileUrlFilterTest extends \PHPUnit_Framework_TestCase
 {
     public function fileUrlDataProvider()
     {
@@ -29,14 +29,12 @@ class TrackTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider fileUrlDataProvider
      *
-     * @param string $filePath
+     * @param string $localFile
      * @param string $directorySeparator
      * @param string $expectedFileUrl
      */
-    public function testGetFileUrl($filePath, $directorySeparator, $expectedFileUrl)
+    public function testFilter($localFile, $directorySeparator, $expectedFileUrl)
     {
-        $track = new Track($filePath);
-
-        $this->assertEquals($expectedFileUrl, $track->getFileUrl($directorySeparator));
+        $this->assertEquals($expectedFileUrl, FileUrlFilter::filter($localFile, $directorySeparator));
     }
 }

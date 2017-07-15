@@ -2,7 +2,6 @@
 
 namespace XspfTest;
 
-
 use Xspf\XspfSchemeValidator;
 
 class XspfSchemeValidatorTest extends \PHPUnit_Framework_TestCase
