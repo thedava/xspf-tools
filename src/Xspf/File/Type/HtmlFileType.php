@@ -25,7 +25,7 @@ class HtmlFileType extends AbstractFileType
 
         foreach ($structure->getTracks() as $track) {
             $result[] = $t . $t . $t . '<div class="track">';
-            foreach ($track->toArray() as $key => $value) {
+            foreach ($track->toArray(true) as $key => $value) {
                 $result[] = $t . $t . $t . $t . '<div class="' . $key . '">' . $value . '</div>';
             }
             $result[] = $t . $t . $t . '</div>';

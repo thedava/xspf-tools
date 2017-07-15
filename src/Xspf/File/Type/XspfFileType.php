@@ -64,7 +64,7 @@ class XspfFileType extends AbstractFileType
         foreach ($structure->getTracks() as $track) {
             $eTrack = $trackList->addChild('track');
 
-            foreach ($track->toArray() as $key => $value) {
+            foreach ($track->toArray(true) as $key => $value) {
                 $eTrack->addChild($key, htmlspecialchars($value));
             }
         }

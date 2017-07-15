@@ -38,15 +38,39 @@ class Track
     }
 
     /**
+     * @param bool $useFileUrl
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($useFileUrl = false)
     {
         $result = [];
-        $result['location'] = $this->getLocation();
+        $result['location'] = ($useFileUrl) ? $this->getFileUrl() : $this->getLocation();
         $this->getDuration() && $result['duration'] = (int)$this->getDuration();
 
         return $result;
+    }
+
+    /**
+     * @param string $directorySeparator
+     *
+     * @return string
+     */
+    public function getFileUrl($directorySeparator = DIRECTORY_SEPARATOR)
+    {
+        $parts = explode($directorySeparator, $this->getLocation());
+        list($first) = $parts;
+        $parts = array_map('rawurlencode', $parts);
+
+        // Check if windows
+        if (preg_match('/^[A-Z]\:$/', $first)) {
+            $parts[0] = '/' . $first;
+        } elseif ($first == '' && isset($parts[1], $parts[2]) && $parts[1] == 'cygdrive' && preg_match('/^[a-z]$/', $parts[2])) {
+            $parts[0] = '/' . strtoupper($parts[2]) . ':';
+            unset($parts[1], $parts[2]);
+        }
+
+        return 'file://' . implode('/', $parts);
     }
 
     public function update()
