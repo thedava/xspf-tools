@@ -4,8 +4,16 @@ namespace Xspf;
 
 class Utils
 {
-    /** @var null|float */
+    /** @var null|string */
     private static $version = null;
+
+    /**
+     * @return string
+     */
+    public static function getVersionFile()
+    {
+        return dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'VERSION';
+    }
 
     /**
      * @return float|null
@@ -13,7 +21,7 @@ class Utils
     public static function getVersion()
     {
         if (self::$version === null) {
-            self::$version = (float)trim(file_get_contents(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'VERSION'));
+            self::$version = trim(file_get_contents(self::getVersionFile()));
         }
 
         return self::$version;

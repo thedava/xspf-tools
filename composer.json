@@ -24,7 +24,8 @@
             "@composer self-update",
             "@php composer.phar install --no-dev -o",
             "@php bin/build-console.php",
-            "@php -d phar.readonly=0 bin/build-phar.php"
+            "@php -d phar.readonly=0 bin/build-phar.php",
+            "@php xspf.phar version"
         ]
     }
 }
