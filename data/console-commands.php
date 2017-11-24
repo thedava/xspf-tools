@@ -5,6 +5,7 @@ return [
     "Xspf\\Create\\CreateCommand",
     "Xspf\\Merge\\MergeCommand",
     "Xspf\\Order\\OrderCommand",
+    "Xspf\\SelfUpdateCommand",
     "Xspf\\Update\\UpdateCommand",
     "Xspf\\Validate\\ValidateCommand",
     "Xspf\\VersionCommand",

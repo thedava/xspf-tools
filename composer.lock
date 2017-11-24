@@ -4,8 +4,37 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0c2a034455d00749677d405ce27d0b1",
+    "content-hash": "ae1f2d1a340b386d488df9d9789e3c0b",
     "packages": [
+        {
+            "name": "davahome/self-update",
+            "version": "1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DavaHome/self-update.git",
+                "reference": "bbf866e80e18bd89a3bf42ea089dbc952ac019c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DavaHome/self-update/zipball/bbf866e80e18bd89a3bf42ea089dbc952ac019c0",
+                "reference": "bbf866e80e18bd89a3bf42ea089dbc952ac019c0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DavaHome\\SelfUpdate\\": "src/DavaHome/SelfUpdate/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "gpl"
+            ],
+            "time": "2017-11-08T12:48:03+00:00"
+        },
         {
             "name": "james-heinrich/getid3",
             "version": "v1.9.14",
