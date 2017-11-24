@@ -4,7 +4,7 @@ namespace Xspf\Filter;
 
 class FileUrlFilter
 {
-    const REPLACE = [
+    private static $replace = [
         '%28' => '(',
         '%29' => ')',
     ];
@@ -34,6 +34,6 @@ class FileUrlFilter
         $file = 'file://' . implode('/', $parts);
 
         // Apply replaces
-        return str_replace(array_keys(self::REPLACE), array_values(self::REPLACE), $file);
+        return str_replace(array_keys(self::$replace), array_values(self::$replace), $file);
     }
 }
