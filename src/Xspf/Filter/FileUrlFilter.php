@@ -4,6 +4,11 @@ namespace Xspf\Filter;
 
 class FileUrlFilter
 {
+    const REPLACE = [
+        '%28' => '(',
+        '%29' => ')',
+    ];
+
     /**
      * @param string $location
      * @param string $directorySeparator
@@ -14,7 +19,9 @@ class FileUrlFilter
     {
         $parts = explode($directorySeparator, $location);
         list($first) = $parts;
-        $parts = array_map('rawurlencode', $parts);
+        array_walk($parts, function (&$value) {
+            $value = rawurlencode(utf8_encode($value));
+        }, $parts);
 
         // Check if windows
         if (preg_match('/^[A-Z]\:$/', $first)) {
@@ -24,6 +31,9 @@ class FileUrlFilter
             unset($parts[1], $parts[2]);
         }
 
-        return 'file://' . implode('/', $parts);
+        $file = 'file://' . implode('/', $parts);
+
+        // Apply replaces
+        return str_replace(array_keys(self::REPLACE), array_values(self::REPLACE), $file);
     }
 }
