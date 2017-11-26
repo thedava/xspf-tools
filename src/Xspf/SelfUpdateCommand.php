@@ -13,18 +13,20 @@ class SelfUpdateCommand extends AbstractCommand
     {
         $this->setName('self-update')
             ->setDescription('Replace the current version of xspf with the latest from GitHub')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force download (Avoid validation of downloaded file)');
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force update');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $force = $input->hasOption('force') && $input->getOption('force');
+
         $assetFileDownloader = new AssetFileDownloader('thedava', 'xspf-tools');
         $releaseInformation = $assetFileDownloader->getReleaseInformation();
         $date = new \DateTime($releaseInformation['published_at']);
         $output->writeln('Version: ' . $releaseInformation['tag_name']);
         $output->writeln('Published: ' . $date->format('Y-m-d H:i:s'));
 
-        if (version_compare(Utils::getVersion(), $releaseInformation['tag_name'], '>=')) {
+        if (!$force && version_compare(Utils::getVersion(), $releaseInformation['tag_name'], '>=')) {
             $output->writeln('You are already using the latest version');
 
             return 0;
@@ -35,7 +37,7 @@ class SelfUpdateCommand extends AbstractCommand
         $output->writeln('Finished');
         $output->writeln('');
 
-        if (!$input->hasOption('force') || !$input->getOption('force')) {
+        if (!$force) {
             $output->writeln('Validating downloaded file');
             $data = shell_exec('php .xspf.phar version');
             if (stripos($data, 'thedava/xspf-tools') === false) {
