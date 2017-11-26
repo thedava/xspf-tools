@@ -24,6 +24,12 @@ class SelfUpdateCommand extends AbstractCommand
         $output->writeln('Version: ' . $releaseInformation['tag_name']);
         $output->writeln('Published: ' . $date->format('Y-m-d H:i:s'));
 
+        if (version_compare(Utils::getVersion(), $releaseInformation['tag_name'], '>=')) {
+            $output->writeln('You are already using the latest version');
+
+            return 0;
+        }
+
         $output->writeln('Starting download of xspf.phar...');
         file_put_contents('.xspf.phar', $assetFileDownloader->downloadAsset('xspf.phar'));
         $output->writeln('Finished');
@@ -41,5 +47,7 @@ class SelfUpdateCommand extends AbstractCommand
         // Everything is okay. Rename it
         rename('.xspf.phar', 'xspf.phar');
         $output->writeln('<info>done</info>');
+
+        return 0;
     }
 }
