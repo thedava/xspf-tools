@@ -4,6 +4,7 @@
 .idea
 *.xspf
 test/data/*
+*.xd
 
 !test/fixtures/*.xspf
 !.gitkeep
