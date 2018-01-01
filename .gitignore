@@ -1,10 +1,11 @@
 *.phar
 /vendor/
 *.stackdump
-.idea
-*.xspf
-test/data/*
-*.xd
+/.idea
+/*.xspf
+/test/data/*
+/*.xd
+/*.xml
 
 !test/fixtures/*.xspf
 !.gitkeep

@@ -3,6 +3,7 @@
 return [
     "Xspf\\Backup\\CleanCommand",
     "Xspf\\Create\\CreateCommand",
+    "Xspf\\Index\\ConvertIndexCommand",
     "Xspf\\Index\\CreateIndexCommand",
     "Xspf\\Merge\\MergeCommand",
     "Xspf\\Order\\OrderCommand",

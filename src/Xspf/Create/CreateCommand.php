@@ -19,7 +19,6 @@ class CreateCommand extends AbstractCommand
     {
         $this->setName('create')
             ->setDescription('Create a new playlist')
-//            ->addOption('force', 'f', InputOption::VALUE_OPTIONAL, 'Force override of existing files')
             ->addArgument('playlist-file', InputArgument::REQUIRED, 'The playlist file that should be created')
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added');
     }
@@ -38,6 +37,16 @@ class CreateCommand extends AbstractCommand
             }
         }
 
+        $this->createPlaylist($input, $output, $tracks);
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param Track[]         $tracks
+     */
+    protected function createPlaylist(InputInterface $input, OutputInterface $output, array $tracks)
+    {
         $output->writeln('Found ' . count($tracks) . ' files');
 
         (new File($input->getArgument('playlist-file')))

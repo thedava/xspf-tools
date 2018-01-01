@@ -58,6 +58,8 @@ class IndexModel
      */
     public function save()
     {
+        $this->sort();
+
         $handle = fopen($this->indexFile, 'w');
         foreach ($this->data as $line) {
             fputcsv($handle, $line);
@@ -117,5 +119,21 @@ class IndexModel
     public function getIndexFile()
     {
         return $this->indexFile;
+    }
+
+    /**
+     * Return the files of the index
+     *
+     * @return \Generator|string[]
+     */
+    public function getFiles()
+    {
+        foreach ($this->data as $data) {
+            $file = realpath($data['file']);
+
+            if (!empty($file) && md5_file($file) == $data['md5']) {
+                yield $file;
+            }
+        }
     }
 }
