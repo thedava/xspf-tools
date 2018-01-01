@@ -10,8 +10,9 @@
     },
     "require": {
         "james-heinrich/getid3": "^1.9",
-        "symfony/console": "^3.2",
-        "davahome/self-update": "^1.1"
+        "symfony/console": "^3",
+        "davahome/self-update": "^1.1",
+        "davahome/console": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4"

@@ -2,9 +2,7 @@
 
 namespace Xspf;
 
-use Symfony\Component\Console\Command\Command;
-
-abstract class AbstractCommand extends Command
+abstract class AbstractCommand extends \DavaHome\Console\Command\AbstractCommand
 {
 
 }

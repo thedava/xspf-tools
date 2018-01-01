@@ -4,8 +4,37 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ae1f2d1a340b386d488df9d9789e3c0b",
+    "content-hash": "3ed31a77d1812f1d44640537e55dbb64",
     "packages": [
+        {
+            "name": "davahome/console",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DavaHome/console.git",
+                "reference": "b8bb3851269ff56bc15e646c1c139f8c5bccdd90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DavaHome/console/zipball/b8bb3851269ff56bc15e646c1c139f8c5bccdd90",
+                "reference": "b8bb3851269ff56bc15e646c1c139f8c5bccdd90",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/console": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DavaHome\\Console\\": "src/DavaHome/Console/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "gpl"
+            ],
+            "time": "2018-01-01T05:33:11+00:00"
+        },
         {
             "name": "davahome/self-update",
             "version": "1.1",
@@ -120,16 +149,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v3.3.4",
+            "version": "v3.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "a97e45d98c59510f085fa05225a1acb74dfe0546"
+                "reference": "b0878233cb5c4391347e5495089c7af11b8e6201"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/a97e45d98c59510f085fa05225a1acb74dfe0546",
-                "reference": "a97e45d98c59510f085fa05225a1acb74dfe0546",
+                "url": "https://api.github.com/repos/symfony/console/zipball/b0878233cb5c4391347e5495089c7af11b8e6201",
+                "reference": "b0878233cb5c4391347e5495089c7af11b8e6201",
                 "shasum": ""
             },
             "require": {
@@ -185,7 +214,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2017-07-03T13:19:36+00:00"
+            "time": "2017-07-29T21:27:59+00:00"
         },
         {
             "name": "symfony/debug",
