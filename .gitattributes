@@ -1,0 +1,4 @@
+* text=lf
+
+# Force CRLF
+*.bat text eol=crlf
