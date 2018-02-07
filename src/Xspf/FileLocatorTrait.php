@@ -2,11 +2,22 @@
 
 namespace Xspf;
 
-
 use Symfony\Component\Console\Output\OutputInterface;
 
 trait FileLocatorTrait
 {
+    /**
+     * @param string $file
+     *
+     * @return bool
+     */
+    private function shouldFileBeSkipped($file)
+    {
+        return (preg_match('/^(Thumbs\.db|.*\.bak)$/', $file))
+            ? true
+            : false;
+    }
+
     /**
      * @param string          $folder
      * @param OutputInterface $output
@@ -24,7 +35,7 @@ trait FileLocatorTrait
                 continue;
             }
 
-            if ($dir->isFile()) {
+            if ($dir->isFile() && !$this->shouldFileBeSkipped($dir->getBasename())) {
                 $output->writeln('- ' . $folder . '/' . $dir->getFilename() . ' -> file', $output::VERBOSITY_DEBUG);
                 yield $folder . '/' . $dir->getFilename();
             }
