@@ -16,6 +16,7 @@ class CreateIndexCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('create-index')
+            ->setEnabled(false)
             ->setDescription('Create an index file')
             ->setHelp(implode(PHP_EOL, [
                 'This command creates an index file used by various other xspf-tools commands',
@@ -62,7 +63,6 @@ class CreateIndexCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Creating index. This may take a while...');
-
 
         $progressBarOutput = ($input->getOption('no-progress')) ? new BufferedOutput() : $output;
         $progressBar = $this->createProgressBar($progressBarOutput);
