@@ -13,7 +13,7 @@ class ConvertIndexCommand extends CreateCommand
     protected function configure()
     {
         $this->setName('convert-index')
-            ->setEnabled(false)
+            ->setHidden(true)
             ->setDescription('Convert an index file into a playlist file')
             ->addArgument('index-file', InputArgument::OPTIONAL, 'The index file', 'index.xd')
             ->addArgument('playlist-file', InputArgument::OPTIONAL, 'The playlist file that should be created', 'index.xspf');

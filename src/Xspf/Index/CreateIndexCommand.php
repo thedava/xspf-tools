@@ -16,7 +16,7 @@ class CreateIndexCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('create-index')
-            ->setEnabled(false)
+            ->setHidden(true)
             ->setDescription('Create an index file')
             ->setHelp(implode(PHP_EOL, [
                 'This command creates an index file used by various other xspf-tools commands',
