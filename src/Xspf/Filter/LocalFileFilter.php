@@ -15,8 +15,18 @@ class LocalFileFilter
         // file-"protocol"
         $scheme = 'file://';
         if (strpos($location, $scheme) === 0) {
-            $location = urldecode($location);
             $location = str_replace(['/', '\\', $directorySeparator], $directorySeparator, substr($location, strlen($scheme)));
+
+            // Do the opposite work of the FileUrlFilter
+            $replaces = FileUrlFilter::getReplaces();
+            $location = str_replace(array_values($replaces), array_keys($replaces), $location);
+
+            $parts = explode($directorySeparator, $location);
+            array_walk($parts, function (&$value) use ($replaces) {
+                $value = utf8_decode(rawurldecode($value));
+            }, $parts);
+
+            $location = implode($directorySeparator, $parts);
         }
 
         // Windows path

@@ -10,6 +10,14 @@ class FileUrlFilter
     ];
 
     /**
+     * @return array
+     */
+    public static function getReplaces()
+    {
+        return self::$replace;
+    }
+
+    /**
      * @param string $location
      * @param string $directorySeparator
      *

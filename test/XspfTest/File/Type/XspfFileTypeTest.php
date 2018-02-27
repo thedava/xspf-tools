@@ -1,18 +1,31 @@
 <?php
 
+use Xspf\File\Structure;
+use Xspf\File\Type\XspfFileType;
+use Xspf\Track;
 use Xspf\XspfSchemeValidator;
 
 class XspfFileTypeTest extends PHPUnit_Framework_TestCase
 {
+    public function fileNameDataProvider()
+    {
+        return [
+            ['test.mp3'],
+            ['t(es)t.mp3'],
+            ['Runde Räder sind toll.mp4'], // Uml Ä
+            ['Bömische Dörfer.flv'], // Uml Ö
+        ];
+    }
+
     public function testEncode()
     {
-        $structure = new \Xspf\File\Structure();
+        $structure = new Structure();
         $structure->setTracks([
-            (new \Xspf\Track('foo/bar.mp4')),
-            (new \Xspf\Track('foo/baz.mkv'))->setDuration(1337),
+            (new Track('foo/bar.mp4')),
+            (new Track('foo/baz.mkv'))->setDuration(1337),
         ]);
 
-        $result = (new \Xspf\File\Type\XspfFileType())->encode($structure);
+        $result = (new XspfFileType())->encode($structure);
         $isValid = XspfSchemeValidator::isValid($result);
 
         if ($isValid === null) {
@@ -20,5 +33,32 @@ class XspfFileTypeTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($isValid);
+    }
+
+    /**
+     * @dataProvider fileNameDataProvider
+     *
+     * @param string $fileName
+     */
+    public function testFilter($fileName)
+    {
+        $structure = new Structure();
+        $structure->setTracks([new Track($fileName)]);
+
+        $fileType = new XspfFileType();
+
+        // De and Encode multiple times
+        for ($i = 0; $i < 5; $i++) {
+            $content = $fileType->encode($structure);
+            $structure = $fileType->decode($content);
+
+            $tracks = $structure->getTracks();
+            $this->assertInternalType('array', $tracks);
+            $this->assertCount(1, $tracks);
+
+            $track = $tracks[0];
+            $this->assertInstanceOf(Track::class, $track);
+            $this->assertEquals($fileName, $track->getLocation());
+        }
     }
 }
