@@ -36,17 +36,26 @@ class IndexModel
      * Load data from index file into memory
      *
      * @return $this
+     * @throws \Exception
      */
     public function load()
     {
         $this->clear();
 
+        $lineCount = 0;
         $handle = fopen($this->indexFile, 'r');
-        while (($line = fgetcsv($handle)) !== false) {
-            $this->data[] = [
-                'file' => $line[0],
-                'md5'  => $line[1],
-            ];
+        while (($line = fgets($handle)) !== false) {
+            $lineCount++;
+
+            $json = json_decode($line, true);
+            if (!is_array($json) || !isset($json['file'])) {
+                throw new \Exception(vsprintf('Invalid or malformed data in index file %s on line %d', [
+                    basename($this->indexFile),
+                    $lineCount,
+                ]));
+            }
+
+            $this->data[] = $json;
         }
         fclose($handle);
 
@@ -62,7 +71,7 @@ class IndexModel
 
         $handle = fopen($this->indexFile, 'w');
         foreach ($this->data as $line) {
-            fputcsv($handle, $line);
+            fwrite($handle, json_encode($line, JSON_UNESCAPED_SLASHES) . "\n");
         }
         fclose($handle);
 
