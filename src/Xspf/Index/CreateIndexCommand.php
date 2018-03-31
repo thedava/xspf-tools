@@ -13,10 +13,12 @@ use Xspf\AbstractCommand;
 
 class CreateIndexCommand extends AbstractCommand
 {
+    /** @var OutputInterface */
+    protected $output;
+
     protected function configure()
     {
         $this->setName('create-index')
-            ->setHidden(true)
             ->setDescription('Create an index file')
             ->setHelp(implode(PHP_EOL, [
                 'This command creates an index file used by various other xspf-tools commands',
@@ -30,6 +32,11 @@ class CreateIndexCommand extends AbstractCommand
             ->addOption('no-progress', null, InputOption::VALUE_NONE, 'Suppress the progressbar');
     }
 
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->output = $output;
+    }
+
     /**
      * @param string      $file
      * @param IndexModel  $indexModel
@@ -37,6 +44,7 @@ class CreateIndexCommand extends AbstractCommand
      */
     protected function addFile($file, IndexModel $indexModel, ProgressBar $progressBar)
     {
+        $this->output->writeln(sprintf('Added file <cyan>"%s"</cyan>', $file), OutputInterface::VERBOSITY_DEBUG);
         $indexModel->addFile($file);
         $progressBar->advance();
     }
@@ -85,5 +93,6 @@ class CreateIndexCommand extends AbstractCommand
         $indexModel->save();
         $output->writeln('Index file successfully created');
         $output->writeln('Path: ' . realpath($indexModel->getIndexFile()));
+        $output->writeln('File: ' . basename($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
     }
 }
