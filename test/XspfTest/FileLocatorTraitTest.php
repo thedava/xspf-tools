@@ -17,8 +17,8 @@ class FileLocatorTraitTest extends \PHPUnit_Framework_TestCase
     public function skipFileDataProvider()
     {
         return [
-            ['Thumbs.db', true],
-            ['test.bak', true],
+//            ['Thumbs.db', true],
+//            ['test.bak', true],
             ['Movie XYZ.mp4', false],
             ['FlashVideo.flv', false],
         ];
