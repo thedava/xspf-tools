@@ -15,6 +15,7 @@ class XspfFileType extends AbstractFileType
      * @param string $data
      *
      * @return Structure
+     *
      * @throws \Exception
      */
     protected function toStructure($data)

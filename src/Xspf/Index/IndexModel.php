@@ -36,6 +36,7 @@ class IndexModel
      * Load data from index file into memory
      *
      * @return $this
+     *
      * @throws \Exception
      */
     public function load()

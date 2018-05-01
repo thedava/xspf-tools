@@ -25,6 +25,7 @@ class Structure
     public function setTracks($tracks)
     {
         $this->tracks = $tracks;
+
         return $this;
     }
 }

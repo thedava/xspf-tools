@@ -53,6 +53,7 @@ class File
     public function setFileName($fileName)
     {
         $this->fileName = $fileName;
+
         return $this;
     }
 
@@ -64,6 +65,7 @@ class File
     public function setTracks($tracks)
     {
         $this->tracks = $tracks;
+
         return $this;
     }
 
@@ -83,6 +85,7 @@ class File
     public function setFileType($fileType)
     {
         $this->fileType = $fileType;
+
         return $this;
     }
 

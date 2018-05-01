@@ -66,7 +66,7 @@ class CreateIndexCommand extends AbstractCommand
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

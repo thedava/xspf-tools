@@ -24,10 +24,8 @@ class OrderCommand extends AbstractCommand
         // Force help command if no order-type is set
         if (!$input->hasArgument('order-type') || $input->getArgument('order-type') == '') {
             $input->setArgument('order-type', 'help');
-
         } elseif (!in_array($input->getArgument('order-type'), AbstractOrderType::getOrderTypes())) {
             throw new RuntimeException('<error>Unknown or invalid order type given! Use "help" as order type for more information.</error>');
-
         } elseif (!$input->hasArgument('playlist-file')) {
             throw new RuntimeException('Playlist file is missing');
         }
@@ -45,6 +43,7 @@ class OrderCommand extends AbstractCommand
             $output->writeln('asc:    The file will be ordered by video file names in ascending order');
             $output->writeln('desc:   The file will be ordered by video file names in descending order');
             $output->writeln('random: The file will be ordered in random order');
+
             return 0;
         }
 

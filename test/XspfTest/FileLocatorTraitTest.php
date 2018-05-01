@@ -2,7 +2,6 @@
 
 namespace XspfTest;
 
-
 use Xspf\FileLocatorTrait;
 
 class FileLocatorTraitTest extends \PHPUnit_Framework_TestCase

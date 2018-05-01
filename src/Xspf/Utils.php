@@ -33,6 +33,7 @@ class Utils
      * @param string $fileName
      *
      * @return string
+     *
      * @throws \Exception
      */
     public static function determinePath($fileName)

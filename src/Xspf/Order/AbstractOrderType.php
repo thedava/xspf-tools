@@ -33,6 +33,7 @@ abstract class AbstractOrderType
      * @param string $orderType
      *
      * @return static
+     *
      * @throws \Exception
      */
     public static function factory($orderType)

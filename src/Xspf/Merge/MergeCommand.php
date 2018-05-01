@@ -52,5 +52,4 @@ class MergeCommand extends AbstractCommand
 
         (new File($target))->setTracks($tracks)->save(false);
     }
-
 }

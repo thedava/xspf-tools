@@ -13,9 +13,11 @@ trait FileLocatorTrait
      */
     private function shouldFileBeSkipped($file)
     {
-        return (preg_match('/^(Thumbs\.db|.*\.bak)$/', $file))
-            ? true
-            : false;
+        return false;
+
+//        return (preg_match('/^(Thumbs\.db|.*\.bak)$/', $file))
+//            ? true
+//            : false;
     }
 
     /**
@@ -53,7 +55,6 @@ trait FileLocatorTrait
         if (is_file($fileOrFolder)) {
             $output->writeln('- ' . $fileOrFolder . ' -> file', $output::VERBOSITY_DEBUG);
             yield $fileOrFolder;
-
         } elseif (is_dir($fileOrFolder)) {
             $output->writeln('- ' . $fileOrFolder . ' -> folder', $output::VERBOSITY_DEBUG);
             foreach ($this->locateFiles($fileOrFolder, $output) as $file) {

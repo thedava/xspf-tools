@@ -2,7 +2,6 @@
 
 namespace XspfTest;
 
-
 use Xspf\Utils;
 
 class UtilsTest extends \PHPUnit_Framework_TestCase

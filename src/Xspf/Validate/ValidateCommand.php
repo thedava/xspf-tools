@@ -47,5 +47,4 @@ class ValidateCommand extends AbstractCommand
 
         return 0;
     }
-
 }

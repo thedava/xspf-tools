@@ -29,7 +29,7 @@ abstract class AbstractFileType
      *
      * @return mixed
      */
-    public final function encode(Structure $structure)
+    final public function encode(Structure $structure)
     {
         return $this->fromStructure($structure);
     }
@@ -38,9 +38,10 @@ abstract class AbstractFileType
      * @param mixed $data
      *
      * @return Structure
+     *
      * @throws \Exception
      */
-    public final function decode($data)
+    final public function decode($data)
     {
         $result = $this->toStructure($data);
 

@@ -74,6 +74,7 @@ class Track
     public function setLocation($location)
     {
         $this->location = $location;
+
         return $this;
     }
 
@@ -93,6 +94,7 @@ class Track
     public function setDuration($duration)
     {
         $this->duration = $duration;
+
         return $this;
     }
 }

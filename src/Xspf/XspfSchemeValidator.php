@@ -49,7 +49,6 @@ class XspfSchemeValidator
             }
 
             return ($isSuccess && !$isFailure);
-
         } catch (\Exception $error) {
             return null;
         }
