@@ -6,6 +6,7 @@
 /test/data/*
 /*.xd
 /*.xml
+/*.cache
 
 !test/fixtures/*.xspf
 !.gitkeep

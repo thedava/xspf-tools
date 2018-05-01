@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ed31a77d1812f1d44640537e55dbb64",
+    "content-hash": "59819829f0225524fa70559e650919c1",
     "packages": [
         {
             "name": "davahome/console",
@@ -333,6 +333,30 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "davahome/php-cs-fixer-ruleset",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DavaHome/php-cs-fixer-ruleset.git",
+                "reference": "b9b2ffdb3f2b148abb14dbe87718f74b50de45ec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DavaHome/php-cs-fixer-ruleset/zipball/b9b2ffdb3f2b148abb14dbe87718f74b50de45ec",
+                "reference": "b9b2ffdb3f2b148abb14dbe87718f74b50de45ec",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/PhpCsFixer.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "The default ruleset of php-cs-fixer for all davahome projects",
+            "time": "2018-02-16T14:58:41+00:00"
+        },
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",

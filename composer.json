@@ -8,6 +8,11 @@
             "Xspf\\": "src/Xspf"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "XspfMock\\": "test/XspfMock"
+        }
+    },
     "require": {
         "james-heinrich/getid3": "^1.9",
         "symfony/console": "^3",
@@ -15,7 +20,8 @@
         "davahome/console": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4"
+        "phpunit/phpunit": "^4",
+        "davahome/php-cs-fixer-ruleset": "*"
     },
     "bin": [
         "./bin/xspf.php"
@@ -28,6 +34,10 @@
             "@php bin/build-console.php",
             "@php -d phar.readonly=0 bin/build-phar.php",
             "@php xspf.phar version"
+        ],
+        "phpcs": [
+            "bash bin/php-cs-fixer.sh",
+            "php php-cs-fixer.phar fix --config=php_cs.php"
         ]
     }
 }
