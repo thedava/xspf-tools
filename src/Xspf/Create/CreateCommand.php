@@ -27,6 +27,8 @@ class CreateCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->parseWhiteAndBlacklist($input);
+
         $tracks = [];
         foreach ($input->getArgument('file-or-folder') as $value) {
             foreach ($this->getFiles($value, $output) as $file) {
@@ -37,6 +39,8 @@ class CreateCommand extends AbstractCommand
                     } catch (\Exception $error) {
                         // nothing
                     }
+                } elseif ($output->isVeryVerbose()) {
+                    $output->writeln('Skipping ' . $file . ' due to white/blacklist');
                 }
             }
         }
