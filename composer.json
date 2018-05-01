@@ -28,6 +28,10 @@
     ],
     "scripts": {
         "phplint": "bin/phplint.sh",
+        "dev": [
+            "@composer self-update",
+            "@php composer.phar install --ignore-platform-reqs"
+        ],
         "build": [
             "@composer self-update",
             "@php composer.phar install --no-dev -o --ignore-platform-reqs",
