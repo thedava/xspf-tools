@@ -18,7 +18,7 @@ trait WhiteAndBlacklistProviderTrait
     {
         $command
             ->addOption('whitelist', 'w', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Whitelisted file patterns (e.g. *.avi)', null)
-            ->addOption('blacklist', 'b', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Blacklisted file patterns (e.g. *.db)', ['*.db', '.*']);
+            ->addOption('blacklist', 'b', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Blacklisted file patterns (e.g. *.db)');
     }
 
     protected function parseWhiteAndBlacklist(InputInterface $input)
