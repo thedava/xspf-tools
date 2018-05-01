@@ -47,7 +47,7 @@ trait WhiteAndBlacklistProviderTrait
         if ($this->whiteList !== null) {
             $match = false;
             foreach ($this->whiteList as $pattern) {
-                if (fnmatch($pattern, $filePath)) {
+                if (fnmatch($pattern, $filePath, FNM_CASEFOLD)) {
                     $match = true;
                     break;
                 }
@@ -60,7 +60,7 @@ trait WhiteAndBlacklistProviderTrait
 
         // Match against blacklist
         foreach ($this->blackList as $pattern) {
-            if (fnmatch($pattern, $filePath)) {
+            if (fnmatch($pattern, $filePath, FNM_CASEFOLD)) {
                 return false;
             }
         }

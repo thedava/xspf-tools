@@ -34,8 +34,7 @@ class CreateCommand extends AbstractCommand
                     $output->writeln('Adding ' . $file . ' as track', $output::VERBOSITY_DEBUG);
                     try {
                         $tracks[] = new Track(realpath($file));
-                    }
-                    catch (\Exception $error) {
+                    } catch (\Exception $error) {
                         // nothing
                     }
                 }

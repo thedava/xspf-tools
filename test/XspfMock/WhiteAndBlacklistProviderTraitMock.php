@@ -2,7 +2,6 @@
 
 namespace XspfMock;
 
-use Symfony\Component\Console\Input\ArrayInput;
 use Xspf\WhiteAndBlacklistProviderTrait;
 
 class WhiteAndBlacklistProviderTraitMock
@@ -11,11 +10,8 @@ class WhiteAndBlacklistProviderTraitMock
 
     public function __construct(array $blackList = [], array $whiteList = null)
     {
-        $input = new ArrayInput([
-            'whitelist' => $whiteList,
-            'blacklist' => $blackList,
-        ]);
-        $this->parseWhiteAndBlacklist($input);
+        $this->whiteList = $whiteList;
+        $this->blackList = $blackList;
     }
 
     /**
