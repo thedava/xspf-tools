@@ -21,12 +21,17 @@ class CopyCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!$input->getOption('force') && file_exists($input->getArgument('target'))) {
+        $source = $input->getArgument('source');
+        $target = $input->getArgument('target');
+
+        $output->writeln('Copying from ' . $source . ' to ' . $target, $output::VERBOSITY_VERBOSE);
+
+        if (!$input->getOption('force') && file_exists($target)) {
             $this->getErrorOutput($output)->writeln('<red>Target file already exists</red>');
 
             return 1;
         }
 
-        return copy($input->getArgument('source'), $input->getArgument('target')) ? 0 : 1;
+        return copy($source, $target) ? 0 : 1;
     }
 }

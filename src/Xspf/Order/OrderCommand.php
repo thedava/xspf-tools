@@ -34,6 +34,8 @@ class OrderCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $orderType = $input->getArgument('order-type');
+        $playlistFile = $input->getArgument('playlist-file');
+        $output->writeln('Ordering file ' . $playlistFile . ' ' . $orderType, $output::VERBOSITY_VERBOSE);
 
         // Special command help
         if ($orderType == 'help') {
@@ -48,7 +50,7 @@ class OrderCommand extends AbstractCommand
         }
 
         $order = AbstractOrderType::factory($orderType);
-        $file = new File($input->getArgument('playlist-file'));
+        $file = new File($playlistFile);
         $file->load();
         $order->order($file);
         $file->save();

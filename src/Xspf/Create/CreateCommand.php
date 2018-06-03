@@ -27,6 +27,7 @@ class CreateCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln('Creating ' . $input->getArgument('playlist-file'), $output::VERBOSITY_VERBOSE);
         $this->parseWhiteAndBlacklist($input);
 
         $tracks = [];
