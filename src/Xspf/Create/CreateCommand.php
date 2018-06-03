@@ -30,7 +30,7 @@ class CreateCommand extends AbstractCommand
         $this->parseWhiteAndBlacklist($input);
 
         $tracks = [];
-        foreach ($input->getArgument('file-or-folder') as $value) {
+        foreach ((array)$input->getArgument('file-or-folder') as $value) {
             foreach ($this->getFiles($value, $output) as $file) {
                 if ($this->isFileAllowed($file)) {
                     $output->writeln('Adding ' . $file . ' as track', $output::VERBOSITY_DEBUG);

@@ -17,7 +17,8 @@
         "james-heinrich/getid3": "^1.9",
         "symfony/console": "^3",
         "davahome/self-update": "^1.1",
-        "davahome/console": "*"
+        "davahome/console": "*",
+        "symfony/yaml": "~3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4",
@@ -28,6 +29,7 @@
     ],
     "scripts": {
         "phplint": "bin/phplint.sh",
+        "console": "@php bin/build-console.php",
         "dev": [
             "@composer self-update",
             "@php composer.phar install --ignore-platform-reqs"
@@ -35,11 +37,12 @@
         "build": [
             "@composer self-update",
             "@php composer.phar install --no-dev -o --ignore-platform-reqs",
-            "@php bin/build-console.php",
+            "@console",
             "@php -d phar.readonly=0 bin/build-phar.php",
             "@php xspf.phar version"
         ],
         "phpcs": [
+            "@php composer.phar install --ignore-platform-reqs -q",
             "bash bin/php-cs-fixer.sh",
             "php php-cs-fixer.phar fix --config=php_cs.php"
         ]
