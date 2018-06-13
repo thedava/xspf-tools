@@ -64,17 +64,31 @@ class IndexModel
     }
 
     /**
+     * @param bool $append
+     *
      * @return $this
      */
-    public function save()
+    public function save($append = false)
     {
         $this->sort();
 
-        $handle = fopen($this->indexFile, 'w');
+        $handle = fopen($this->indexFile, $append ? 'a' : 'w');
         foreach ($this->data as $line) {
             fwrite($handle, json_encode($line, JSON_UNESCAPED_SLASHES) . "\n");
         }
         fclose($handle);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function delete()
+    {
+        if (file_exists($this->indexFile)) {
+            unlink($this->indexFile);
+        }
 
         return $this;
     }

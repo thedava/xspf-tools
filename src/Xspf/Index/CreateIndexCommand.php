@@ -29,7 +29,8 @@ class CreateIndexCommand extends AbstractCommand
             ]))
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.xd')
-            ->addOption('no-progress', null, InputOption::VALUE_NONE, 'Suppress the progressbar');
+            ->addOption('no-progress', null, InputOption::VALUE_NONE, 'Suppress the progressbar')
+            ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it');
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -90,7 +91,7 @@ class CreateIndexCommand extends AbstractCommand
         $progressBarOutput->writeln('');
         $progressBarOutput->writeln('');
 
-        $indexModel->save();
+        $indexModel->save($input->getOption('append'));
         $output->writeln('Index file successfully created');
         $output->writeln('Path: ' . realpath($indexModel->getIndexFile()));
         $output->writeln('File: ' . basename($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
