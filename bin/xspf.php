@@ -60,8 +60,7 @@ try {
 
     $application->run(null, $output);
     exit(0);
-}
-catch (Exception $error) {
+} catch (Exception $error) {
     echo 'An unexpected error occured!', PHP_EOL, PHP_EOL;
     echo $error->getMessage(), PHP_EOL;
     echo $error->getTraceAsString(), PHP_EOL;

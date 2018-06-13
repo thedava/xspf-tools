@@ -3,6 +3,7 @@
 namespace Xspf\Order;
 
 use Xspf\File;
+use Xspf\Index\IndexModel;
 
 abstract class AbstractOrderTypeSorting extends AbstractOrderType
 {
@@ -11,7 +12,7 @@ abstract class AbstractOrderTypeSorting extends AbstractOrderType
     /**
      * @param File $file
      */
-    public function order(File $file)
+    public function orderFile(File $file)
     {
         $files = [];
         $tracks = $file->getTracks();
@@ -22,5 +23,12 @@ abstract class AbstractOrderTypeSorting extends AbstractOrderType
 
         array_multisort($files, $this->getSortingType(), $tracks);
         $file->setTracks($tracks);
+    }
+
+    public function orderIndex(IndexModel $indexModel)
+    {
+        $files = $indexModel->getFiles();
+        array_multisort($files, $this->getSortingType(), $files);
+        $indexModel->setFiles($files);
     }
 }

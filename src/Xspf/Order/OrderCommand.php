@@ -52,7 +52,7 @@ class OrderCommand extends AbstractCommand
         $order = AbstractOrderType::factory($orderType);
         $file = new File($playlistFile);
         $file->load();
-        $order->order($file);
+        $order->orderFile($file);
         $file->save();
 
         return 0;

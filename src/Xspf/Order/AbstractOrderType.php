@@ -3,6 +3,7 @@
 namespace Xspf\Order;
 
 use Xspf\File;
+use Xspf\Index\IndexModel;
 
 abstract class AbstractOrderType
 {
@@ -13,7 +14,12 @@ abstract class AbstractOrderType
     /**
      * @param File $file
      */
-    abstract public function order(File $file);
+    abstract public function orderFile(File $file);
+
+    /**
+     * @param IndexModel $indexModel
+     */
+    abstract public function orderIndex(IndexModel $indexModel);
 
     /**
      * Returns all valid order types

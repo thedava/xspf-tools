@@ -118,6 +118,21 @@ class IndexModel
     }
 
     /**
+     * @param array $files
+     *
+     * @return $this
+     */
+    public function setFiles(array $files)
+    {
+        $this->clear();
+        foreach ($files as $file) {
+            $this->addFile($file);
+        }
+
+        return $this;
+    }
+
+    /**
      * Sort the index
      *
      * @return $this
