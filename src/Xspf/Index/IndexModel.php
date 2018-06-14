@@ -44,8 +44,8 @@ class IndexModel
         $this->clear();
 
         $lineCount = 0;
-        $handle = fopen($this->indexFile, 'r');
-        while (($line = fgets($handle)) !== false) {
+        $handle = gzopen($this->indexFile, 'rb');
+        while (($line = gzgets($handle)) !== false) {
             $lineCount++;
 
             $json = json_decode($line, true);
@@ -58,7 +58,7 @@ class IndexModel
 
             $this->data[] = $json;
         }
-        fclose($handle);
+        gzclose($handle);
 
         return $this;
     }
@@ -72,11 +72,11 @@ class IndexModel
     {
         $this->sort();
 
-        $handle = fopen($this->indexFile, $append ? 'a' : 'w');
+        $handle = gzopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
         foreach ($this->data as $line) {
-            fwrite($handle, json_encode($line, JSON_UNESCAPED_SLASHES) . "\n");
+            gzwrite($handle, json_encode($line, JSON_UNESCAPED_SLASHES) . "\n");
         }
-        fclose($handle);
+        gzclose($handle);
 
         return $this;
     }
