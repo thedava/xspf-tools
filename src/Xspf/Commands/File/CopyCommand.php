@@ -1,18 +1,19 @@
 <?php
 
-namespace Xspf\File;
+namespace Xspf\Commands\File;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\AbstractCommand;
+use Xspf\Commands\AbstractCommand;
 
 class CopyCommand extends AbstractCommand
 {
     protected function configure()
     {
-        $this->setName('copy')
+        $this->setName('file:copy')
+            ->setAliases(['copy'])
             ->setDescription('A simple copy functionality')
             ->addArgument('source', InputArgument::REQUIRED)
             ->addArgument('target', InputArgument::REQUIRED)

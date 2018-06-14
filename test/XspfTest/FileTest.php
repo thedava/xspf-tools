@@ -2,7 +2,7 @@
 
 namespace XspfTest;
 
-use Xspf\File;
+use Xspf\File\File;
 use Xspf\Track;
 
 class FileTest extends \PHPUnit_Framework_TestCase

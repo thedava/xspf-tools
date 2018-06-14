@@ -1,13 +1,13 @@
 <?php
 
-namespace Xspf\Order;
+namespace Xspf\Commands;
 
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\AbstractCommand;
-use Xspf\File;
+use Xspf\File\File;
+use Xspf\Order\AbstractOrderType;
 
 class OrderCommand extends AbstractCommand
 {

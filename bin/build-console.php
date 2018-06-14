@@ -2,28 +2,13 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-function include_all_files($folder)
-{
-    foreach (new DirectoryIterator($folder) as $dir) {
-        $path = $dir->getPath() . '/' . $dir->getFilename();
-        if ($dir->isDir() && !$dir->isDot()) {
-            include_all_files($path);
-        } elseif ($dir->getExtension() == 'php') {
-            require_once $path;
-        }
-    }
-}
-
-include_all_files(realpath(__DIR__ . '/../src'));
-
 $commands = [];
-foreach (get_declared_classes() as $className) {
-    if (preg_match('/^Xspf\\\\(.*)Command/', $className)) {
-        $refClass = new ReflectionClass($className);
+$dir = __DIR__ . '/../src';
+foreach (glob($dir . '/Xspf/Commands/{*,*/*,*/*/*}Command.php', GLOB_BRACE) as $file) {
+    $refClass = new ReflectionClass(str_replace('/', '\\', substr($file, strlen($dir) + 1, -4)));
 
-        if ($refClass->isSubclassOf(\Xspf\AbstractCommand::class) && $refClass->isInstantiable()) {
-            $commands[] = $className;
-        }
+    if ($refClass->isSubclassOf(\Xspf\Commands\AbstractCommand::class) && $refClass->isInstantiable()) {
+        $commands[] = $refClass->getName();
     }
 }
 sort($commands, SORT_ASC);

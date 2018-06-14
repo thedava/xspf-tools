@@ -1,6 +1,6 @@
 <?php
 
-namespace Xspf;
+namespace Xspf\File;
 
 use Symfony\Component\Console\Output\OutputInterface;
 

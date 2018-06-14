@@ -1,11 +1,10 @@
 <?php
 
-namespace Xspf\Backup;
+namespace Xspf\Commands;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\AbstractCommand;
-use Xspf\File;
+use Xspf\File\File;
 use Xspf\Utils;
 
 class CleanCommand extends AbstractCommand

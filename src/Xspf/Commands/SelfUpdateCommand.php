@@ -1,11 +1,12 @@
 <?php
 
-namespace Xspf;
+namespace Xspf\Commands;
 
 use DavaHome\SelfUpdate\AssetFileDownloader;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Xspf\Utils;
 
 class SelfUpdateCommand extends AbstractCommand
 {

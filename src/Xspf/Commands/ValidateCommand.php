@@ -1,13 +1,12 @@
 <?php
 
-namespace Xspf\Validate;
+namespace Xspf\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\AbstractCommand;
-use Xspf\File;
+use Xspf\File\File;
 
 class ValidateCommand extends AbstractCommand
 {

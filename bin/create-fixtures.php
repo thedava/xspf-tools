@@ -12,7 +12,7 @@ call_user_func(function ($files) {
     foreach ($files as $file) {
         $tracks[] = new \Xspf\Track(realpath($file));
     }
-    (new \Xspf\File(__DIR__ . '/../test/fixtures/asc.xspf'))
+    (new \Xspf\File\File(__DIR__ . '/../test/fixtures/asc.xspf'))
         ->setTracks($tracks)
         ->save(false);
 }, $files);
@@ -24,7 +24,7 @@ call_user_func(function ($files) {
     foreach ($files as $file) {
         $tracks[] = new \Xspf\Track(realpath($file));
     }
-    (new \Xspf\File(__DIR__ . '/../test/fixtures/desc.xspf'))
+    (new \Xspf\File\File(__DIR__ . '/../test/fixtures/desc.xspf'))
         ->setTracks($tracks)
         ->save(false);
 }, $files);
@@ -40,7 +40,7 @@ call_user_func(function ($files) {
         }
         $tracks[] = new \Xspf\Track($location);
     }
-    (new \Xspf\File(__DIR__ . '/../test/fixtures/missing.xspf'))
+    (new \Xspf\File\File(__DIR__ . '/../test/fixtures/missing.xspf'))
         ->setTracks($tracks)
         ->save(false);
 }, $files);

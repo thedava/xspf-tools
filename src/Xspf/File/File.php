@@ -1,9 +1,9 @@
 <?php
 
-namespace Xspf;
+namespace Xspf\File;
 
-use Xspf\File\Structure;
 use Xspf\File\Type\AbstractFileType;
+use Xspf\Track;
 
 class File
 {

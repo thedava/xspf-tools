@@ -2,7 +2,7 @@
 
 namespace Xspf\Order;
 
-use Xspf\File;
+use Xspf\File\File;
 use Xspf\Index\IndexModel;
 
 abstract class AbstractOrderTypeSorting extends AbstractOrderType

@@ -1,6 +1,6 @@
 <?php
 
-namespace Xspf\Index;
+namespace Xspf\Commands\Index;
 
 use DavaHome\Console\Helper\ProgressBarOptions;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -9,7 +9,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\AbstractCommand;
+use Xspf\Commands\AbstractCommand;
+use Xspf\Index\IndexModel;
 
 class CreateIndexCommand extends AbstractCommand
 {
@@ -18,7 +19,7 @@ class CreateIndexCommand extends AbstractCommand
 
     protected function configure()
     {
-        $this->setName('create-index')
+        $this->setName('index:create')
             ->setDescription('Create an index file')
             ->setHelp(implode(PHP_EOL, [
                 'This command creates an index file used by various other xspf-tools commands',

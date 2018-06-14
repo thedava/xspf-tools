@@ -1,19 +1,20 @@
 <?php
 
-namespace Xspf\Index;
+namespace Xspf\Commands\Index;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\Create\CreateCommand;
+use Xspf\Commands\CreateCommand;
+use Xspf\Index\IndexModel;
 use Xspf\Order\AbstractOrderType;
 
 class OrderIndexCommand extends CreateCommand
 {
     protected function configure()
     {
-        $this->setName('order-index')
+        $this->setName('index:order')
             ->setDescription('Orders an index file')
             ->addArgument('order-type', InputArgument::OPTIONAL, 'The order type')
             ->addArgument('index-file', InputArgument::OPTIONAL, 'The index file', 'index.xd')
