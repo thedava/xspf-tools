@@ -39,6 +39,8 @@ class XspfFileTypeTest extends PHPUnit_Framework_TestCase
      * @dataProvider fileNameDataProvider
      *
      * @param string $fileName
+     *
+     * @throws Exception
      */
     public function testFilter($fileName)
     {

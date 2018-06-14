@@ -91,6 +91,8 @@ class File
 
     /**
      * @return $this
+     *
+     * @throws \Exception
      */
     public function load()
     {

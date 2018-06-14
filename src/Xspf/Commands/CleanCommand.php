@@ -20,6 +20,8 @@ class CleanCommand extends AbstractCommand
      * @param OutputInterface $output
      *
      * @return int
+     *
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

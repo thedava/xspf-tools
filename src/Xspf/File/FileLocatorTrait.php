@@ -13,11 +13,9 @@ trait FileLocatorTrait
      */
     private function shouldFileBeSkipped($file)
     {
-        return false;
-
-//        return (preg_match('/^(Thumbs\.db|.*\.bak)$/', $file))
-//            ? true
-//            : false;
+        return (preg_match('/^(Thumbs\.db|\.DS\_Store)$/i', $file))
+            ? true
+            : false;
     }
 
     /**
