@@ -23,5 +23,6 @@ node {
         sh 'php bin/xspf.php index:create --no-progress -o test/data/index.xd ./'
         sh 'php bin/xspf.php index:convert test/data/index.xd test/data/index.xspf'
         sh 'php bin/xspf.php validate --stop-on-error test/data/index.xspf'
+        sh 'cat test/data/index.xspf'
     }
 }
