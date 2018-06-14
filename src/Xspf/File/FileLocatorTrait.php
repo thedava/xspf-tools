@@ -43,6 +43,19 @@ trait FileLocatorTrait
     }
 
     /**
+     * @param string$pattern
+     *
+     * @return string
+     */
+    private function escapeGlobPattern($pattern)
+    {
+        $pattern = str_replace(['[', ']'], ['\[', '\]'], $pattern);
+        $pattern = str_replace(['\[', '\]'], ['[[]', '[]]'], $pattern);
+
+        return $pattern;
+    }
+
+    /**
      * @param string          $fileOrFolder
      * @param OutputInterface $output
      *
@@ -59,7 +72,7 @@ trait FileLocatorTrait
                 yield $file;
             }
         } else {
-            foreach (glob($fileOrFolder, GLOB_BRACE) as $item) {
+            foreach (glob($this->escapeGlobPattern($fileOrFolder), GLOB_BRACE) as $item) {
                 if (is_file($item)) {
                     $output->writeln('- ' . $item . ' -> file', $output::VERBOSITY_DEBUG);
                     yield $item;
