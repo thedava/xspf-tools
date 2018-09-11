@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$pharFile = __DIR__ . '/../xspf.phar';
+$pharFile = __DIR__ . '/../build/xspf.phar';
 $version = \Xspf\Utils::getVersion();
 
 // Dirty checks
@@ -17,7 +17,7 @@ if (file_exists($pharFile)) {
 
 $phar = new Phar($pharFile);
 $phar->setMetadata(['version' => $version]);
-$phar->buildFromDirectory(dirname(__DIR__), '/(VERSION|src|vendor|xspf\.php|data)/');
-$phar->setStub($phar->createDefaultStub('bin/xspf.php'));
+$phar->buildFromDirectory(dirname(__DIR__), '/(VERSION|src|vendor|console\.php|data)/');
+$phar->setStub($phar->createDefaultStub('console.php'));
 
 echo 'File size: ', round(filesize($pharFile) / 1024, 2), ' kB', PHP_EOL;

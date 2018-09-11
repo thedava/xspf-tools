@@ -36,14 +36,17 @@
         "build": [
             "@composer self-update",
             "@php composer.phar install --no-dev -o --ignore-platform-reqs",
+            "@build-dev"
+        ],
+        "build-dev": [
             "@console",
             "@php -d phar.readonly=0 bin/build-phar.php",
-            "@php xspf.phar version"
+            "@php build/xspf.phar version"
         ],
         "phpcs": [
             "@php composer.phar install --ignore-platform-reqs -q",
             "bash bin/php-cs-fixer.sh",
-            "php php-cs-fixer.phar fix --config=php_cs.php"
+            "@php php-cs-fixer.phar fix --config=php_cs.php"
         ]
     }
 }
