@@ -84,6 +84,19 @@ class BatchCommand extends AbstractCommand
             return 0;
         }
 
+        return ($this->processBatchFile($output, $yaml)) ? 1 : 0;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param array           $yaml
+     *
+     * @return int
+     *
+     * @throws \Exception
+     */
+    protected function processBatchFile(OutputInterface $output, array $yaml)
+    {
         $errorOccurred = false;
         $app = $this->getApplication();
         foreach ($yaml as $data) {
@@ -104,6 +117,6 @@ class BatchCommand extends AbstractCommand
             $output->writeln($message);
         }
 
-        return ($errorOccurred) ? 1 : 0;
+        return $errorOccurred;
     }
 }
