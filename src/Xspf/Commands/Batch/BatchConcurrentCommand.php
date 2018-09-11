@@ -9,12 +9,12 @@ use Symfony\Component\Yaml\Yaml;
 use Xspf\Commands\BatchCommand;
 use Xspf\Utils\Fork;
 
-class BatchParallelCommand extends BatchCommand
+class BatchConcurrentCommand extends BatchCommand
 {
     protected function configure()
     {
-        $this->setName('batch:parallel')
-            ->setDescription('Perform multiple xspf operations from multiple batch files')
+        $this->setName('batch:concurrent')
+            ->setDescription('Perform multiple xspf operations from multiple batch files concurrently')
             ->addArgument('files', InputArgument::IS_ARRAY, '.yml files');
     }
 
@@ -22,7 +22,7 @@ class BatchParallelCommand extends BatchCommand
     {
         $fork = new Fork();
         if (!$fork->isForkingSupported()) {
-            $output->writeln('<error>Forking is not supported by this host!</error>');
+            $output->writeln('<error>Concurrent execution is not supported by this system!</error>');
 
             return 1;
         }
