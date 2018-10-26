@@ -6,6 +6,9 @@ use Xspf\File\Structure;
 
 abstract class AbstractFileType
 {
+    /** @var bool */
+    protected $sanitizeFileNames = true;
+
     /**
      * Convert the given fileType specific $data into an array
      *
@@ -50,6 +53,16 @@ abstract class AbstractFileType
         }
 
         return $result;
+    }
+
+    /**
+     * @return $this
+     */
+    final public function disableSanitizing()
+    {
+        $this->sanitizeFileNames = false;
+
+        return $this;
     }
 
     /**

@@ -33,14 +33,18 @@ class XspfFileType extends AbstractFileType
 
         $tracks = [];
         foreach ($xml->{'trackList'}->{'track'} as $track) {
-            if (!isset($track->{'location'})) {
-                $trackObj = new Track(LocalFileFilter::filter((string)$track));
-            } else {
-                $trackObj = new Track(LocalFileFilter::filter((string)$track->{'location'}));
+            $location = (!isset($track->{'location'}))
+                ? (string)$track
+                : (string)$track->{'location'};
 
-                if (isset($track->{'duration'})) {
-                    $trackObj->setDuration((int)(string)$track->{'duration'});
-                }
+            $trackObj = new Track(
+                ($this->sanitizeFileNames)
+                    ? LocalFileFilter::filter($location)
+                    : $location
+            );
+
+            if (isset($track->{'duration'})) {
+                $trackObj->setDuration((int)(string)$track->{'duration'});
             }
 
             $tracks[] = $trackObj;
@@ -68,7 +72,9 @@ class XspfFileType extends AbstractFileType
 
             foreach ($track->toArray() as $key => $value) {
                 if ($key === 'location') {
-                    $value = FileUrlFilter::filter($value);
+                    $value = ($this->sanitizeFileNames)
+                        ? FileUrlFilter::filter($value)
+                        : $value;
                 }
                 $eTrack->addChild($key, htmlspecialchars($value));
             }

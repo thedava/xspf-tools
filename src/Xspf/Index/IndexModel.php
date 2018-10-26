@@ -46,10 +46,15 @@ class IndexModel
         $lineCount = 0;
         $handle = gzopen($this->indexFile, 'rb');
         while (($line = gzgets($handle)) !== false) {
+            if (trim($line) === '') {
+                continue;
+            }
+
             $lineCount++;
 
             $json = json_decode($line, true);
             if (!is_array($json) || !isset($json['file'])) {
+//                throw new \Exception($line);
                 throw new \Exception(vsprintf('Invalid or malformed data in index file %s on line %d', [
                     basename($this->indexFile),
                     $lineCount,
@@ -82,6 +87,24 @@ class IndexModel
     }
 
     /**
+     * @param bool $append
+     *
+     * @return $this
+     */
+    public function savePlain($append = false)
+    {
+        $this->sort();
+
+        $handle = fopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
+        foreach ($this->data as $line) {
+            fwrite($handle, json_encode($line, JSON_UNESCAPED_SLASHES) . "\n");
+        }
+        fclose($handle);
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function delete()
@@ -103,7 +126,8 @@ class IndexModel
         $cwd = realpath(getcwd());
         $file = realpath($file);
 
-        $md5 = md5_file($file);
+//        $md5 = md5_file($file);
+        $md5 = '';
 
         if (strpos($file, $cwd) === 0) {
             $file = substr($file, strlen($cwd) + 1);
@@ -170,7 +194,8 @@ class IndexModel
         foreach ($this->data as $data) {
             $file = realpath($data['file']);
 
-            if (!empty($file) && md5_file($file) == $data['md5']) {
+//            if (!empty($file) && md5_file($file) == $data['md5']) {
+            if (!empty($file)) {
                 yield $file;
             }
         }

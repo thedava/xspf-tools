@@ -19,14 +19,17 @@ class File
     protected $fileType;
 
     /**
-     * File constructor.
-     *
      * @param string $fileName
+     * @param bool   $disableSanitizing
      */
-    public function __construct($fileName)
+    public function __construct($fileName, $disableSanitizing = false)
     {
         $this->fileName = $fileName;
         $this->fileType = AbstractFileType::factory($fileName);
+
+        if ($disableSanitizing) {
+            $this->fileType->disableSanitizing();
+        }
     }
 
     /**

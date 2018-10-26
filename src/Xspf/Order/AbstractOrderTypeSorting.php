@@ -27,7 +27,7 @@ abstract class AbstractOrderTypeSorting extends AbstractOrderType
 
     public function orderIndex(IndexModel $indexModel)
     {
-        $files = $indexModel->getFiles();
+        $files = iterator_to_array($indexModel->getFiles());
         array_multisort($files, $this->getSortingType(), $files);
         $indexModel->setFiles($files);
     }

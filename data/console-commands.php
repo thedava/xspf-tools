@@ -8,6 +8,8 @@ return [
     "Xspf\\Commands\\File\\CopyCommand",
     "Xspf\\Commands\\Index\\ConvertIndexCommand",
     "Xspf\\Commands\\Index\\CreateIndexCommand",
+    "Xspf\\Commands\\Index\\CreateIndexPlaylistCommand",
+    "Xspf\\Commands\\Index\\DecodeIndexCommand",
     "Xspf\\Commands\\Index\\OrderIndexCommand",
     "Xspf\\Commands\\MergeCommand",
     "Xspf\\Commands\\OrderCommand",

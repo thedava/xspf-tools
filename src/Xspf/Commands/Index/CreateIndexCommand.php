@@ -2,20 +2,19 @@
 
 namespace Xspf\Commands\Index;
 
-use DavaHome\Console\Helper\ProgressBarOptions;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\Commands\AbstractCommand;
+use Xspf\File\FileLocatorTrait;
 use Xspf\Index\IndexModel;
+use Xspf\WhiteAndBlacklistProviderTrait;
 
 class CreateIndexCommand extends AbstractCommand
 {
-    /** @var OutputInterface */
-    protected $output;
+    use FileLocatorTrait;
+    use WhiteAndBlacklistProviderTrait;
 
     protected function configure()
     {
@@ -30,41 +29,8 @@ class CreateIndexCommand extends AbstractCommand
             ]))
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.xd')
-            ->addOption('no-progress', null, InputOption::VALUE_NONE, 'Suppress the progressbar')
-            ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it');
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        $this->output = $output;
-    }
-
-    /**
-     * @param string      $file
-     * @param IndexModel  $indexModel
-     * @param ProgressBar $progressBar
-     */
-    protected function addFile($file, IndexModel $indexModel, ProgressBar $progressBar)
-    {
-        $this->output->writeln(sprintf('Added file <cyan>"%s"</cyan>', $file), OutputInterface::VERBOSITY_DEBUG);
-        $indexModel->addFile($file);
-        $progressBar->advance();
-    }
-
-    /**
-     * @param string      $dir
-     * @param IndexModel  $indexModel
-     * @param ProgressBar $progressBar
-     */
-    protected function openDir($dir, IndexModel $indexModel, ProgressBar $progressBar)
-    {
-        foreach (glob($dir . '/*') as $fileOrDir) {
-            if (is_dir($fileOrDir)) {
-                $this->openDir($fileOrDir, $indexModel, $progressBar);
-            } else {
-                $this->addFile($fileOrDir, $indexModel, $progressBar);
-            }
-        }
+            ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it')
+            ->appendWhiteAndBlacklistOptions($this);
     }
 
     /**
@@ -73,28 +39,25 @@ class CreateIndexCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Creating index. This may take a while...');
-
-        $progressBarOutput = ($input->getOption('no-progress')) ? new BufferedOutput() : $output;
-        $progressBar = $this->createProgressBar($progressBarOutput);
-        $progressBar->setFormat(ProgressBarOptions::FORMAT_DEBUG_NOMAX);
-        $progressBar->start();
+        $this->parseWhiteAndBlacklist($input);
 
         $indexModel = new IndexModel($input->getOption('output'));
-        foreach ($input->getArgument('file-or-folder') as $fileOrFolder) {
-            if (is_dir($fileOrFolder)) {
-                $this->openDir($fileOrFolder, $indexModel, $progressBar);
-            } else {
-                $this->addFile($fileOrFolder, $indexModel, $progressBar);
+        foreach ((array)$input->getArgument('file-or-folder') as $fileOrFolder) {
+            foreach ($this->getFiles($fileOrFolder, $output) as $file) {
+                if ($this->isFileAllowed($file)) {
+                    $output->writeln('Adding ' . $file, $output::VERBOSITY_DEBUG);
+                    $indexModel->addFile($file);
+                } elseif ($output->isVeryVerbose()) {
+                    $output->writeln('Skipping ' . $file . ' due to white/blacklist');
+                }
             }
         }
-        $progressBar->setProgress($indexModel->count());
-        $progressBar->finish();
-        $progressBarOutput->writeln('');
-        $progressBarOutput->writeln('');
+        $output->writeln('Added ' . $indexModel->count() . ' files to index');
+        $output->writeln('');
 
         $indexModel->save($input->getOption('append'));
         $output->writeln('Index file successfully created');
-        $output->writeln('Path: ' . realpath($indexModel->getIndexFile()));
+        $output->writeln('Path: ' . realpath($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
         $output->writeln('File: ' . basename($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
     }
 }
