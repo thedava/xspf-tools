@@ -7,6 +7,15 @@ use Xspf\Utils;
 ini_set('display_errors', 'On');
 error_reporting(-1);
 
+$applicationTitle = 'XSPF Tools';
+if (PHP_MAJOR_VERSION < 7) {
+    echo $applicationTitle, PHP_EOL,
+        PHP_EOL,
+        'Minimum required version is 7.0 but ', phpversion(), ' was given',
+        PHP_EOL;
+    exit(1);
+}
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
@@ -51,7 +60,7 @@ try {
     $formatter->setStyle('yellow', new OutputFormatterStyle('yellow'));
     $formatter->setStyle('blue', new OutputFormatterStyle('blue'));
 
-    $application = new \Symfony\Component\Console\Application('XSPF Tools', Utils::getVersion());
+    $application = new \Symfony\Component\Console\Application($applicationTitle, Utils::getVersion());
 
     // Append commands
     foreach (require_once __DIR__ . '/data/console-commands.php' as $command) {
