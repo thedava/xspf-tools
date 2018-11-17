@@ -17,7 +17,7 @@ class OrderIndexCommand extends CreateCommand
         $this->setName('index:order')
             ->setDescription('Orders an index file')
             ->addArgument('order-type', InputArgument::OPTIONAL, 'The order type')
-            ->addArgument('index-file', InputArgument::OPTIONAL, 'The index file', 'index.xd')
+            ->addArgument('index-file', InputArgument::OPTIONAL, 'The index file', 'index.' . IndexModel::EXT_COMPRESSED)
             ->addOption('distinct', 't', InputOption::VALUE_NONE, 'Remove duplicates from index file');
     }
 

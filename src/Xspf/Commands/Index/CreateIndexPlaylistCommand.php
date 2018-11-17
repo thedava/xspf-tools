@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\Commands\AbstractCommand;
+use Xspf\Index\IndexModel;
 use Xspf\WhiteAndBlacklistProviderTrait;
 
 class CreateIndexPlaylistCommand extends AbstractCommand
@@ -36,7 +37,7 @@ class CreateIndexPlaylistCommand extends AbstractCommand
         $this->parseWhiteAndBlacklist($input);
         $app = $this->getApplication();
         $playlistFile = $input->getArgument('playlist-file');
-        $indexFile = dirname($playlistFile) . '/' . $input->getOption('index-folder') . '/' . basename($playlistFile, '.xspf') . '.xd';
+        $indexFile = dirname($playlistFile) . '/' . $input->getOption('index-folder') . '/' . basename($playlistFile, '.xspf') . '.' . IndexModel::EXT_COMPRESSED;
 
         try {
             file_exists(dirname($indexFile)) || @mkdir(dirname($indexFile), 0777, true);

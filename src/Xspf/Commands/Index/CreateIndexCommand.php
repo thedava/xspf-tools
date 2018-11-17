@@ -28,7 +28,7 @@ class CreateIndexCommand extends AbstractCommand
                 'stores all paths relative to provide cross-system-support)',
             ]))
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
-            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.xd')
+            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.' . IndexModel::EXT_COMPRESSED)
             ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it')
             ->appendWhiteAndBlacklistOptions($this);
     }

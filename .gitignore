@@ -5,6 +5,7 @@
 /*.xspf
 /test/data/*
 /*.xd
+/*.xdc
 /*.xml
 /*.cache
 /build/*

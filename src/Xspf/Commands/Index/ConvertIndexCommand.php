@@ -16,7 +16,7 @@ class ConvertIndexCommand extends CreateCommand
     {
         $this->setName('index:convert')
             ->setDescription('Convert an index file into a playlist file')
-            ->addArgument('index-file', InputArgument::OPTIONAL, 'The index file', 'index.xd')
+            ->addArgument('index-file', InputArgument::OPTIONAL, 'The index file', 'index.' . IndexModel::EXT_COMPRESSED)
             ->addArgument('playlist-file', InputArgument::OPTIONAL, 'The playlist file that should be created', 'index.xspf')
             ->addOption('distinct', 't', InputOption::VALUE_NONE, 'Avoid duplicates in playlist file')
             ->addOption('delete', 'D', InputOption::VALUE_NONE, 'Remove index file after conversion');

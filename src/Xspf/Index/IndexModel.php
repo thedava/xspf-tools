@@ -4,6 +4,9 @@ namespace Xspf\Index;
 
 class IndexModel
 {
+    const EXT_PLAIN = 'xd';
+    const EXT_COMPRESSED = 'xdc';
+
     /** @var string */
     protected $indexFile;
 
@@ -41,8 +44,41 @@ class IndexModel
      */
     public function load()
     {
-        $this->clear();
+        return $this->useCompression()
+            ? $this->loadPlain()
+            : $this->loadCompressed();
+    }
 
+    /**
+     * @return $this
+     *
+     * @throws \Exception
+     */
+    protected function loadPlain()
+    {
+        $this->clear();
+        $lineCount = 0;
+        $handle = fopen($this->indexFile, 'r');
+        while (($line = fgets($handle)) !== false) {
+            if (trim($line) === '') {
+                continue;
+            }
+
+            $this->data[] = $this->decode($line, ++$lineCount);
+        }
+        fclose($handle);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     *
+     * @throws \Exception
+     */
+    protected function loadCompressed()
+    {
+        $this->clear();
         $lineCount = 0;
         $handle = gzopen($this->indexFile, 'rb');
         while (($line = gzgets($handle)) !== false) {
@@ -50,18 +86,7 @@ class IndexModel
                 continue;
             }
 
-            $lineCount++;
-
-            $json = json_decode($line, true);
-            if (!is_array($json) || !isset($json['file'])) {
-//                throw new \Exception($line);
-                throw new \Exception(vsprintf('Invalid or malformed data in index file %s on line %d', [
-                    basename($this->indexFile),
-                    $lineCount,
-                ]));
-            }
-
-            $this->data[] = $json;
+            $this->data[] = $this->decode($line, ++$lineCount);
         }
         gzclose($handle);
 
@@ -75,11 +100,23 @@ class IndexModel
      */
     public function save($append = false)
     {
+        return $this->useCompression()
+            ? $this->saveCompressed($append)
+            : $this->savePlain($append);
+    }
+
+    /**
+     * @param bool $append
+     *
+     * @return $this
+     */
+    protected function saveCompressed($append = false)
+    {
         $this->sort();
 
         $handle = gzopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
         foreach ($this->data as $line) {
-            gzwrite($handle, json_encode($line, JSON_UNESCAPED_SLASHES) . "\n");
+            gzwrite($handle, $this->encode($line));
         }
         gzclose($handle);
 
@@ -91,13 +128,13 @@ class IndexModel
      *
      * @return $this
      */
-    public function savePlain($append = false)
+    protected function savePlain($append = false)
     {
         $this->sort();
 
         $handle = fopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
         foreach ($this->data as $line) {
-            fwrite($handle, json_encode($line, JSON_UNESCAPED_SLASHES) . "\n");
+            fwrite($handle, $this->encode($line));
         }
         fclose($handle);
 
@@ -126,16 +163,12 @@ class IndexModel
         $cwd = realpath(getcwd());
         $file = realpath($file);
 
-//        $md5 = md5_file($file);
-        $md5 = '';
-
         if (strpos($file, $cwd) === 0) {
             $file = substr($file, strlen($cwd) + 1);
         }
 
         $this->data[] = [
             'file' => $file,
-            'md5'  => $md5,
         ];
 
         return $this;
@@ -194,10 +227,49 @@ class IndexModel
         foreach ($this->data as $data) {
             $file = realpath($data['file']);
 
-//            if (!empty($file) && md5_file($file) == $data['md5']) {
             if (!empty($file)) {
                 yield $file;
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function useCompression()
+    {
+        return !preg_match(sprintf('/\.%s/', self::EXT_PLAIN), $this->indexFile);
+    }
+
+    /**
+     * @param mixed $data
+     *
+     * @return string
+     */
+    protected function encode($data)
+    {
+        return json_encode($data, JSON_UNESCAPED_SLASHES) . "\n";
+    }
+
+    /**
+     * @param $line
+     * @param $lineCount
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    protected function decode($line, $lineCount)
+    {
+        $json = json_decode($line, true);
+        if (!is_array($json) || !isset($json['file'])) {
+//                throw new \Exception($line);
+            throw new \Exception(vsprintf('Invalid or malformed data in index file %s on line %d', [
+                basename($this->indexFile),
+                $lineCount,
+            ]));
+        }
+
+        return $json;
     }
 }
