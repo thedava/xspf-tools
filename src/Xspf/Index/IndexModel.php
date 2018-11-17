@@ -2,6 +2,8 @@
 
 namespace Xspf\Index;
 
+use Xspf\Utils;
+
 class IndexModel
 {
     const EXT_PLAIN = 'xd';
@@ -13,12 +15,20 @@ class IndexModel
     /** @var \ArrayObject */
     protected $data;
 
+    /** @var bool */
+    protected $shouldUseCompression = true;
+
     /**
      * @param string $indexFile
      */
     public function __construct($indexFile)
     {
         $this->indexFile = $indexFile;
+
+        // Determine compression
+        if (preg_match(sprintf('/\.%s/', self::EXT_PLAIN), $this->indexFile) !== false) {
+            $this->shouldUseCompression = false;
+        }
 
         $this->clear();
     }
@@ -44,7 +54,7 @@ class IndexModel
      */
     public function load()
     {
-        return $this->useCompression()
+        return $this->shouldUseCompression
             ? $this->loadPlain()
             : $this->loadCompressed();
     }
@@ -59,6 +69,7 @@ class IndexModel
         $this->clear();
         $lineCount = 0;
         $handle = fopen($this->indexFile, 'r');
+        fgets($handle); // Remote meta data
         while (($line = fgets($handle)) !== false) {
             if (trim($line) === '') {
                 continue;
@@ -81,6 +92,7 @@ class IndexModel
         $this->clear();
         $lineCount = 0;
         $handle = gzopen($this->indexFile, 'rb');
+        gzgets($handle); // Remove meta data
         while (($line = gzgets($handle)) !== false) {
             if (trim($line) === '') {
                 continue;
@@ -100,7 +112,7 @@ class IndexModel
      */
     public function save($append = false)
     {
-        return $this->useCompression()
+        return $this->shouldUseCompression
             ? $this->saveCompressed($append)
             : $this->savePlain($append);
     }
@@ -115,6 +127,7 @@ class IndexModel
         $this->sort();
 
         $handle = gzopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
+        fwrite($handle, $this->encode(['_version' => Utils::getVersion()]));
         foreach ($this->data as $line) {
             gzwrite($handle, $this->encode($line));
         }
@@ -133,6 +146,7 @@ class IndexModel
         $this->sort();
 
         $handle = fopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
+        fwrite($handle, $this->encode(['_version' => Utils::getVersion()]));
         foreach ($this->data as $line) {
             fwrite($handle, $this->encode($line));
         }
@@ -234,14 +248,6 @@ class IndexModel
     }
 
     /**
-     * @return bool
-     */
-    protected function useCompression()
-    {
-        return !preg_match(sprintf('/\.%s/', self::EXT_PLAIN), $this->indexFile);
-    }
-
-    /**
      * @param mixed $data
      *
      * @return string
@@ -252,10 +258,10 @@ class IndexModel
     }
 
     /**
-     * @param $line
-     * @param $lineCount
+     * @param string $line
+     * @param int    $lineCount
      *
-     * @return mixed
+     * @return array
      *
      * @throws \Exception
      */
