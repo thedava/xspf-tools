@@ -20,10 +20,12 @@ class ConvertIndexCommand extends CreateCommand
             ->addArgument('playlist-file', InputArgument::OPTIONAL, 'The playlist file that should be created', 'index.xspf')
             ->addOption('distinct', 't', InputOption::VALUE_NONE, 'Avoid duplicates in playlist file')
             ->addOption('delete', 'D', InputOption::VALUE_NONE, 'Remove index file after conversion');
+        $this->appendWhiteAndBlacklistOptions($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->parseWhiteAndBlacklist($input);
         $indexModel = new IndexModel($input->getArgument('index-file'));
         $indexModel->load();
 
@@ -42,7 +44,9 @@ class ConvertIndexCommand extends CreateCommand
                 $history[$file] = 1;
             }
 
-            $tracks[] = new Track($file);
+            if ($this->isFileAllowed($file)) {
+                $tracks[] = new Track($file);
+            }
         }
 
         $this->createPlaylist($input, $output, $tracks);
