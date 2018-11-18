@@ -34,6 +34,14 @@ class IndexModel
     }
 
     /**
+     * @return bool
+     */
+    public function shouldUseCompression()
+    {
+        return $this->shouldUseCompression;
+    }
+
+    /**
      * Clear the index data from memory
      *
      * @return $this
@@ -254,7 +262,7 @@ class IndexModel
      */
     protected function encode($data)
     {
-        return json_encode($data, JSON_UNESCAPED_SLASHES) . "\n";
+        return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
     }
 
     /**

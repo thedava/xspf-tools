@@ -4,6 +4,7 @@ namespace Xspf\Order;
 
 use Xspf\File\File;
 use Xspf\Index\IndexModel;
+use Xspf\Track;
 
 abstract class AbstractOrderType
 {
@@ -14,7 +15,17 @@ abstract class AbstractOrderType
     /**
      * @param File $file
      */
-    abstract public function orderFile(File $file);
+    public function orderFile(File $file)
+    {
+        $file->setTracks($this->orderTracks($file->getTracks()));
+    }
+
+    /**
+     * @param array|Track[] $tracks
+     *
+     * @return array|Track[]
+     */
+    abstract public function orderTracks(array $tracks);
 
     /**
      * @param IndexModel $indexModel

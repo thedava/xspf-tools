@@ -2,19 +2,21 @@
 
 namespace Xspf\Order;
 
-use Xspf\File\File;
 use Xspf\Index\IndexModel;
+use Xspf\Track;
 
 class OrderTypeRandom extends AbstractOrderType
 {
     /**
-     * @param File $file
+     * @param array|Track[] $tracks
+     *
+     * @return array|Track[]
      */
-    public function orderFile(File $file)
+    public function orderTracks(array $tracks)
     {
-        $tracks = $file->getTracks();
         shuffle($tracks);
-        $file->setTracks($tracks);
+
+        return $tracks;
     }
 
     public function orderIndex(IndexModel $indexModel)

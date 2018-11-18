@@ -4,9 +4,11 @@ namespace Xspf\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\File\File;
 use Xspf\File\FileLocatorTrait;
+use Xspf\Order\AbstractOrderType;
 use Xspf\Track;
 use Xspf\WhiteAndBlacklistProviderTrait;
 
@@ -20,7 +22,8 @@ class CreateCommand extends AbstractCommand
         $this->setName('create')
             ->setDescription('Create a new playlist')
             ->addArgument('playlist-file', InputArgument::REQUIRED, 'The playlist file that should be created')
-            ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added');
+            ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
+            ->addOption('order', '', InputOption::VALUE_REQUIRED, 'Order the index file (asc, desc, random)', null);
         $this->appendWhiteAndBlacklistOptions($this);
     }
 
@@ -45,20 +48,28 @@ class CreateCommand extends AbstractCommand
             }
         }
 
-        $this->createPlaylist($input, $output, $tracks);
+        $this->createPlaylist($input, $output, $tracks, $input->getOption('order'));
     }
 
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @param Track[]         $tracks
+     * @param string|null     $order
+     *
+     * @throws \Exception
      */
-    protected function createPlaylist(InputInterface $input, OutputInterface $output, array $tracks)
+    protected function createPlaylist(InputInterface $input, OutputInterface $output, array $tracks, $order = null)
     {
         $output->writeln('Found ' . count($tracks) . ' files');
 
-        (new File($input->getArgument('playlist-file')))
-            ->setTracks($tracks)
-            ->save(false);
+        $file = (new File($input->getArgument('playlist-file')))->setTracks($tracks);
+
+        if ($order !== null) {
+            $orderType = AbstractOrderType::factory($order);
+            $orderType->orderFile($file);
+        }
+
+        $file->save(false);
     }
 }
