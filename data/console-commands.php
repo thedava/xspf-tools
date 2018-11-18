@@ -6,6 +6,7 @@ return [
     "Xspf\\Commands\\CleanCommand",
     "Xspf\\Commands\\CreateCommand",
     "Xspf\\Commands\\File\\CopyCommand",
+    "Xspf\\Commands\\File\\DeleteCommand",
     "Xspf\\Commands\\Index\\ConvertIndexCommand",
     "Xspf\\Commands\\Index\\CreateIndexCommand",
     "Xspf\\Commands\\Index\\CreateIndexPlaylistCommand",
