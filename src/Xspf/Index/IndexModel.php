@@ -26,7 +26,7 @@ class IndexModel
         $this->indexFile = $indexFile;
 
         // Determine compression
-        if (preg_match(sprintf('/\.%s/', self::EXT_PLAIN), $this->indexFile) !== false) {
+        if (mb_strlen($this->indexFile) >= 3 && mb_substr($this->indexFile, -2) === self::EXT_PLAIN) {
             $this->shouldUseCompression = false;
         }
 
@@ -55,8 +55,8 @@ class IndexModel
     public function load()
     {
         return $this->shouldUseCompression
-            ? $this->loadPlain()
-            : $this->loadCompressed();
+            ? $this->loadCompressed()
+            : $this->loadPlain();
     }
 
     /**
