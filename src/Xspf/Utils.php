@@ -4,8 +4,7 @@ namespace Xspf;
 
 class Utils
 {
-    /** @var null|string */
-    private static $version = null;
+    const PERFORMANCE_TRACKING_ENABLED = true;
 
     /**
      * @return string
@@ -20,11 +19,62 @@ class Utils
      */
     public static function getVersion()
     {
-        if (self::$version === null) {
-            self::$version = trim(file_get_contents(self::getVersionFile()));
+        static $version = null;
+        if ($version === null) {
+            $version = trim(file_get_contents(self::getVersionFile()));
         }
 
-        return self::$version;
+        return $version;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isPhar()
+    {
+        static $isPhar = null;
+        if ($isPhar === null) {
+            $isPhar = stripos(__DIR__, 'phar://') === 0;
+        }
+
+        return $isPhar;
+    }
+
+    /**
+     * @param string|null $path
+     *
+     * @return string
+     */
+    public static function setDirectory($path = null)
+    {
+        static $directory = null;
+        if ($directory === null) {
+            $directory = (self::isPhar())
+                ? dirname(\Phar::running(false))
+                : (string)$path;
+        }
+
+        return $directory;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDirectory()
+    {
+        return self::setDirectory();
+    }
+
+    /**
+     * @param array $path
+     *
+     * @return string
+     */
+    public static function buildPath(array $path)
+    {
+        return self::getDirectory()
+            . DIRECTORY_SEPARATOR
+            . implode(DIRECTORY_SEPARATOR, $path);
     }
 
     /**
@@ -38,6 +88,12 @@ class Utils
      */
     public static function determinePath($fileName)
     {
+        // File exists in phar/project root
+        $path = self::buildPath([$fileName]);
+        if (file_exists($path)) {
+            return $path;
+        }
+
         // File exists in current context
         if (file_exists($fileName)) {
             return realpath($fileName);
@@ -55,16 +111,21 @@ class Utils
             return __DIR__ . $ds . $fileName;
         }
 
-        // Phar folder
-        $phar = \Phar::running(false);
-        if ($phar !== '') {
-            $dir = dirname($phar);
-            // Same folder as phar archive
-            if (file_exists($dir . $ds . $fileName)) {
-                return $dir . $ds . $fileName;
-            }
-        }
-
         throw new \Exception('File could not be located! Please enter an absolute path.');
+    }
+
+    /**
+     * @param string $name
+     * @param string $description
+     */
+    public static function trackPerformance($name, $description)
+    {
+        if (self::PERFORMANCE_TRACKING_ENABLED) {
+            file_put_contents(self::buildPath(['performance.log']), vsprintf('[%s] <%s> %s' . PHP_EOL, [
+                (new \DateTime())->format('Y-m-d H:i:s.u'),
+                (string)$name,
+                (string)$description,
+            ]), FILE_APPEND);
+        }
     }
 }

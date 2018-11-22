@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\Commands\CreateCommand;
 use Xspf\Index\IndexModel;
+use Xspf\Index\IndexModelFactory;
 use Xspf\Order\AbstractOrderType;
 use Xspf\Track;
 
@@ -28,13 +29,17 @@ class ConvertIndexCommand extends CreateCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->parseWhiteAndBlacklist($input);
-        $indexModel = new IndexModel($input->getArgument('index-file'));
+        $this->trackPerformance('Loading index file');
+        $indexModel = IndexModelFactory::factory($input->getArgument('index-file'));
         $indexModel->load();
+        $this->trackPerformance('Index file loaded');
 
         $order = $input->getOption('order');
         if ($order !== null) {
+            $this->trackPerformance('Ordering index');
             $orderType = AbstractOrderType::factory($order);
             $orderType->orderIndex($indexModel);
+            $this->trackPerformance('Index ordered');
         }
 
         $skipCount = 0;

@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
+use Xspf\Index\IndexModelFactory;
 
 class BatchCommand extends AbstractCommand
 {
@@ -17,11 +18,13 @@ class BatchCommand extends AbstractCommand
             ->setDescription('Perform multiple xspf operations as a batch')
             ->addArgument('file', InputArgument::REQUIRED, 'A .yml file')
             ->addOption('validate', '', InputOption::VALUE_NONE, 'Validate the batch file instead of executing it')
-            ->addOption('example', '', InputOption::VALUE_NONE, 'Create an example batch file');
+            ->addOption('example', '', InputOption::VALUE_NONE, 'Create an example batch file')
+            ->addOption('memory', '', InputOption::VALUE_NONE, 'Keep index files in memory');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        IndexModelFactory::setUseMemoryDefault($input->getOption('memory'));
         $file = $input->getArgument('file');
 
         if ($input->getOption('example')) {

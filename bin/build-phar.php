@@ -9,6 +9,9 @@ $version = \Xspf\Utils::getVersion();
 if (is_dir(__DIR__ . '/../vendor/phpunit')) {
     echo 'Attention: dev-dependencies detected!', PHP_EOL;
 }
+if (\Xspf\Utils::PERFORMANCE_TRACKING_ENABLED) {
+    echo 'Attention: Performance tracking is enabled!', PHP_EOL;
+}
 
 if (file_exists($pharFile)) {
     echo 'Old file size: ', round(filesize($pharFile) / 1024, 2), ' kB', PHP_EOL;

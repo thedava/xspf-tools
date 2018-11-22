@@ -17,6 +17,7 @@ if (PHP_MAJOR_VERSION < 7) {
 }
 
 require_once __DIR__ . '/vendor/autoload.php';
+Utils::setDirectory(__DIR__);
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);

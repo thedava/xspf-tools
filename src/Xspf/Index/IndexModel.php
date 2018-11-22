@@ -2,43 +2,38 @@
 
 namespace Xspf\Index;
 
+use Xspf\Index\FileHandler\FileHandlerInterface;
 use Xspf\Utils;
 
-class IndexModel
+class IndexModel implements IndexModelInterface
 {
-    const EXT_PLAIN = 'xd';
-    const EXT_COMPRESSED = 'xdc';
-
     /** @var string */
     protected $indexFile;
+
+    /** @var FileHandlerInterface */
+    protected $fileHandler;
 
     /** @var \ArrayObject */
     protected $data;
 
-    /** @var bool */
-    protected $shouldUseCompression = true;
-
     /**
-     * @param string $indexFile
+     * @param string               $indexFile
+     * @param FileHandlerInterface $fileHandler
      */
-    public function __construct($indexFile)
+    public function __construct($indexFile, FileHandlerInterface $fileHandler)
     {
         $this->indexFile = $indexFile;
-
-        // Determine compression
-        if (mb_strlen($this->indexFile) >= 3 && mb_substr($this->indexFile, -2) === self::EXT_PLAIN) {
-            $this->shouldUseCompression = false;
-        }
-
+        $this->fileHandler = $fileHandler;
+        $fileHandler->setIndexModel($this);
         $this->clear();
     }
 
     /**
-     * @return bool
+     * @return \ArrayObject
      */
-    public function shouldUseCompression()
+    public function getData()
     {
-        return $this->shouldUseCompression;
+        return $this->data;
     }
 
     /**
@@ -62,103 +57,19 @@ class IndexModel
      */
     public function load()
     {
-        return $this->shouldUseCompression
-            ? $this->loadCompressed()
-            : $this->loadPlain();
-    }
-
-    /**
-     * @return $this
-     *
-     * @throws \Exception
-     */
-    protected function loadPlain()
-    {
         $this->clear();
-        $lineCount = 0;
-        $handle = fopen($this->indexFile, 'r');
-        fgets($handle); // Remote meta data
-        while (($line = fgets($handle)) !== false) {
-            if (trim($line) === '') {
-                continue;
-            }
-
-            $this->data[] = $this->decode($line, ++$lineCount);
-        }
-        fclose($handle);
+        $this->data = $this->fileHandler->load();
 
         return $this;
     }
 
     /**
      * @return $this
-     *
-     * @throws \Exception
      */
-    protected function loadCompressed()
-    {
-        $this->clear();
-        $lineCount = 0;
-        $handle = gzopen($this->indexFile, 'rb');
-        gzgets($handle); // Remove meta data
-        while (($line = gzgets($handle)) !== false) {
-            if (trim($line) === '') {
-                continue;
-            }
-
-            $this->data[] = $this->decode($line, ++$lineCount);
-        }
-        gzclose($handle);
-
-        return $this;
-    }
-
-    /**
-     * @param bool $append
-     *
-     * @return $this
-     */
-    public function save($append = false)
-    {
-        return $this->shouldUseCompression
-            ? $this->saveCompressed($append)
-            : $this->savePlain($append);
-    }
-
-    /**
-     * @param bool $append
-     *
-     * @return $this
-     */
-    protected function saveCompressed($append = false)
+    public function save()
     {
         $this->sort();
-
-        $handle = gzopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
-        fwrite($handle, $this->encode(['_version' => Utils::getVersion()]));
-        foreach ($this->data as $line) {
-            gzwrite($handle, $this->encode($line));
-        }
-        gzclose($handle);
-
-        return $this;
-    }
-
-    /**
-     * @param bool $append
-     *
-     * @return $this
-     */
-    protected function savePlain($append = false)
-    {
-        $this->sort();
-
-        $handle = fopen($this->indexFile, sprintf('%s' . 'b9', $append ? 'a' : 'w'));
-        fwrite($handle, $this->encode(['_version' => Utils::getVersion()]));
-        foreach ($this->data as $line) {
-            fwrite($handle, $this->encode($line));
-        }
-        fclose($handle);
+        $this->fileHandler->save();
 
         return $this;
     }
@@ -189,9 +100,7 @@ class IndexModel
             $file = substr($file, strlen($cwd) + 1);
         }
 
-        $this->data[] = [
-            'file' => $file,
-        ];
+        $this->data[] = $file;
 
         return $this;
     }
@@ -218,7 +127,9 @@ class IndexModel
      */
     public function sort()
     {
+        Utils::trackPerformance('Index', 'Sorting...');
         $this->data->asort();
+        Utils::trackPerformance('Index', 'Sorting finished');
 
         return $this;
     }
@@ -246,44 +157,12 @@ class IndexModel
      */
     public function getFiles()
     {
-        foreach ($this->data as $data) {
-            $file = realpath($data['file']);
+        foreach ($this->data as $file) {
+            $file = realpath($file);
 
             if (!empty($file)) {
                 yield $file;
             }
         }
-    }
-
-    /**
-     * @param mixed $data
-     *
-     * @return string
-     */
-    protected function encode($data)
-    {
-        return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
-    }
-
-    /**
-     * @param string $line
-     * @param int    $lineCount
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    protected function decode($line, $lineCount)
-    {
-        $json = json_decode($line, true);
-        if (!is_array($json) || !isset($json['file'])) {
-//                throw new \Exception($line);
-            throw new \Exception(vsprintf('Invalid or malformed data in index file %s on line %d', [
-                basename($this->indexFile),
-                $lineCount,
-            ]));
-        }
-
-        return $json;
     }
 }

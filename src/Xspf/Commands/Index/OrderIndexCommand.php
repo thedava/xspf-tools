@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\Commands\CreateCommand;
 use Xspf\Index\IndexModel;
+use Xspf\Index\IndexModelFactory;
 use Xspf\Order\AbstractOrderType;
 
 class OrderIndexCommand extends CreateCommand
@@ -23,7 +24,7 @@ class OrderIndexCommand extends CreateCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $indexModel = new IndexModel($input->getArgument('index-file'));
+        $indexModel = IndexModelFactory::factory($input->getArgument('index-file'));
         $indexModel->load();
 
         if ($input->getOption('distinct')) {

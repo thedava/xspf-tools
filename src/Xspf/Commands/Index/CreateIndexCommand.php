@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\Commands\AbstractCommand;
 use Xspf\File\FileLocatorTrait;
 use Xspf\Index\IndexModel;
+use Xspf\Index\IndexModelFactory;
 use Xspf\WhiteAndBlacklistProviderTrait;
 
 class CreateIndexCommand extends AbstractCommand
@@ -29,7 +30,7 @@ class CreateIndexCommand extends AbstractCommand
             ]))
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.' . IndexModel::EXT_COMPRESSED)
-            ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it')
+//            ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it')
             ->appendWhiteAndBlacklistOptions($this);
     }
 
@@ -41,7 +42,7 @@ class CreateIndexCommand extends AbstractCommand
         $output->writeln('Creating index. This may take a while...');
         $this->parseWhiteAndBlacklist($input);
 
-        $indexModel = new IndexModel($input->getOption('output'));
+        $indexModel = IndexModelFactory::factory($input->getOption('output'));
         foreach ((array)$input->getArgument('file-or-folder') as $fileOrFolder) {
             foreach ($this->getFiles($fileOrFolder, $output) as $file) {
                 if ($this->isFileAllowed($file)) {
@@ -55,7 +56,7 @@ class CreateIndexCommand extends AbstractCommand
         $output->writeln('Added ' . $indexModel->count() . ' files to index');
         $output->writeln('');
 
-        $indexModel->save($input->getOption('append'));
+        $indexModel->save();
         $output->writeln('Index file successfully created');
         $output->writeln('Path: ' . realpath($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
         $output->writeln('File: ' . basename($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
