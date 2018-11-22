@@ -29,23 +29,20 @@ class ConvertIndexCommand extends CreateCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->parseWhiteAndBlacklist($input);
-        $this->trackPerformance('Loading index file');
         $indexModel = IndexModelFactory::factory($input->getArgument('index-file'));
         $indexModel->load();
-        $this->trackPerformance('Index file loaded');
 
         $order = $input->getOption('order');
         if ($order !== null) {
-            $this->trackPerformance('Ordering index');
             $orderType = AbstractOrderType::factory($order);
             $orderType->orderIndex($indexModel);
-            $this->trackPerformance('Index ordered');
         }
 
         $skipCount = 0;
         $history = new \ArrayObject();
         $distinct = $input->getOption('distinct');
 
+        $this->trackPerformance('Checking files (white-/blacklist)');
         $tracks = [];
         foreach ($indexModel->getFiles() as $file) {
             if ($distinct) {
@@ -61,8 +58,12 @@ class ConvertIndexCommand extends CreateCommand
                 $tracks[] = new Track($file);
             }
         }
+        $this->trackPerformance('White-/Blacklist check finished');
 
+        $this->trackPerformance('Creating playlist');
         $this->createPlaylist($input, $output, $tracks);
+        $this->trackPerformance('Playlist created');
+
         $output->writeln('Created playlist with ' . count($tracks) . ' files');
 
         if ($skipCount > 0) {

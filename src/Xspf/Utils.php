@@ -122,7 +122,7 @@ class Utils
     {
         if (self::PERFORMANCE_TRACKING_ENABLED) {
             file_put_contents(self::buildPath(['performance.log']), vsprintf('[%s] <%s> %s' . PHP_EOL, [
-                (new \DateTime())->format('Y-m-d H:i:s.u'),
+                \DateTime::createFromFormat('U.u', microtime(true))->format('Y-m-d H:i:s.u'),
                 (string)$name,
                 (string)$description,
             ]), FILE_APPEND);

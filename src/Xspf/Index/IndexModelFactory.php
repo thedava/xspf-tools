@@ -5,6 +5,7 @@ namespace Xspf\Index;
 use Xspf\Index\FileHandler\CompressedFileHandler;
 use Xspf\Index\FileHandler\FileHandlerInterface;
 use Xspf\Index\FileHandler\PlainFileHandler;
+use Xspf\Utils;
 
 class IndexModelFactory
 {
@@ -64,8 +65,12 @@ class IndexModelFactory
         }
 
         if ($useMemory && isset(self::$memory[$indexModelFile])) {
+            Utils::trackPerformance('IndexFactory', 'Loading IndexModel from memory');
+
             return self::$memory[$indexModelFile];
         }
+
+        Utils::trackPerformance('IndexFactory', 'Creating new indexModel');
         $indexModel = new IndexModel($indexModelFile, self::determineFileHandler($indexModelFile));
 
         return ($useMemory)
