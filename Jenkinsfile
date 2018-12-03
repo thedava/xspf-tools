@@ -21,6 +21,7 @@ node (label: 'php') {
     stage('Run') {
         sh 'rm -f test/data/*'
         sh 'php console.php index:create -o test/data/index.xd ./bin'
+        sh 'cat test/data/index.xd'
         sh 'php console.php index:convert test/data/index.xd test/data/index.xspf'
         sh 'php console.php validate --stop-on-error test/data/index.xspf'
         sh 'cat test/data/index.xspf'
