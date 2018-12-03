@@ -11,6 +11,7 @@ use Xspf\Index\IndexModel;
 use Xspf\Index\IndexModelFactory;
 use Xspf\Order\AbstractOrderType;
 use Xspf\Track;
+use Xspf\WhiteAndBlacklistService;
 
 class ConvertIndexCommand extends CreateCommand
 {
@@ -23,12 +24,12 @@ class ConvertIndexCommand extends CreateCommand
             ->addOption('distinct', 't', InputOption::VALUE_NONE, 'Avoid duplicates in playlist file')
             ->addOption('delete', 'D', InputOption::VALUE_NONE, 'Remove index file after conversion')
             ->addOption('order', '', InputOption::VALUE_REQUIRED, 'Order the index file (asc, desc, random)', null);
-        $this->appendWhiteAndBlacklistOptions($this);
+        WhiteAndBlacklistService::appendOptionsToCommand($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->parseWhiteAndBlacklist($input);
+        $whiteAndBlacklistService = WhiteAndBlacklistService::createFromCommandInput($input);
         $indexModel = IndexModelFactory::factory($input->getArgument('index-file'));
         $indexModel->load();
 
@@ -54,7 +55,7 @@ class ConvertIndexCommand extends CreateCommand
                 $history[$file] = 1;
             }
 
-            if ($this->isFileAllowed($file)) {
+            if ($whiteAndBlacklistService->isFileAllowed($file)) {
                 $tracks[] = new Track($file);
             }
         }

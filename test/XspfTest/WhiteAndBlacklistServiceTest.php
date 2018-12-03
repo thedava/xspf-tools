@@ -2,15 +2,15 @@
 
 namespace XspfTest;
 
-use XspfMock\WhiteAndBlacklistProviderTraitMock;
+use Xspf\WhiteAndBlacklistService;
 
-class WhiteAndBlacklistProviderTraitTest extends \PHPUnit_Framework_TestCase
+class WhiteAndBlacklistServiceTest extends \PHPUnit_Framework_TestCase
 {
     public function whiteListDataProvider()
     {
         return [
             [
-                '*.json',
+                '*.JSON',
                 [
                     'composer.json' => true,
                     'composer.lock' => false,
@@ -25,22 +25,14 @@ class WhiteAndBlacklistProviderTraitTest extends \PHPUnit_Framework_TestCase
                     'Cover.jpg'     => false,
                 ],
             ],
+            [
+                '*[Family]*',
+                [
+                    'HomeVideo [Family].avi' => true,
+                    'Work [Work].mp4'        => false,
+                ],
+            ],
         ];
-    }
-
-    /**
-     * @dataProvider whiteListDataProvider
-     *
-     * @param string $whiteListPattern
-     * @param array  $fileList
-     */
-    public function testWhiteList($whiteListPattern, $fileList)
-    {
-        $mock = new WhiteAndBlacklistProviderTraitMock([], [$whiteListPattern]);
-
-        foreach ($fileList as $file => $isAllowed) {
-            $this->assertEquals($isAllowed, $mock->checkFileAllowed($file));
-        }
     }
 
     public function blackListDataProvider()
@@ -65,21 +57,6 @@ class WhiteAndBlacklistProviderTraitTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @dataProvider blackListDataProvider
-     *
-     * @param string $blackListPattern
-     * @param array  $fileList
-     */
-    public function testBlackList($blackListPattern, $fileList)
-    {
-        $mock = new WhiteAndBlacklistProviderTraitMock([$blackListPattern]);
-
-        foreach ($fileList as $file => $isAllowed) {
-            $this->assertEquals($isAllowed, $mock->checkFileAllowed($file));
-        }
-    }
-
     public function combinedListDataProvider()
     {
         return [
@@ -97,6 +74,36 @@ class WhiteAndBlacklistProviderTraitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider whiteListDataProvider
+     *
+     * @param string $whiteListPattern
+     * @param array  $fileList
+     */
+    public function testWhiteList($whiteListPattern, $fileList)
+    {
+        $service = new WhiteAndBlacklistService([$whiteListPattern]);
+
+        foreach ($fileList as $file => $isAllowed) {
+            $this->assertEquals($isAllowed, $service->isFileAllowed($file), 'Mismatch between ' . $whiteListPattern . ' and ' . $file);
+        }
+    }
+
+    /**
+     * @dataProvider blackListDataProvider
+     *
+     * @param string $blackListPattern
+     * @param array  $fileList
+     */
+    public function testBlackList($blackListPattern, $fileList)
+    {
+        $service = new WhiteAndBlacklistService([], [$blackListPattern]);
+
+        foreach ($fileList as $file => $isAllowed) {
+            $this->assertEquals($isAllowed, $service->isFileAllowed($file));
+        }
+    }
+
+    /**
      * @dataProvider combinedListDataProvider
      *
      * @param string $whiteListPattern
@@ -105,10 +112,10 @@ class WhiteAndBlacklistProviderTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testCombinedList($whiteListPattern, $blackListPattern, $fileList)
     {
-        $mock = new WhiteAndBlacklistProviderTraitMock([$blackListPattern], [$whiteListPattern]);
+        $service = new WhiteAndBlacklistService([$whiteListPattern], [$blackListPattern]);
 
         foreach ($fileList as $file => $isAllowed) {
-            $this->assertEquals($isAllowed, $mock->checkFileAllowed($file));
+            $this->assertEquals($isAllowed, $service->isFileAllowed($file));
         }
     }
 }

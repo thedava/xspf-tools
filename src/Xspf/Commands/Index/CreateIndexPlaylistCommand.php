@@ -9,12 +9,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Xspf\Commands\AbstractCommand;
 use Xspf\Index\IndexModel;
-use Xspf\WhiteAndBlacklistProviderTrait;
+use Xspf\WhiteAndBlacklistService;
 
 class CreateIndexPlaylistCommand extends AbstractCommand
 {
-    use WhiteAndBlacklistProviderTrait;
-
     protected function configure()
     {
         $this->setName('index:create-playlist')
@@ -25,8 +23,8 @@ class CreateIndexPlaylistCommand extends AbstractCommand
             ->addArgument('playlist-file', InputArgument::REQUIRED, 'The playlist file that should be created')
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
             ->addOption('index-folder', 'i', InputOption::VALUE_REQUIRED, 'The path of the index folder', 'index')
-            ->addOption('order', '', InputOption::VALUE_REQUIRED, 'Order the index file (asc, desc, random)', null)
-            ->appendWhiteAndBlacklistOptions($this);
+            ->addOption('order', '', InputOption::VALUE_REQUIRED, 'Order the index file (asc, desc, random)', null);
+        WhiteAndBlacklistService::appendOptionsToCommand($this);
     }
 
     /**
@@ -34,7 +32,6 @@ class CreateIndexPlaylistCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->parseWhiteAndBlacklist($input);
         $app = $this->getApplication();
         $playlistFile = $input->getArgument('playlist-file');
         $indexFile = dirname($playlistFile) . '/' . $input->getOption('index-folder') . '/' . basename($playlistFile, '.xspf') . '.' . IndexModel::EXT_COMPRESSED;

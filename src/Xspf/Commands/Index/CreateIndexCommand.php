@@ -10,12 +10,11 @@ use Xspf\Commands\AbstractCommand;
 use Xspf\File\FileLocatorTrait;
 use Xspf\Index\IndexModel;
 use Xspf\Index\IndexModelFactory;
-use Xspf\WhiteAndBlacklistProviderTrait;
+use Xspf\WhiteAndBlacklistService;
 
 class CreateIndexCommand extends AbstractCommand
 {
     use FileLocatorTrait;
-    use WhiteAndBlacklistProviderTrait;
 
     protected function configure()
     {
@@ -29,9 +28,9 @@ class CreateIndexCommand extends AbstractCommand
                 'stores all paths relative to provide cross-system-support)',
             ]))
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
-            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.' . IndexModel::EXT_COMPRESSED)
+            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.' . IndexModel::EXT_COMPRESSED);
 //            ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it')
-            ->appendWhiteAndBlacklistOptions($this);
+        WhiteAndBlacklistService::appendOptionsToCommand($this);
     }
 
     /**
@@ -40,12 +39,12 @@ class CreateIndexCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Creating index. This may take a while...');
-        $this->parseWhiteAndBlacklist($input);
+        $whiteAndBlacklistService = WhiteAndBlacklistService::createFromCommandInput($input);
 
         $indexModel = IndexModelFactory::factory($input->getOption('output'));
         foreach ((array)$input->getArgument('file-or-folder') as $fileOrFolder) {
             foreach ($this->getFiles($fileOrFolder, $output) as $file) {
-                if ($this->isFileAllowed($file)) {
+                if ($whiteAndBlacklistService->isFileAllowed($file)) {
                     $output->writeln('Adding ' . $file, $output::VERBOSITY_DEBUG);
                     $indexModel->addFile($file);
                 } elseif ($output->isVeryVerbose()) {
