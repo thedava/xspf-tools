@@ -76,9 +76,11 @@ class WhiteAndBlacklistService
     {
         if ($this->hasWhiteList = !empty($whiteList)) {
             $this->whiteListCached = self::buildCacheString($whiteList);
+            Utils::trackPerformance('WhiteList', $this->whiteListCached);
         }
         if ($this->hasBlackList = !empty($blackList)) {
             $this->blackListCached = self::buildCacheString($blackList);
+            Utils::trackPerformance('BlackList', $this->blackListCached);
         }
     }
 

@@ -4,7 +4,7 @@ namespace Xspf;
 
 class Utils
 {
-    const PERFORMANCE_TRACKING_ENABLED = true;
+    const PERFORMANCE_TRACKING_ENABLED = false;
 
     /**
      * @return string

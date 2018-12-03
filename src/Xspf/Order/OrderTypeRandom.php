@@ -21,7 +21,7 @@ class OrderTypeRandom extends AbstractOrderType
 
     public function orderIndex(IndexModel $indexModel)
     {
-        $files = iterator_to_array($indexModel->getFiles());
+        $files = $indexModel->getFiles();
         shuffle($files);
         $indexModel->setFiles($files);
     }

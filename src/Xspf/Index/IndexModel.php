@@ -51,14 +51,32 @@ class IndexModel implements IndexModelInterface
     /**
      * Load data from index file into memory
      *
+     * @param bool $force
+     *
      * @return $this
      *
      * @throws \Exception
      */
-    public function load()
+    public function load($force = false)
     {
-        $this->clear();
-        $this->data = $this->fileHandler->load();
+        if ($force || $this->data->count() <= 0) {
+            $this->clear();
+            $cwd = Utils::determinePath($this->getIndexFile());
+            foreach ($this->fileHandler->load() as $file) {
+                try {
+                    // Check for relative path
+                    $path = Utils::determinePath($cwd . DIRECTORY_SEPARATOR . $file);
+                } catch (\Exception $e) {
+                    try {
+                        // Maybe path is absolute
+                        $path = Utils::determinePath($file);
+                    } catch (\Exception $e) {
+                        throw new \Exception('Could not locate file "' . $file . '"', 0, $e);
+                    }
+                }
+                $this->addFile($path);
+            }
+        }
 
         return $this;
     }
@@ -93,13 +111,7 @@ class IndexModel implements IndexModelInterface
      */
     public function addFile($file)
     {
-        $cwd = realpath(getcwd());
         $file = realpath($file);
-
-        if (strpos($file, $cwd) === 0) {
-            $file = substr($file, strlen($cwd) + 1);
-        }
-
         $this->data[] = $file;
 
         return $this;
@@ -153,16 +165,10 @@ class IndexModel implements IndexModelInterface
     /**
      * Return the files of the index
      *
-     * @return \Generator|string[]
+     * @return string[]
      */
     public function getFiles()
     {
-        foreach ($this->data as $file) {
-            $file = realpath($file);
-
-            if (!empty($file)) {
-                yield $file;
-            }
-        }
+        return $this->getData()->getArrayCopy();
     }
 }
