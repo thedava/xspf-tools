@@ -11,6 +11,7 @@ return [
     "Xspf\\Commands\\Index\\CreateIndexCommand",
     "Xspf\\Commands\\Index\\CreateIndexPlaylistCommand",
     "Xspf\\Commands\\Index\\ExtractIndexCommand",
+    "Xspf\\Commands\\Index\\FilterIndexCommand",
     "Xspf\\Commands\\Index\\OrderIndexCommand",
     "Xspf\\Commands\\MergeCommand",
     "Xspf\\Commands\\OrderCommand",
