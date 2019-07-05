@@ -22,5 +22,6 @@ $phar = new Phar($pharFile);
 $phar->setMetadata(['version' => $version]);
 $phar->buildFromDirectory(dirname(__DIR__), '/(VERSION|src|vendor|console\.php|data)/');
 $phar->setStub($phar->createDefaultStub('console.php'));
+$phar->compressFiles(Phar::GZ);
 
 echo 'File size: ', round(filesize($pharFile) / 1024, 2), ' kB', PHP_EOL;
