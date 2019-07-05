@@ -23,7 +23,8 @@ class LocalFileFilter
 
             $parts = explode($directorySeparator, $location);
             array_walk($parts, function (&$value) use ($replaces) {
-                $value = utf8_decode(rawurldecode($value));
+//                $value = utf8_decode(rawurldecode($value));
+                $value = rawurldecode($value);
             }, $parts);
 
             $location = implode($directorySeparator, $parts);
