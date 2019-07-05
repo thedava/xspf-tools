@@ -61,17 +61,17 @@ class IndexModel implements IndexModelInterface
     {
         if ($force || $this->data->count() <= 0) {
             $this->clear();
-            $cwd = Utils::determinePath($this->getIndexFile());
-            foreach ($this->fileHandler->load() as $file) {
+            $cwd = Utils::determinePath($this->getIndexFile(), true);
+            foreach ($this->fileHandler->load() as $l => $file) {
                 try {
                     // Check for relative path
-                    $path = Utils::determinePath($cwd . DIRECTORY_SEPARATOR . $file);
+                    $path = Utils::determinePath($cwd . DIRECTORY_SEPARATOR . $file, true);
                 } catch (\Exception $e) {
                     try {
                         // Maybe path is absolute
-                        $path = Utils::determinePath($file);
+                        $path = Utils::determinePath($file, true);
                     } catch (\Exception $e) {
-                        throw new \Exception('Could not locate file "' . $file . '"', 0, $e);
+                        throw new \Exception('Could not locate file "' . $file . '" (#' . ($l + 1) . ')', 0, $e);
                     }
                 }
                 $this->addFile($path);

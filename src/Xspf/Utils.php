@@ -81,12 +81,13 @@ class Utils
      * Tries to determine the correct path for the given file
      *
      * @param string $fileName
+     * @param bool   $required
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function determinePath($fileName)
+    public static function determinePath($fileName, $required = false)
     {
         // File exists in phar/project root
         $path = self::buildPath([$fileName]);
@@ -111,7 +112,12 @@ class Utils
             return __DIR__ . $ds . $fileName;
         }
 
-        throw new \Exception('File could not be located! Please enter an absolute path.');
+        // Abort now if the file is required
+        if ($required) {
+            throw new \Exception('File could not be located! Please enter an absolute path.');
+        }
+
+        return $fileName;
     }
 
     /**
