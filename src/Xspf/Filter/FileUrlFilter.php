@@ -28,7 +28,8 @@ class FileUrlFilter
         $parts = explode($directorySeparator, $location);
         list($first) = $parts;
         array_walk($parts, function (&$value) {
-            $value = rawurlencode(utf8_encode($value));
+//            $value = rawurlencode(utf8_encode($value));
+            $value = rawurlencode($value);
         }, $parts);
 
         // Check if windows
