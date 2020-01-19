@@ -26,24 +26,27 @@ trait FileLocatorTrait
      */
     private function locateFiles($folder, OutputInterface $output)
     {
-        foreach (new \DirectoryIterator($folder) as $dir) {
-            if ($dir->isDir() && !$dir->isDot()) {
-                $output->writeln('- ' . $folder . '/' . $dir->getFilename() . ' -> folder', $output::VERBOSITY_DEBUG);
-                foreach ($this->locateFiles($folder . '/' . $dir->getFilename(), $output) as $file) {
-                    yield $file;
+        try {
+            foreach (new \DirectoryIterator($folder) as $dir) {
+                if ($dir->isDir() && !$dir->isDot()) {
+                    $output->writeln('- ' . $folder . '/' . $dir->getFilename() . ' -> folder', $output::VERBOSITY_DEBUG);
+                    foreach ($this->locateFiles($folder . '/' . $dir->getFilename(), $output) as $file) {
+                        yield $file;
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            if ($dir->isFile() && !$this->shouldFileBeSkipped($dir->getBasename())) {
-                $output->writeln('- ' . $folder . '/' . $dir->getFilename() . ' -> file', $output::VERBOSITY_DEBUG);
-                yield $folder . '/' . $dir->getFilename();
+                if ($dir->isFile() && !$this->shouldFileBeSkipped($dir->getBasename())) {
+                    $output->writeln('- ' . $folder . '/' . $dir->getFilename() . ' -> file', $output::VERBOSITY_DEBUG);
+                    yield $folder . '/' . $dir->getFilename();
+                }
             }
+        } catch (\Exception $e) {
         }
     }
 
     /**
-     * @param string$pattern
+     * @param string $pattern
      *
      * @return string
      */
@@ -63,7 +66,7 @@ trait FileLocatorTrait
      */
     protected function getFiles($fileOrFolder, OutputInterface $output)
     {
-        if (is_file($fileOrFolder)) {
+        if (is_file($fileOrFolder) || preg_match('/.*\.\w*$/', $fileOrFolder)) {
             $output->writeln('- ' . $fileOrFolder . ' -> file', $output::VERBOSITY_DEBUG);
             yield $fileOrFolder;
         } elseif (is_dir($fileOrFolder)) {

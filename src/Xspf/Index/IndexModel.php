@@ -49,32 +49,63 @@ class IndexModel implements IndexModelInterface
     }
 
     /**
+     * @param string $cwd
+     * @param string $file
+     * @param int    $line
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    private function loadSingleFile($cwd, $file, $line)
+    {
+        try {
+            // Check for relative path
+            return Utils::determinePath($cwd . DIRECTORY_SEPARATOR . $file, true);
+        } catch (\Exception $e) {
+            try {
+                // Maybe path is absolute
+                return Utils::determinePath($file, true);
+            } catch (\Exception $e) {
+                throw new \Exception('Could not locate file "' . $file . '" (#' . ($line + 1) . ')', 0, $e);
+            }
+        }
+    }
+
+    /**
      * Load data from index file into memory
      *
      * @param bool $force
+     * @param bool $ignoreErrors
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function load($force = false)
+    public function load($force = false, $ignoreErrors = false)
     {
         if ($force || $this->data->count() <= 0) {
             $this->clear();
             $cwd = Utils::determinePath($this->getIndexFile(), true);
             foreach ($this->fileHandler->load() as $l => $file) {
-                try {
-                    // Check for relative path
-                    $path = Utils::determinePath($cwd . DIRECTORY_SEPARATOR . $file, true);
-                } catch (\Exception $e) {
+                $path = null;
+                $exception = null;
+                foreach ([$file, utf8_encode($file), utf8_decode($file)] as $f) {
                     try {
-                        // Maybe path is absolute
-                        $path = Utils::determinePath($file, true);
-                    } catch (\Exception $e) {
-                        throw new \Exception('Could not locate file "' . $file . '" (#' . ($l + 1) . ')', 0, $e);
+                        $path = $this->loadSingleFile($cwd, $f, $l);
+                    } catch (\Exception $exception) {
                     }
                 }
-                $this->addFile($path);
+
+                if ($path !== null) {
+                    $this->addFile($path);
+                } elseif (!$ignoreErrors) {
+                    if ($exception !== null) {
+                        throw $exception;
+                    } else {
+                        throw new \Exception('Unknown error while locating file "' . $file . '"');
+                    }
+                }
             }
         }
 

@@ -5,6 +5,8 @@ return [
     "Xspf\\Commands\\Batch\\BatchConcurrentCommand",
     "Xspf\\Commands\\CleanCommand",
     "Xspf\\Commands\\CreateCommand",
+    "Xspf\\Commands\\Duplicates\\ListDuplicatesCommand",
+    "Xspf\\Commands\\Duplicates\\ShowDuplicatesCommand",
     "Xspf\\Commands\\File\\CopyCommand",
     "Xspf\\Commands\\File\\DeleteCommand",
     "Xspf\\Commands\\Index\\ConvertIndexCommand",

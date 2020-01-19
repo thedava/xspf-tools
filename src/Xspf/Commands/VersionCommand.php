@@ -18,8 +18,13 @@ class VersionCommand extends AbstractCommand
     {
         $output->writeln('XSPF Tools v' . Utils::getVersion());
         $output->writeln('Build: ' . date('Y-m-d', filemtime(Utils::getVersionFile())));
+
         $output->writeln('');
-        $output->writeln('GitHub: thedava/xspf-tools');
-        $output->writeln('https://github.com/thedava/xspf-tools');
+        if ($output->isVerbose() && Utils::isPhar()) {
+            $output->writeln('Compiled: ' . date('Y-m-d H:i:s', filemtime(\Phar::running(false))));
+        } else {
+            $output->writeln('GitHub: thedava/xspf-tools');
+            $output->writeln('https://github.com/thedava/xspf-tools');
+        }
     }
 }
