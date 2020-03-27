@@ -27,12 +27,12 @@ abstract class AbstractFileHandler implements FileHandlerInterface
      */
     final protected function getData()
     {
-        $cwd = realpath(dirname(Utils::determinePath($this->indexModel->getIndexFile(), true)));
+        $cwd = realpath(dirname(Utils::determinePath($this->indexModel->getIndexFile())));
         $length = strlen($cwd);
 
         $data = new \ArrayObject();
         foreach ($this->indexModel->getData() as $file) {
-            $file = Utils::determinePath($file, true);
+            $file = Utils::determinePath($file);
             if (strpos($file, $cwd) === 0) {
                 $file = mb_substr($file, $length + 1);
             }
