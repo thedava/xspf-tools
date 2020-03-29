@@ -4,10 +4,10 @@ ini_set('display_errors', 'On');
 error_reporting(-1);
 
 $applicationTitle = 'XSPF Tools';
-if (PHP_MAJOR_VERSION < 7) {
+if (version_compare(phpversion(), '7.2', '<')) {
     echo $applicationTitle, PHP_EOL,
     PHP_EOL,
-    'Minimum required version is 7.0 but ', phpversion(), ' was given',
+    'Minimum required version is 7.2 but ', phpversion(), ' was given',
     PHP_EOL;
     exit(1);
 }
