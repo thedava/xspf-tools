@@ -2,6 +2,7 @@
 
 namespace Xspf\Console\Command\Duplicates;
 
+use ArrayObject;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,7 +20,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         parent::configure();
     }
 
-    protected function saveChecksums(\ArrayObject $checksumList, InputInterface $input, OutputInterface $output, $final = false)
+    protected function saveChecksums(ArrayObject $checksumList, InputInterface $input, OutputInterface $output, $final = false)
     {
         if ($input->getOption('output') === '-') {
             return;
@@ -34,11 +35,11 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $checksumList = new \ArrayObject();
+        $checksumList = new ArrayObject();
         $files = $this->getFilesByAction($input, $output);
 
         if ($input->getOption('input') && file_exists($input->getOption('input'))) {
-            $existingChecksums = new \ArrayObject();
+            $existingChecksums = new ArrayObject();
             foreach (file($input->getOption('input')) as $line) {
                 $result = explode(self::SEPARATOR, $line);
                 if (count($result) === 2) {
@@ -52,7 +53,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
                 }
             }
 
-            $missingFiles = new \ArrayObject();
+            $missingFiles = new ArrayObject();
             foreach ($files as $file) {
                 if (!isset($existingChecksums[$file])) {
                     $missingFiles[] = $file;
