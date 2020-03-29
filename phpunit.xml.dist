@@ -4,19 +4,25 @@
 <!-- https://phpunit.de/manual/current/en/appendixes.configuration.html -->
 
 <phpunit
-        backupGlobals               = "false"
-        backupStaticAttributes      = "false"
-        colors                      = "true"
-        convertErrorsToExceptions   = "true"
-        convertNoticesToExceptions  = "true"
-        convertWarningsToExceptions = "true"
-        processIsolation            = "false"
-        stopOnFailure               = "true"
-        bootstrap="test/bootstrap.php">
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        stopOnFailure="true"
+        bootstrap="test/bootstrap.php"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>./test/XspfTest</directory>
+        </testsuite>
+    </testsuites>
 
     <testsuites>
-        <testsuite name="Xspf">
-            <directory>./test/XspfTest</directory>
+        <testsuite name="Integration">
+            <directory>./test/IntegrationTest</directory>
         </testsuite>
     </testsuites>
 
