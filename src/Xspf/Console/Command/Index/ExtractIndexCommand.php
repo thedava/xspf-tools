@@ -1,12 +1,12 @@
 <?php
 
-namespace Xspf\Commands\Index;
+namespace Xspf\Console\Command\Index;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\Commands\AbstractCommand;
+use Xspf\Console\Command\AbstractCommand;
 use Xspf\Index\IndexModelFactory;
 
 class ExtractIndexCommand extends AbstractCommand

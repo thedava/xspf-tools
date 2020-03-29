@@ -1,6 +1,6 @@
 <?php
 
-namespace Xspf\Commands;
+namespace Xspf\Console\Command;
 
 use DavaHome\SelfUpdate\AssetFileDownloader;
 use Symfony\Component\Console\Input\InputInterface;

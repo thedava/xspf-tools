@@ -1,13 +1,14 @@
 <?php
 
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $commands = [];
 $dir = __DIR__ . '/../src';
-foreach (glob($dir . '/Xspf/Commands/{*,*/*,*/*/*}Command.php', GLOB_BRACE) as $file) {
+foreach (glob($dir . '/Xspf/Console/Command/{*,*/*,*/*/*}Command.php', GLOB_BRACE) as $file) {
     $refClass = new ReflectionClass(str_replace('/', '\\', substr($file, strlen($dir) + 1, -4)));
 
-    if ($refClass->isSubclassOf(\Xspf\Commands\AbstractCommand::class) && $refClass->isInstantiable()) {
+    if ($refClass->isSubclassOf(Xspf\Console\Command\AbstractCommand::class) && $refClass->isInstantiable()) {
         $commands[] = $refClass->getName();
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Xspf\Commands\Batch;
+namespace Xspf\Console\Command\Batch;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
-use Xspf\Commands\BatchCommand;
+use Xspf\Console\Command\BatchCommand;
 use Xspf\Utils\Fork;
 
 class BatchConcurrentCommand extends BatchCommand

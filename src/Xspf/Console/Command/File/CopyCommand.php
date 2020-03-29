@@ -1,12 +1,12 @@
 <?php
 
-namespace Xspf\Commands\File;
+namespace Xspf\Console\Command\File;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\Commands\AbstractCommand;
+use Xspf\Console\Command\AbstractCommand;
 
 class CopyCommand extends AbstractCommand
 {

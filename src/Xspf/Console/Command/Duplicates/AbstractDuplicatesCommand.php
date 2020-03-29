@@ -1,6 +1,6 @@
 <?php
 
-namespace Xspf\Commands\Duplicates;
+namespace Xspf\Console\Command\Duplicates;
 
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\Commands\AbstractCommand;
+use Xspf\Console\Command\AbstractCommand;
 use Xspf\File\File;
 use Xspf\File\FileLocatorTrait;
 use Xspf\Index\IndexModelFactory;

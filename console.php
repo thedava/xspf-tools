@@ -15,13 +15,6 @@ if (PHP_MAJOR_VERSION < 7) {
         PHP_EOL;
     exit(1);
 }
-//elseif (!function_exists('fnmatch')) {
-//    echo $applicationTitle, PHP_EOL,
-//    PHP_EOL,
-//    'fnmatch() is not supported by your system',
-//    PHP_EOL;
-//    exit(1);
-//}
 
 require_once __DIR__ . '/vendor/autoload.php';
 Utils::setDirectory(__DIR__);
@@ -40,7 +33,7 @@ try {
     $formatter->setStyle('yellow', new OutputFormatterStyle('yellow'));
     $formatter->setStyle('blue', new OutputFormatterStyle('blue'));
 
-    $application = new \Symfony\Component\Console\Application($applicationTitle, Utils::getVersion());
+    $application = new Symfony\Component\Console\Application($applicationTitle, Utils::getVersion());
 
     // Append commands
     foreach (require_once __DIR__ . '/data/console-commands.php' as $command) {

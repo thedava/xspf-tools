@@ -1,6 +1,6 @@
 <?php
 
-namespace Xspf\Commands\Duplicates;
+namespace Xspf\Console\Command\Duplicates;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
