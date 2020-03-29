@@ -9,6 +9,7 @@ class IndexCommandTest extends \AbstractCommandIntegrationTest
 
     /**
      * @covers \Xspf\Console\Command\Index\CreateIndexCommand::run()
+     *
      * @throws \Exception
      */
     public function testIndexCreate()

@@ -20,10 +20,11 @@ class FileLocatorTraitTest extends TestCase
     public function skipFileDataProvider()
     {
         return [
-//            ['Thumbs.db', true],
-//            ['test.bak', true],
-['Movie XYZ.mp4', false],
-['FlashVideo.flv', false],
+            ['Movie XYZ.mp4', false],
+            ['FlashVideo.flv', false],
+            ['Thumbs.db', true], // Windows
+            ['.DS_Store', true], // Mac OS
+            //['test.bak', true],
         ];
     }
 

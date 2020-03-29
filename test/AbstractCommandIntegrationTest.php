@@ -33,6 +33,7 @@ abstract class AbstractCommandIntegrationTest extends TestCase
      * @param int    $expectedExitCode
      *
      * @return string Console output
+     *
      * @throws Exception
      */
     final protected function runCommand(string $command, array $input, int $expectedExitCode = 0): string

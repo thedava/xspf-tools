@@ -20,5 +20,5 @@ return [
     "Xspf\\Console\\Command\\SelfUpdateCommand",
     "Xspf\\Console\\Command\\UpdateCommand",
     "Xspf\\Console\\Command\\ValidateCommand",
-    "Xspf\\Console\\Command\\VersionCommand",
+    "Xspf\\Console\\Command\\VersionCommand"
 ];

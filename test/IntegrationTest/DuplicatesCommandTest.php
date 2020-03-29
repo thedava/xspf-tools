@@ -11,6 +11,7 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
 
     /**
      * @covers \Xspf\Console\Command\Duplicates\ListDuplicatesCommand::run()
+     *
      * @throws Exception
      */
     public function testDuplicatesList()
@@ -35,6 +36,7 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
     /**
      * @depends testDuplicatesList
      * @covers  \Xspf\Console\Command\Duplicates\ListDuplicatesCommand::run()
+     *
      * @throws Exception
      */
     public function testDuplicatesListAppend()
@@ -74,6 +76,7 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
     /**
      * @depends testDuplicatesListAppend
      * @covers  \Xspf\Console\Command\Duplicates\ShowDuplicatesCommand::run()
+     *
      * @throws Exception
      */
     public function testDuplicatesShow()

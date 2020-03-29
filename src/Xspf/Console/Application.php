@@ -65,6 +65,7 @@ class Application
 
     /**
      * @return int
+     *
      * @throws \Exception
      */
     public function run(): int

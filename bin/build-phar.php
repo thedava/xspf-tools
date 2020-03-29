@@ -3,13 +3,13 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $pharFile = __DIR__ . '/../build/xspf.phar';
-$version = \Xspf\Utils::getVersion();
+$version = Xspf\Utils::getVersion();
 
 // Dirty checks
 if (is_dir(__DIR__ . '/../vendor/phpunit')) {
     echo 'Attention: dev-dependencies detected!', PHP_EOL;
 }
-if (\Xspf\Utils::PERFORMANCE_TRACKING_ENABLED) {
+if (Xspf\Utils::PERFORMANCE_TRACKING_ENABLED) {
     echo 'Attention: Performance tracking is enabled!', PHP_EOL;
 }
 
