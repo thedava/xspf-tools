@@ -2,9 +2,12 @@
 
 namespace XspfTest;
 
+use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use ReflectionObject;
 use Xspf\File\FileLocatorTrait;
 
-class FileLocatorTraitTest extends \PHPUnit_Framework_TestCase
+class FileLocatorTraitTest extends TestCase
 {
     /** @var FileLocatorTrait */
     protected $fileLocatorTrait;
@@ -19,8 +22,8 @@ class FileLocatorTraitTest extends \PHPUnit_Framework_TestCase
         return [
 //            ['Thumbs.db', true],
 //            ['test.bak', true],
-            ['Movie XYZ.mp4', false],
-            ['FlashVideo.flv', false],
+['Movie XYZ.mp4', false],
+['FlashVideo.flv', false],
         ];
     }
 
@@ -29,10 +32,12 @@ class FileLocatorTraitTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $fileName
      * @param bool   $shouldBeSkipped
+     *
+     * @throws ReflectionException
      */
     public function testShouldFileBeSkipped($fileName, $shouldBeSkipped)
     {
-        $refObj = new \ReflectionObject($this->fileLocatorTrait);
+        $refObj = new ReflectionObject($this->fileLocatorTrait);
         $refMethod = $refObj->getMethod('shouldFileBeSkipped');
         $refMethod->setAccessible(true);
 

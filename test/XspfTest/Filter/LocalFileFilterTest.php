@@ -2,9 +2,10 @@
 
 namespace XspfTest\Filter;
 
+use PHPUnit\Framework\TestCase;
 use Xspf\Filter\LocalFileFilter;
 
-class LocalFileFilterTest extends \PHPUnit_Framework_TestCase
+class LocalFileFilterTest extends TestCase
 {
     public function localFileDataProvider()
     {

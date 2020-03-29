@@ -2,9 +2,10 @@
 
 namespace XspfTest;
 
+use PHPUnit\Framework\TestCase;
 use Xspf\XspfSchemeValidator;
 
-class XspfSchemeValidatorTest extends \PHPUnit_Framework_TestCase
+class XspfSchemeValidatorTest extends TestCase
 {
     public function testIsValid_Success()
     {

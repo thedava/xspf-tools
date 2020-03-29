@@ -1,11 +1,15 @@
 <?php
 
+namespace XspfTest\File\Type;
+
+use Exception;
+use PHPUnit\Framework\TestCase;
 use Xspf\File\Structure;
 use Xspf\File\Type\XspfFileType;
 use Xspf\Track;
 use Xspf\XspfSchemeValidator;
 
-class XspfFileTypeTest extends PHPUnit_Framework_TestCase
+class XspfFileTypeTest extends TestCase
 {
     public function fileNameDataProvider()
     {

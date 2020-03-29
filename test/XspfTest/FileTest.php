@@ -2,10 +2,11 @@
 
 namespace XspfTest;
 
+use PHPUnit\Framework\TestCase;
 use Xspf\File\File;
 use Xspf\Track;
 
-class FileTest extends \PHPUnit_Framework_TestCase
+class FileTest extends TestCase
 {
     public function testSave()
     {

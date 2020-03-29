@@ -2,9 +2,10 @@
 
 namespace XspfTest\Filter;
 
+use PHPUnit\Framework\TestCase;
 use Xspf\Filter\FileUrlFilter;
 
-class FileUrlFilterTest extends \PHPUnit_Framework_TestCase
+class FileUrlFilterTest extends TestCase
 {
     public function fileUrlDataProvider()
     {

@@ -22,7 +22,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4",
+        "phpunit/phpunit": "^5",
         "davahome/php-cs-fixer-ruleset": "*"
     },
     "bin": [

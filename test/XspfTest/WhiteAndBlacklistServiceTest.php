@@ -2,9 +2,10 @@
 
 namespace XspfTest;
 
+use PHPUnit\Framework\TestCase;
 use Xspf\WhiteAndBlacklistService;
 
-class WhiteAndBlacklistServiceTest extends \PHPUnit_Framework_TestCase
+class WhiteAndBlacklistServiceTest extends TestCase
 {
     public function whiteListDataProvider()
     {
