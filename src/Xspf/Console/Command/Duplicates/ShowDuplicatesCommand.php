@@ -4,7 +4,6 @@ namespace Xspf\Console\Command\Duplicates;
 
 use ArrayObject;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,8 +30,17 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         $progressBar->start();
         $checksums = new ArrayObject();
         $duplicates = new ArrayObject();
+
+        $skipCount = 0;
         foreach ($files as $file => $checksum) {
             $progressBar->advance();
+
+            // Skip empty checksums (maybe the list command crashed)
+            if (empty($checksum)) {
+                $skipCount++;
+                $output->writeln(sprintf('<red>File "%s" has no checksum! Maybe duplicates:list crashed?</red>', $file), OutputInterface::VERBOSITY_DEBUG);
+                continue;
+            }
 
             if (isset($checksums[$checksum])) {
                 if (!isset($duplicates[$checksum])) {
@@ -50,6 +58,10 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         $progressBar->finish();
         $output->writeln('');
 
+        if ($skipCount > 0) {
+            $output->writeln(sprintf('<yellow>%d files were skipped!</yellow>', $skipCount));
+        }
+
         if ($duplicates->count() <= 0) {
             $output->writeln('');
             $output->writeln('<green>No duplicates found!</green>');
@@ -58,13 +70,14 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             return 0;
         }
 
-        $table = new Table($output);
-        $table->setHeaders(['Checksum', 'Files']);
+        $output->writeln('Duplicate files by checksum: ');
         foreach ($duplicates as $checksum => $files) {
-            $table->addRow([$checksum, implode(PHP_EOL, $files)]);
+            $output->writeln('');
+            $output->writeln(sprintf('<cyan>Checksum: %s</cyan>', $checksum));
+            foreach ($files as $file) {
+                $output->writeln(sprintf('  - %s', $file));
+            }
         }
-        $output->writeln('');
-        $table->render();
         $output->writeln('');
 
         return 0;

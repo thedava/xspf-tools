@@ -2,6 +2,10 @@
 
 namespace Xspf\Console\Command\Duplicates;
 
+use ArrayObject;
+use Closure;
+use Exception;
+use Generator;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,16 +45,16 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return array|\ArrayObject
+     * @return array|ArrayObject
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getFilesByAction(InputInterface $input, OutputInterface $output)
     {
         $action = $input->getArgument('action');
         $values = (array)$input->getArgument('value');
 
-        $files = new \ArrayObject();
+        $files = new ArrayObject();
         switch ($action) {
             case 'path':
                 foreach ($values as $fileOrFolder) {
@@ -92,20 +96,22 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
                 foreach (self::ACTIONS as $action) {
                     $output->writeln('  - ' . $action);
                 }
-                throw new \Exception('Invalid action');
+                throw new Exception('Invalid action');
         }
 
-        return new \ArrayObject(array_unique($files->getArrayCopy()));
+        $array = array_unique($files->getArrayCopy());
+
+        return new ArrayObject(array_combine($array, $array));
     }
 
     /**
-     * @param \ArrayObject    $files
+     * @param ArrayObject    $files
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return \Generator
+     * @return Generator
      */
-    protected function getChecksums(\ArrayObject $files, InputInterface $input, OutputInterface $output)
+    protected function getChecksums(ArrayObject $files, InputInterface $input, OutputInterface $output)
     {
         $algo = $this->getAlgo($input, $output);
 
@@ -120,7 +126,7 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
 
             try {
                 yield $file => $algo($file);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
             }
         }
         $progressBar->finish();
@@ -132,41 +138,44 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return \Closure|null
+     * @return Closure|null
      */
     protected function getAlgo(InputInterface $input, OutputInterface $output)
     {
-        switch ($input->getOption('algorithm')) {
+        $algo = $input->getOption('algorithm');
+
+        switch ($algo) {
             case 'md5':
-                $algo = function ($file) {
+                $callback = function ($file) {
                     return md5_file($file);
                 };
                 break;
 
             case 'sha1':
-                $algo = function ($file) {
+                $callback = function ($file) {
                     return sha1_file($file);
                 };
                 break;
 
             default:
-                $output->writeln('<error>Invalid algorithm</error>');
-
-                return null;
+                $callback = function ($file) use ($algo) {
+                    return hash_file($algo, $file);
+                };
+                break;
         }
 
-        return $algo;
+        return $callback;
     }
 
     /**
      * @param string          $file
      * @param OutputInterface $output
      *
-     * @return \ArrayObject
+     * @return ArrayObject
      */
     protected function parseChecksumsFromFile($file, OutputInterface $output)
     {
-        $checksums = new \ArrayObject();
+        $checksums = new ArrayObject();
         foreach ($this->getFiles($file, $output) as $file) {
             foreach (file($file) as $line) {
                 $result = explode(': ', $line);
