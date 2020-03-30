@@ -44,7 +44,7 @@
         "build-dev": [
             "@console",
             "@php -d phar.readonly=0 bin/build-phar.php",
-            "@php build/xspf.phar version"
+            "@php build/xspf.phar version -v"
         ],
         "phpcs": [
             "@php composer.phar install --ignore-platform-reqs -q",
