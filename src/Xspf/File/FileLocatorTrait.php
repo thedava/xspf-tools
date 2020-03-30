@@ -26,19 +26,22 @@ trait FileLocatorTrait
      */
     private function locateFiles($folder, OutputInterface $output)
     {
+        $ds = DIRECTORY_SEPARATOR;
+        $folder = rtrim($folder, $ds . '/\\');
+
         try {
             foreach (new \DirectoryIterator($folder) as $dir) {
                 if ($dir->isDir() && !$dir->isDot()) {
-                    $output->writeln('- ' . $folder . '/' . $dir->getFilename() . ' -> folder', $output::VERBOSITY_DEBUG);
-                    foreach ($this->locateFiles($folder . '/' . $dir->getFilename(), $output) as $file) {
+                    $output->writeln('- ' . $folder . $ds . $dir->getFilename() . ' -> folder', $output::VERBOSITY_DEBUG);
+                    foreach ($this->locateFiles($folder . $ds . $dir->getFilename(), $output) as $file) {
                         yield $file;
                     }
                     continue;
                 }
 
                 if ($dir->isFile() && !$this->shouldFileBeSkipped($dir->getBasename())) {
-                    $output->writeln('- ' . $folder . '/' . $dir->getFilename() . ' -> file', $output::VERBOSITY_DEBUG);
-                    yield $folder . '/' . $dir->getFilename();
+                    $output->writeln('- ' . $folder . $ds . $dir->getFilename() . ' -> file', $output::VERBOSITY_DEBUG);
+                    yield $folder . $ds . $dir->getFilename();
                 }
             }
         } catch (\Exception $e) {

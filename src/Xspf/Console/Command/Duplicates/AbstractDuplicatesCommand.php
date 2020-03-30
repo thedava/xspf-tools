@@ -168,14 +168,15 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
     }
 
     /**
-     * @param string          $file
-     * @param OutputInterface $output
+     * @param string           $file
+     * @param OutputInterface  $output
+     * @param ArrayObject|null $checksums
      *
      * @return ArrayObject
      */
-    protected function parseChecksumsFromFile($file, OutputInterface $output)
+    protected function parseChecksumsFromFile($file, OutputInterface $output, ArrayObject $checksums = null)
     {
-        $checksums = new ArrayObject();
+        $checksums = $checksums ?? new ArrayObject();
         foreach ($this->getFiles($file, $output) as $file) {
             foreach (file($file) as $line) {
                 $result = explode(': ', $line);

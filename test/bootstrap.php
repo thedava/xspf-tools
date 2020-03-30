@@ -13,7 +13,7 @@ define('XSPF_FIXTURE_INVALID', __DIR__ . '/fixtures/invalid.xspf');
 // Clear data folder onStart and onFinish
 $clearDataFolder = function (bool $clearAllFiles) {
     foreach (glob(XSPF_TEMP_DIR . '/*') as $item) {
-        if ($clearAllFiles || strpos($item, '.xml') === false) {
+        if ($clearAllFiles || !in_array(basename($item), ['junit.xml', 'clover.xml'])) {
             unlink($item);
         }
     }

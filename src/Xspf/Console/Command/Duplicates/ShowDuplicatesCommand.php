@@ -16,13 +16,20 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
     {
         $this->setName('duplicates:show')
             ->setAliases(['duplicate:show'])
-            ->addArgument('file', InputArgument::REQUIRED, 'Duplicate list result file (created by "duplicates:list")')
+            ->addArgument('files', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Duplicate list result files (created by "duplicates:list")')
             ->addOption('no-progress', '', InputOption::VALUE_NONE, 'Hide progress');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $files = $this->parseChecksumsFromFile($input->getArgument('file'), $output);
+        $filePathList = (array)$input->getArgument('files');
+        $files = new ArrayObject();
+        foreach ($filePathList as $file) {
+            $this->parseChecksumsFromFile($file, $output, $files);
+        }
+        if (count($filePathList) > 1) {
+            $output->writeln(sprintf('Fetched checksums from %d duplicate list files', count($filePathList)));
+        }
 
         $progressBar = new ProgressBar(($input->getOption('no-progress')) ? new NullOutput() : $output, $files->count());
         $progressBar->setRedrawFrequency(2);
