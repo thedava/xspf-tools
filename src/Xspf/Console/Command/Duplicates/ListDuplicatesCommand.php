@@ -136,7 +136,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         foreach ($this->getChecksums($files, $input, $output) as $file => $checksum) {
             $checksumList[$file] = $checksum . self::SEPARATOR . $file;
 
-            if ($i++ % 9 == 0) {
+            if ($i++ % 10 == 0) {
                 $this->saveChecksums($checksumList, $input, $output);
             }
         }
