@@ -37,7 +37,7 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
         $this->setAliases([str_replace('duplicates:', 'duplicate:', $this->getName())])
             ->addArgument('action', InputArgument::REQUIRED, implode('|', self::ACTIONS))
             ->addArgument('value', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Value(s) for the action')
-            ->addOption('algorithm', 'a', InputOption::VALUE_REQUIRED, implode('|', self::SUPPORTED_ALGORITHMS), current(self::SUPPORTED_ALGORITHMS))
+            ->addOption('algorithm', 'r', InputOption::VALUE_REQUIRED, implode('|', self::SUPPORTED_ALGORITHMS), current(self::SUPPORTED_ALGORITHMS))
             ->addOption('progress', 'p', InputOption::VALUE_NONE, 'Show progress');
     }
 
