@@ -17,9 +17,10 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
     protected function configure()
     {
         $this->setName('duplicates:list')
-            ->addOption('input', 'i', InputOption::VALUE_REQUIRED, 'Input file (add missing checksums to file)', null)
+            ->addOption('input', 'i', InputOption::VALUE_REQUIRED, 'Input file (add missing checksums to file). File has to exist', null)
+            ->addOption('ignore-input', '-g', InputOption::VALUE_NONE, 'Ignore if input file is missing (will be created)', false)
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Output file', '-')
-            ->addOption('append', 'a', InputOption::VALUE_REQUIRED, 'Append missing checksums to file (implies -i and -o', null)
+            ->addOption('append', 'a', InputOption::VALUE_REQUIRED, 'Append missing checksums to file (implies -i|-o|-g)', null)
             ->addOption('remove-missing', 'm', InputOption::VALUE_NONE, 'Remove missing files (only works if input file was given)');
 
         parent::configure();
@@ -39,6 +40,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         $append = $input->getOption('append');
         if ($append !== null) {
             $input->setOption('input', $append);
+            $input->setOption('ignore-input', true);
             $input->setOption('output', $append);
         }
 
@@ -110,14 +112,16 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
             return true;
         }
 
-        if (!file_exists($inputFile)) {
-            $otherInputFile = Utils::determinePath($inputFile);
-            if (!file_exists($otherInputFile)) {
-                $output->writeln(sprintf('<red>Input file "%s" not found! Skipping import of pre-calculated checksums!</red>', $inputFile));
+        if (!$input->getOption('ignore-input')) {
+            if (!file_exists($inputFile)) {
+                $otherInputFile = Utils::determinePath($inputFile);
+                if (!file_exists($otherInputFile)) {
+                    $output->writeln(sprintf('<red>Input file "%s" not found! Skipping import of pre-calculated checksums!</red>', $inputFile));
 
-                return false;
+                    return false;
+                }
+                $inputFile = $otherInputFile;
             }
-            $inputFile = $otherInputFile;
         }
 
         $removeMissing = $input->getOption('remove-missing');
