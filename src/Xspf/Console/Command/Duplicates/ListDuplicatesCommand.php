@@ -18,11 +18,65 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         $this->setName('duplicates:list')
             ->addOption('input', 'i', InputOption::VALUE_REQUIRED, 'Input file (add missing checksums to file)', null)
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Output file', '-')
+            ->addOption('append', 'a', InputOption::VALUE_REQUIRED, 'Append missing checksums to file (implies -i and -o', null)
             ->addOption('remove-missing', 'm', InputOption::VALUE_NONE, 'Remove missing files (only works if input file was given)');
 
         parent::configure();
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|void|null
+     *
+     * @throws Exception
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        // Override --input and --output with --append
+        $append = $input->getOption('append');
+        if ($append !== null) {
+            $input->setOption('input', $append);
+            $input->setOption('output', $append);
+        }
+
+        $checksumList = new ArrayObject();
+        $files = $this->getFilesByAction($input, $output);
+        $output->writeln(sprintf('Found %s files in given location', $files->count()));
+
+        if (!$this->parseInputFile($files, $checksumList, $input, $output)) {
+            return 1;
+        }
+
+        // Fill checksum list with empty values
+        foreach ($files as $file) {
+            $checksumList[$file] = self::SEPARATOR . $file;
+        }
+        $checksumList->ksort();
+        $this->saveChecksums($checksumList, $input, $output);
+
+        // Extend checksum list file by file
+        $i = 0;
+        foreach ($this->getChecksums($files, $input, $output) as $file => $checksum) {
+            $checksumList[$file] = $checksum . self::SEPARATOR . $file;
+
+            if ($i++ % 10 == 0) {
+                $this->saveChecksums($checksumList, $input, $output);
+            }
+        }
+        $checksumList->ksort();
+        $this->saveChecksums($checksumList, $input, $output, true);
+
+        return 0;
+    }
+
+    /**
+     * @param ArrayObject     $checksumList
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param bool            $final
+     */
     protected function saveChecksums(ArrayObject $checksumList, InputInterface $input, OutputInterface $output, $final = false)
     {
         if ($input->getOption('output') === '-') {
@@ -104,45 +158,5 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         }
 
         return true;
-    }
-
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int|void|null
-     *
-     * @throws Exception
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $checksumList = new ArrayObject();
-        $files = $this->getFilesByAction($input, $output);
-        $output->writeln(sprintf('Found %s files in given location', $files->count()));
-
-        if (!$this->parseInputFile($files, $checksumList, $input, $output)) {
-            return 1;
-        }
-
-        // Fill checksum list with empty values
-        foreach ($files as $file) {
-            $checksumList[$file] = self::SEPARATOR . $file;
-        }
-        $checksumList->ksort();
-        $this->saveChecksums($checksumList, $input, $output);
-
-        // Extend checksum list file by file
-        $i = 0;
-        foreach ($this->getChecksums($files, $input, $output) as $file => $checksum) {
-            $checksumList[$file] = $checksum . self::SEPARATOR . $file;
-
-            if ($i++ % 10 == 0) {
-                $this->saveChecksums($checksumList, $input, $output);
-            }
-        }
-        $checksumList->ksort();
-        $this->saveChecksums($checksumList, $input, $output, true);
-
-        return 0;
     }
 }
