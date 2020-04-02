@@ -12,6 +12,7 @@ use Xspf\Utils;
 class ListDuplicatesCommand extends AbstractDuplicatesCommand
 {
     const SEPARATOR = ': ';
+    const SAVE_INTERVAL = 30; // Seconds
 
     protected function configure()
     {
@@ -57,12 +58,14 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         $this->saveChecksums($checksumList, $input, $output);
 
         // Extend checksum list file by file
-        $i = 0;
+        $lastSave = null;
         foreach ($this->getChecksums($files, $input, $output) as $file => $checksum) {
             $checksumList[$file] = $checksum . self::SEPARATOR . $file;
 
-            if ($i++ % 10 == 0) {
+            // Save after calculation time (instead of cycles)
+            if ($lastSave === null || (time() - $lastSave) > self::SAVE_INTERVAL) {
                 $this->saveChecksums($checksumList, $input, $output);
+                $lastSave = time();
             }
         }
         $checksumList->ksort();
