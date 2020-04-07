@@ -23,6 +23,8 @@ class XspfFileTypeTest extends TestCase
 
     public function testEncode()
     {
+        $this->markTestSkipped('Skipped due to external api call');
+
         $structure = new Structure();
         $structure->setTracks([
             (new Track('foo/bar.mp4')),

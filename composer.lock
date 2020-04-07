@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "652c7258f83c5ac692d3df5474ebc05e",
+    "content-hash": "838b22e5cb348ca7b4a4344fb6b628ab",
     "packages": [
         {
             "name": "davahome/console",
@@ -1774,6 +1774,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "php": "^7.2",
         "ext-zlib": "*",
         "ext-json": "*"
     },

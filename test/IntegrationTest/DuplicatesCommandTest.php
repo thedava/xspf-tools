@@ -79,7 +79,7 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
      *
      * @throws Exception
      */
-    public function testDuplicatesShow()
+    public function testDuplicatesShowChecksum()
     {
         // Invoke command
         $output = $this->runCommand('duplicate:show', [
@@ -96,9 +96,9 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
     public function testDuplicatesShowMultiple()
     {
         $files = [
-            'test/data/duplicates_1.txt' => 'test/data/test_2_1.txt',
-            'test/data/duplicates_2.txt' => 'test/data/test_2_2.txt',
-            'test/data/duplicates_3.txt' => 'test/data/test_2_3.txt',
+            'test/data/duplicates_1_1.txt' => 'test/data/test_2_1.txt',
+            'test/data/duplicates_1_2.txt' => 'test/data/test_2_2.txt',
+            'test/data/duplicates_1_3.txt' => 'test/data/test_2_3.txt',
         ];
 
         foreach ($files as $outputFile => $testFile) {

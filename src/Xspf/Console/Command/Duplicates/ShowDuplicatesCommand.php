@@ -17,7 +17,8 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         $this->setName('duplicates:show')
             ->setAliases(['duplicate:show'])
             ->addArgument('files', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Duplicate list result files (created by "duplicates:list")')
-            ->addOption('no-progress', '', InputOption::VALUE_NONE, 'Hide progress');
+            ->addOption('no-progress', '', InputOption::VALUE_NONE, 'Hide progress')
+            ->addOption('checksum-only', 'c', InputOption::VALUE_NONE, 'Only compare by checksum');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -31,12 +32,76 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             $output->writeln(sprintf('Fetched checksums from %d duplicate list files', count($filePathList)));
         }
 
+        $duplicateChecksum = new ArrayObject();
+        $duplicateFilename = new ArrayObject();
+        $skipCount = $this->determineDuplicates($input, $output, $files, $duplicateChecksum, $duplicateFilename);
+
+        if ($skipCount > 0) {
+            $output->writeln(sprintf('<yellow>%d files were skipped!</yellow>', $skipCount));
+        }
+
+        if ($duplicateChecksum->count() <= 0 && $duplicateFilename->count() <= 0) {
+            $output->writeln('');
+            $output->writeln('<green>No duplicates found!</green>');
+            $output->writeln('');
+
+            return 0;
+        }
+
+        // Display checksums
+        if ($duplicateChecksum->count() > 0) {
+            $output->writeln('<green>Duplicate files by checksum:</green>');
+            foreach ($duplicateChecksum as $checksum => $files) {
+                $output->writeln('');
+                $output->writeln(sprintf('<cyan>Checksum: %s</cyan>', $checksum));
+                foreach ($files as $file) {
+                    $output->writeln(sprintf('  - %s', $file));
+                }
+                $output->writeln('');
+            }
+        }
+
+        // Display filenames
+        if ($duplicateFilename->count() > 0) {
+            $output->writeln('<green>Duplicate files by filename:</green>');
+            foreach ($duplicateFilename as $filename => $files) {
+                $output->writeln('');
+                $output->writeln(sprintf('<cyan>Filename: "%s"</cyan>', $filename));
+                foreach ($files as $file) {
+                    $output->writeln(sprintf('  - %s', $file));
+                }
+                $output->writeln('');
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @param ArrayObject     $files
+     * @param ArrayObject     $duplicateChecksum
+     * @param ArrayObject     $duplicateFilename
+     *
+     * @return int
+     */
+    protected function determineDuplicates(
+        InputInterface $input,
+        OutputInterface $output,
+        ArrayObject $files,
+        ArrayObject $duplicateChecksum,
+        ArrayObject $duplicateFilename
+    ) {
         $progressBar = new ProgressBar(($input->getOption('no-progress')) ? new NullOutput() : $output, $files->count());
         $progressBar->setRedrawFrequency(2);
         $progressBar->setFormat('debug');
         $progressBar->start();
-        $checksums = new ArrayObject();
-        $duplicates = new ArrayObject();
+
+        $compareChecksum = new ArrayObject();
+        $compareFilename = new ArrayObject();
+
+        $onlyChecksum = $input->getOption('checksum-only');
 
         $skipCount = 0;
         foreach ($files as $file => $checksum) {
@@ -46,47 +111,40 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             if (empty($checksum)) {
                 $skipCount++;
                 $output->writeln(sprintf('<red>File "%s" has no checksum! Maybe duplicates:list crashed?</red>', $file), OutputInterface::VERBOSITY_DEBUG);
-                continue;
+            } else {
+                // Checksum
+                if (isset($compareChecksum[$checksum])) {
+                    if (!isset($duplicateChecksum[$checksum])) {
+                        $duplicateChecksum[$checksum] = [
+                            $compareChecksum[$checksum],
+                        ];
+                    }
+
+                    $duplicateChecksum[$checksum][] = $file;
+                } else {
+                    $compareChecksum[$checksum] = $file;
+                }
             }
 
-            if (isset($checksums[$checksum])) {
-                if (!isset($duplicates[$checksum])) {
-                    $duplicates[$checksum] = [
-                        $checksums[$checksum],
-                    ];
-                }
+            // Filename
+            if (!$onlyChecksum) {
+                $filename = basename($file);
+                if (isset($compareFilename[$filename])) {
+                    if (!isset($duplicateFilename[$filename])) {
+                        $duplicateFilename[$filename] = [
+                            $compareFilename[$filename],
+                        ];
+                    }
 
-                $duplicates[$checksum][] = $file;
-            } else {
-                $checksums[$checksum] = $file;
+                    $duplicateFilename[$filename][] = $file;
+                } else {
+                    $compareFilename[$filename] = $file;
+                }
             }
         }
-        unset ($files, $checksums);
         $progressBar->finish();
         $output->writeln('');
 
-        if ($skipCount > 0) {
-            $output->writeln(sprintf('<yellow>%d files were skipped!</yellow>', $skipCount));
-        }
-
-        if ($duplicates->count() <= 0) {
-            $output->writeln('');
-            $output->writeln('<green>No duplicates found!</green>');
-            $output->writeln('');
-
-            return 0;
-        }
-
-        $output->writeln('Duplicate files by checksum: ');
-        foreach ($duplicates as $checksum => $files) {
-            $output->writeln('');
-            $output->writeln(sprintf('<cyan>Checksum: %s</cyan>', $checksum));
-            foreach ($files as $file) {
-                $output->writeln(sprintf('  - %s', $file));
-            }
-        }
-        $output->writeln('');
-
-        return 0;
+        return $skipCount;
     }
 }
