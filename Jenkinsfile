@@ -16,13 +16,14 @@ pipeline {
             parallel {
                 stage('PHP Lint') {
                     steps {
-                        sh 'find . -name "*.php"   -not -path "./vendor/*" -print0 | xargs -l1 -0 php -l'
+                        sh 'find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -l1 -0 php -l'
                     }
                 }
                 stage('Lint') {
                     steps {
-                        sh 'find . -name "*.sh"    -not -path "./vendor/*" -print0 | xargs -l1 -0 shellcheck -s bash'
-                        sh 'find . -name "*.json"  -not -path "*vendor*" -print0   | xargs -l1 -0 jsonlint'
+                        sh 'find . -name "*.sh"   -not -path "*vendor*" -print0 | xargs -l1 -0 shellcheck -s bash'
+                        sh 'find . -name "*.json" -not -path "*vendor*" -print0 | xargs -l1 -0 jsonlint'
+                        sh 'find . -name "*.yml"  -not -path "*vendor*" -print0 | xargs -l1 -0 yamllint'
                     }
                 }
                 stage('PHPUnit') {
@@ -47,7 +48,7 @@ pipeline {
                 stage('Test Build Phar') {
                     steps {
                         sh 'php composer.phar build-dev'
-                        sh 'php build/xspf.phar version'
+                        sh 'php build/xspf.phar version -v'
                     }
                 }
             }

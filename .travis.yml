@@ -12,9 +12,10 @@ php:
 before_script:
   - composer install --dev
   - composer phplint
+  - composer build-dev
 
 #script:
 #  - php vendor/bin/phpunit --coverage-clover ./test/logs/clover.xml
 
-#after_script:
-#  - php vendor/bin/coveralls -v
+after_script:
+  - php build/xspf.phar version -v
