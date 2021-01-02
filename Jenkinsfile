@@ -13,8 +13,8 @@ pipeline {
             }
         }
         stage('Validate') {
+            failFast true
             parallel {
-                failFast true
                 stage('Test console') {
                     steps {
                         sh 'php console.php version -v'
