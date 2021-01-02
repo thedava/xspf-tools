@@ -18,9 +18,7 @@
         <testsuite name="Unit">
             <directory>./test/XspfTest</directory>
         </testsuite>
-    </testsuites>
 
-    <testsuites>
         <testsuite name="Integration">
             <directory>./test/IntegrationTest</directory>
         </testsuite>
