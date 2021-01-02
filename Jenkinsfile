@@ -51,10 +51,16 @@ pipeline {
                       '''
                     }
                 }
-                stage('Test Build Phar') {
+                stage('Test Phar') {
                     steps {
+                        // Build phar
                         sh 'php composer.phar build-dev'
                         sh 'php build/xspf.phar version -v'
+
+                        // Test self-update
+                        sh 'php build/xspf.phar self-update'
+                        sh 'php build/xspf.phar self-update -f'
+
                         sh 'rm -f build/xspf.phar'
                     }
                 }
