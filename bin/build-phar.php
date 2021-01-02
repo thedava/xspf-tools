@@ -20,7 +20,7 @@ if (file_exists($pharFile)) {
 
 $phar = new Phar($pharFile);
 $phar->setMetadata(['version' => $version]);
-$phar->buildFromDirectory(dirname(__DIR__), '/(VERSION|src|vendor|console\.php|data)/');
+$phar->buildFromDirectory(dirname(__DIR__), '/(VERSION|src|vendor|console\.php|data|composer\.json)/');
 $phar->setStub($phar->createDefaultStub('console.php'));
 $phar->compressFiles(Phar::GZ);
 
