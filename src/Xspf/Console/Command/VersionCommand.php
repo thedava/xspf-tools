@@ -18,11 +18,8 @@ class VersionCommand extends AbstractCommand
     /**
      * @return string
      */
-    private function getVersion()
+    private function getVersion(array $composerJson)
     {
-        $composerJsonContent = file_get_contents(Utils::getDirectory() . '/composer.json');
-        $composerJson = json_decode($composerJsonContent, true);
-
         $phpVersion = $composerJson['require']['php'];
         $match = [];
         preg_match('/[0-9]\.[0-9]/', $phpVersion, $match);
@@ -36,10 +33,13 @@ class VersionCommand extends AbstractCommand
         $output->writeln('XSPF Tools v' . Utils::getVersion());
         $output->writeln('Build: ' . date('Y-m-d', filemtime(Utils::getVersionFile())));
 
+        // Parse composer.json
+        $composerJson = Utils::getComposerJson();
+
         // Show PHP Version
         $output->writeln('');
         $phpVersion = phpversion();
-        $minPhpVersion = $this->getVersion();
+        $minPhpVersion = $this->getVersion($composerJson);
         $output->writeln('Current PHP Version: ' . $phpVersion);
         if (version_compare($phpVersion, $minPhpVersion, '<')) {
             $exitCode = 1;
@@ -52,8 +52,8 @@ class VersionCommand extends AbstractCommand
         if ($output->isVerbose() && Utils::isPhar()) {
             $output->writeln('Compiled: ' . date('Y-m-d H:i:s', filemtime(Phar::running(false))));
         } else {
-            $output->writeln('GitHub: thedava/xspf-tools');
-            $output->writeln('https://github.com/thedava/xspf-tools');
+            $output->writeln('GitHub: ' . $composerJson['name']);
+            $output->writeln($composerJson['homepage']);
         }
 
         return $exitCode;

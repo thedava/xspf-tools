@@ -2,7 +2,9 @@
 
 namespace Xspf\Console\Command;
 
+use DateTime;
 use DavaHome\SelfUpdate\AssetFileDownloader;
+use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,9 +23,13 @@ class SelfUpdateCommand extends AbstractCommand
     {
         $force = $input->hasOption('force') && $input->getOption('force');
 
-        $assetFileDownloader = new AssetFileDownloader('thedava', 'xspf-tools');
+        // Parse composer.json
+        $composerJson = Utils::getComposerJson();
+
+        [$owner, $repository] = explode('/', $composerJson['name']);
+        $assetFileDownloader = new AssetFileDownloader($owner, $repository);
         $releaseInformation = $assetFileDownloader->getReleaseInformation();
-        $date = new \DateTime($releaseInformation['published_at']);
+        $date = new DateTime($releaseInformation['published_at']);
         $output->writeln('Version: ' . $releaseInformation['tag_name']);
         $output->writeln('Published: ' . $date->format('Y-m-d H:i:s'));
 
@@ -41,8 +47,8 @@ class SelfUpdateCommand extends AbstractCommand
         if (!$force) {
             $output->writeln('Validating downloaded file');
             $data = shell_exec('php .xspf.phar version');
-            if (stripos($data, 'thedava/xspf-tools') === false) {
-                throw new \Exception('The downloaded file is invalid! Please try again later or download it manually.');
+            if (stripos($data, $composerJson['name']) === false) {
+                throw new Exception('The downloaded file is invalid! Please try again later or download it manually.');
             }
         } else {
             $output->writeln('<comment>Skipped validation</comment>');

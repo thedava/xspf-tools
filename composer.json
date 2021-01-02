@@ -3,6 +3,7 @@
     "description": "Tools for manipulating *.xspf Playlists",
     "type": "project",
     "license": "GPL 3.0",
+    "homepage": "https://github.com/thedava/xspf-tools",
     "autoload": {
         "psr-4": {
             "Xspf\\": "src/Xspf"

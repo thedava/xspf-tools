@@ -2,6 +2,10 @@
 
 namespace Xspf;
 
+use DateTime;
+use Exception;
+use Phar;
+
 class Utils
 {
     const PERFORMANCE_TRACKING_ENABLED = false;
@@ -12,6 +16,14 @@ class Utils
     public static function getVersionFile()
     {
         return dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'VERSION';
+    }
+
+    /**
+     * @return array
+     */
+    public static function getComposerJson()
+    {
+        return json_decode(file_get_contents(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'composer.json'), true);
     }
 
     /**
@@ -50,7 +62,7 @@ class Utils
         static $directory = null;
         if ($directory === null) {
             $directory = (self::isPhar())
-                ? dirname(\Phar::running(false))
+                ? dirname(Phar::running(false))
                 : (string)$path;
         }
 
@@ -85,7 +97,7 @@ class Utils
      *
      * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function determinePath($fileName, $required = false)
     {
@@ -114,7 +126,7 @@ class Utils
 
         // Abort now if the file is required
         if ($required) {
-            throw new \Exception('File could not be located! Please enter an absolute path.');
+            throw new Exception('File could not be located! Please enter an absolute path.');
         }
 
         return $fileName;
@@ -128,7 +140,7 @@ class Utils
     {
         if (self::PERFORMANCE_TRACKING_ENABLED) {
             file_put_contents(self::buildPath(['performance.log']), vsprintf('[%s] <%s> %s' . PHP_EOL, [
-                \DateTime::createFromFormat('U.u', microtime(true))->format('Y-m-d H:i:s.u'),
+                DateTime::createFromFormat('U.u', microtime(true))->format('Y-m-d H:i:s.u'),
                 (string)$name,
                 (string)$description,
             ]), FILE_APPEND);
