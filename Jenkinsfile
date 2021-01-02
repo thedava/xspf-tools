@@ -8,12 +8,18 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'bash bin/composer.sh'
-                sh 'php composer.phar global require hirak/prestissimo --no-ansi --no-progress --no-suggest'
-                sh 'php composer.phar install --prefer-dist --no-progress --no-suggest --no-ansi'
+                sh 'php composer.phar install --prefer-dist --no-progress --no-ansi'
+                sh 'php composer.phar console'
             }
         }
         stage('Validate') {
             parallel {
+                failFast true
+                stage('Test console') {
+                    steps {
+                        sh 'php console.php version -v'
+                    }
+                }
                 stage('PHP Lint') {
                     steps {
                         sh 'find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -l1 -0 php -l'
@@ -49,6 +55,7 @@ pipeline {
                     steps {
                         sh 'php composer.phar build-dev'
                         sh 'php build/xspf.phar version -v'
+                        sh 'rm -f build/xspf.phar'
                     }
                 }
             }
