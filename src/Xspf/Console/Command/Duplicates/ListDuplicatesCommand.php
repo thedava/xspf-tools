@@ -17,10 +17,11 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
     protected function configure()
     {
         $this->setName('duplicates:list')
-            ->addOption('input', 'i', InputOption::VALUE_REQUIRED, 'Input file (add missing checksums to file). File has to exist', null)
+            ->setDescription('Create a list of duplicates')
+            ->addOption('input', 'i', InputOption::VALUE_REQUIRED, 'Input file (add missing checksums to file). File has to exist')
             ->addOption('ignore-input', '-g', InputOption::VALUE_NONE, 'Ignore if input file is missing (will be created)')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Output file', '-')
-            ->addOption('append', 'a', InputOption::VALUE_REQUIRED, 'Append missing checksums to file (implies -i|-o|-g)', null)
+            ->addOption('append', 'a', InputOption::VALUE_REQUIRED, 'Append missing checksums to file (implies -i|-o|-g)')
             ->addOption('remove-missing', 'm', InputOption::VALUE_NONE, 'Remove missing files (only works if input file was given)');
 
         parent::configure();

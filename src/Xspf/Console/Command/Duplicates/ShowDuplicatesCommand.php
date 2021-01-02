@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class ShowDuplicatesCommand extends AbstractDuplicatesCommand
 {
@@ -16,9 +17,52 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
     {
         $this->setName('duplicates:show')
             ->setAliases(['duplicate:show'])
+            ->setDescription('Show results of a duplicates file (created by "duplicates:list")')
             ->addArgument('files', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Duplicate list result files (created by "duplicates:list")')
             ->addOption('no-progress', '', InputOption::VALUE_NONE, 'Hide progress')
-            ->addOption('checksum-only', 'c', InputOption::VALUE_NONE, 'Only compare by checksum');
+            ->addOption('checksum-only', 'c', InputOption::VALUE_NONE, 'Only compare by checksum')
+            ->addOption('interactive', 'i', InputOption::VALUE_NONE, 'Handle duplicates interactively');
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param InputInterface  $input
+     * @param array           $files
+     */
+    protected function handleInteractive(OutputInterface $output, InputInterface $input, array $files): void
+    {
+        if (!$input->getOption('interactive')) {
+            foreach ($files as $file) {
+                $output->writeln(sprintf('  - %s', $file));
+            }
+
+            return;
+        }
+
+        $i = 0;
+        $keep = '<yellow>Keep all (no delete)</yellow>';
+        $choices = [$i++ => $keep];
+        foreach ($files as $file) {
+            $choices[$i++] = $file;
+        }
+        $choiceQuestion = new ChoiceQuestion('Which file do you want to keep?', $choices);
+
+        $selection = $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
+        if ($selection === $keep || !in_array($selection, $choices)) {
+            $output->writeln('  <green>- KEEP EVERYTHING</green>');
+
+            return;
+        }
+
+        foreach ($files as $file) {
+            if ($selection === $file) {
+                $output->writeln(sprintf('  <green>- (KEEP) %s</green>', $file));
+                continue;
+            }
+
+            $output->writeln(sprintf('  <red>- (DELETE) %s</red>', $file));
+            unlink($file);
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -54,9 +98,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             foreach ($duplicateChecksum as $checksum => $files) {
                 $output->writeln('');
                 $output->writeln(sprintf('<cyan>Checksum: %s</cyan>', $checksum));
-                foreach ($files as $file) {
-                    $output->writeln(sprintf('  - %s', $file));
-                }
+                $this->handleInteractive($output, $input, $files);
                 $output->writeln('');
             }
         }
@@ -67,9 +109,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             foreach ($duplicateFilename as $filename => $files) {
                 $output->writeln('');
                 $output->writeln(sprintf('<cyan>Filename: "%s"</cyan>', $filename));
-                foreach ($files as $file) {
-                    $output->writeln(sprintf('  - %s', $file));
-                }
+                $this->handleInteractive($output, $input, $files);
                 $output->writeln('');
             }
         }
@@ -92,7 +132,8 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         ArrayObject $files,
         ArrayObject $duplicateChecksum,
         ArrayObject $duplicateFilename
-    ) {
+    )
+    {
         $progressBar = new ProgressBar(($input->getOption('no-progress')) ? new NullOutput() : $output, $files->count());
         $progressBar->setRedrawFrequency(2);
         $progressBar->setFormat('debug');
