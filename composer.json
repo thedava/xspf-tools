@@ -15,7 +15,7 @@
         }
     },
     "require": {
-        "php": "^7.4",
+        "php": ">=7.4",
         "symfony/console": "^3",
         "davahome/self-update": "^1.1",
         "davahome/console": "@stable",
