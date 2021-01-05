@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Xspf\Utils\BytesFormatter;
 
 class ShowDuplicatesCommand extends AbstractDuplicatesCommand
 {
@@ -25,6 +26,16 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
     }
 
     /**
+     * @param string $file
+     *
+     * @return string
+     */
+    protected function getFileName(string $file): string
+    {
+        return sprintf('%s (%s)', $file, (file_exists($file)) ? BytesFormatter::formatBytes(filesize($file)) : '?');
+    }
+
+    /**
      * @param OutputInterface $output
      * @param InputInterface  $input
      * @param array           $files
@@ -33,7 +44,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
     {
         if (!$input->getOption('interactive')) {
             foreach ($files as $file) {
-                $output->writeln(sprintf('  - %s', $file));
+                $output->writeln(sprintf('  - %s', $this->getFileName($file)));
             }
 
             return;
@@ -43,24 +54,24 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         $keep = '<yellow>Keep all (no delete)</yellow>';
         $choices = [$i++ => $keep];
         foreach ($files as $file) {
-            $choices[$i++] = $file;
+            $choices[$i++] = $this->getFileName($file);
         }
         $choiceQuestion = new ChoiceQuestion('Which file do you want to keep?', $choices);
 
         $selection = $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
         if ($selection === $keep || !in_array($selection, $choices)) {
-            $output->writeln('  <green>- KEEP EVERYTHING</green>');
+            $output->writeln('  <green>- [KEEP EVERYTHING]</green>');
 
             return;
         }
 
         foreach ($files as $file) {
             if ($selection === $file) {
-                $output->writeln(sprintf('  <green>- (KEEP) %s</green>', $file));
+                $output->writeln(sprintf('  <green>- [KEEP] %s</green>', $file));
                 continue;
             }
 
-            $output->writeln(sprintf('  <red>- (DELETE) %s</red>', $file));
+            $output->writeln(sprintf('  <red>- [DELETE] %s</red>', $file));
             unlink($file);
         }
     }
