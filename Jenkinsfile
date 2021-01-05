@@ -35,7 +35,7 @@ pipeline {
                 stage('PHPUnit') {
                     steps {
                         sh '''
-                            php vendor/bin/phpunit --disallow-test-output \
+                            php -d xdebug.mode=coverage vendor/bin/phpunit --disallow-test-output \
                             --log-junit "./test/data/junit.xml" \
                             --coverage-clover "./test/data/clover.xml"
                         '''
