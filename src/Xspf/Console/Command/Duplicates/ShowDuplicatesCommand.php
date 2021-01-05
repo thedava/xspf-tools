@@ -14,6 +14,9 @@ use Xspf\Utils\BytesFormatter;
 
 class ShowDuplicatesCommand extends AbstractDuplicatesCommand
 {
+    /** @var bool */
+    private $skipInteraction = false;
+
     protected function configure()
     {
         $this->setName('duplicates:show')
@@ -42,7 +45,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
      */
     protected function handleInteractive(OutputInterface $output, InputInterface $input, array $files): void
     {
-        if (!$input->getOption('interactive')) {
+        if ($this->skipInteraction) {
             foreach ($files as $file) {
                 $output->writeln(sprintf('  - %s', $this->getFileName($file)));
             }
@@ -50,23 +53,30 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             return;
         }
 
+        $choices = [
+            's' => '<yellow>Keep all and Skip all following (no delete)</yellow>',
+            'k' => '<cyan>Keep all (no delete)</cyan>',
+        ];
         $i = 0;
-        $keep = '<yellow>Keep all (no delete)</yellow>';
-        $choices = [$i++ => $keep];
         foreach ($files as $file) {
             $choices[$i++] = $this->getFileName($file);
         }
         $choiceQuestion = new ChoiceQuestion('Which file do you want to keep?', $choices);
 
-        $selection = $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
-        if ($selection === $keep || !in_array($selection, $choices)) {
-            $output->writeln('  <green>- [KEEP EVERYTHING]</green>');
+        $index = $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
+        if (in_array($index, ['s', 'k']) || !array_key_exists($index, $choices)) {
+            if ($index === 's') {
+                $this->skipInteraction = true;
+                $output->writeln('  - [<green>KEEP EVERYTHING</green> AND <cyan>SKIP FOLLOWING</cyan>]');
+            } else {
+                $output->writeln('  - [<green>KEEP EVERYTHING</green>]');
+            }
 
             return;
         }
 
         foreach ($files as $file) {
-            if ($selection === $file) {
+            if ($choices[$index] === $file) {
                 $output->writeln(sprintf('  <green>- [KEEP] %s</green>', $file));
                 continue;
             }
@@ -102,6 +112,9 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
 
             return 0;
         }
+
+        // Skip interaction if no --interactive was given
+        $this->skipInteraction = !$input->getOption('interactive');
 
         // Display checksums
         if ($duplicateChecksum->count() > 0) {
