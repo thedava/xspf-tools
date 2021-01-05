@@ -2,7 +2,10 @@
 
 namespace IntegrationTest;
 
-class IndexCommandTest extends \AbstractCommandIntegrationTest
+use AbstractCommandIntegrationTest;
+use Exception;
+
+class IndexCommandTest extends AbstractCommandIntegrationTest
 {
     const TEST_FILE_INDEX = 'test/data/index.xd';
     const TEST_FILE_PLAYLIST = 'test/data/index.xspf';
@@ -10,7 +13,7 @@ class IndexCommandTest extends \AbstractCommandIntegrationTest
     /**
      * @covers \Xspf\Console\Command\Index\CreateIndexCommand::run()
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function testIndexCreate()
     {
@@ -21,13 +24,13 @@ class IndexCommandTest extends \AbstractCommandIntegrationTest
         ]);
 
         // Validate console output and if file exists
-        $this->assertContains('Index file successfully created', $output);
+        $this->assertStringContainsString('Index file successfully created', $output);
         $this->assertFileExists(self::TEST_FILE_INDEX, 'Newly created index file not found!');
 
         // Validate file content
         $content = file_get_contents(self::TEST_FILE_INDEX);
-        $this->assertContains('build-console.php', $content);
-        $this->assertContains('composer.sh', $content);
+        $this->assertStringContainsString('build-console.php', $content);
+        $this->assertStringContainsString('composer.sh', $content);
     }
 
     /**
@@ -43,13 +46,13 @@ class IndexCommandTest extends \AbstractCommandIntegrationTest
         ]);
 
         // Validate console output and if file exists
-        $this->assertContains('Created playlist', $output);
+        $this->assertStringContainsString('Created playlist', $output);
         $this->assertFileExists(self::TEST_FILE_PLAYLIST, 'Newly created playlist file not found!');
 
         // Validate file content
         $content = file_get_contents(self::TEST_FILE_PLAYLIST);
-        $this->assertContains('build-console.php', $content);
-        $this->assertContains('composer.sh', $content);
+        $this->assertStringContainsString('build-console.php', $content);
+        $this->assertStringContainsString('composer.sh', $content);
     }
 
     /**
@@ -65,6 +68,6 @@ class IndexCommandTest extends \AbstractCommandIntegrationTest
         ]);
 
         // Validate console output and if file exists
-        $this->assertContains('done', $output);
+        $this->assertStringContainsString('done', $output);
     }
 }

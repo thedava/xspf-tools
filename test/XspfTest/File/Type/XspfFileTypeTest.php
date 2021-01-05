@@ -61,7 +61,7 @@ class XspfFileTypeTest extends TestCase
             $structure = $fileType->decode($content);
 
             $tracks = $structure->getTracks();
-            $this->assertInternalType('array', $tracks);
+            $this->assertIsArray($tracks);
             $this->assertCount(1, $tracks);
 
             $track = $tracks[0];

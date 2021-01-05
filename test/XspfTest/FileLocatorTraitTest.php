@@ -12,7 +12,7 @@ class FileLocatorTraitTest extends TestCase
     /** @var FileLocatorTrait */
     protected $fileLocatorTrait;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->fileLocatorTrait = $this->getMockForTrait(FileLocatorTrait::class, [], '', true, true, true, null);
     }

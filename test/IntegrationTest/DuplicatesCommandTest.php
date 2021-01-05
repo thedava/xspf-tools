@@ -24,13 +24,13 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
         ]);
 
         // Validate console output and if file exists
-        $this->assertContains('Saved', $output);
-        $this->assertContains('files to', $output);
+        $this->assertStringContainsString('Saved', $output);
+        $this->assertStringContainsString('files to', $output);
         $this->assertFileExists(self::TEST_FILE_DUPLICATES, 'Newly created duplicates file not found!');
 
         // Validate file content
         $content = file_get_contents(self::TEST_FILE_DUPLICATES);
-        $this->assertContains('.gitkeep', $content);
+        $this->assertStringContainsString('.gitkeep', $content);
     }
 
     /**
@@ -57,17 +57,17 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
         // Validate file content
         $this->assertFileExists(self::TEST_FILE_DUPLICATES, 'Newly created duplicates file not found!');
         $content = file_get_contents(self::TEST_FILE_DUPLICATES);
-        $this->assertContains('test_1_1.txt', $content);
-        $this->assertContains('test_1_2.txt', $content);
+        $this->assertStringContainsString('test_1_1.txt', $content);
+        $this->assertStringContainsString('test_1_2.txt', $content);
 
         // Remove one file and run command again. The file should still be in that list (append)
         $this->assertTrue(unlink('test/data/test_1_1.txt'));
         $this->runCommand('duplicates:list', $args);
         $this->assertFileExists(self::TEST_FILE_DUPLICATES, 'Newly created duplicates file not found!');
         $content = file_get_contents(self::TEST_FILE_DUPLICATES);
-        $this->assertContains('test_1_1.txt', $content);
-        $this->assertContains('test_1_2.txt', $content);
-        $this->assertContains('duplicates.txt', $content);
+        $this->assertStringContainsString('test_1_1.txt', $content);
+        $this->assertStringContainsString('test_1_2.txt', $content);
+        $this->assertStringContainsString('duplicates.txt', $content);
 
         // Create second file again
         file_put_contents('test/data/test_1_2.txt', 'equal');
@@ -88,9 +88,9 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
         ]);
 
         // Validate file content
-        $this->assertContains('test_1_1.txt', $output);
-        $this->assertContains('test_1_2.txt', $output);
-        $this->assertNotContains('duplicates.txt', $output);
+        $this->assertStringContainsString('test_1_1.txt', $output);
+        $this->assertStringContainsString('test_1_2.txt', $output);
+        $this->assertStringNotContainsString('duplicates.txt', $output);
     }
 
     public function testDuplicatesShowMultiple()
@@ -119,7 +119,7 @@ class DuplicatesCommandTest extends AbstractCommandIntegrationTest
             '--no-progress' => true,
         ]);
         foreach (array_values($files) as $file) {
-            $this->assertContains(basename($file), $output); // File exists only once but it occurs multiple times
+            $this->assertStringContainsString(basename($file), $output); // File exists only once but it occurs multiple times
         }
     }
 }
