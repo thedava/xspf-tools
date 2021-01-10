@@ -29,10 +29,10 @@ fi
 if [[ "${PHP_VERSION}" == "${TARGET_VERSION}" ]]; then
     if [[ "${ACTION}" == "before" ]]; then
         composer check-platform-reqs
-        composer install --dev
+        composer install
     elif [[ "${ACTION}" == "run" ]]; then
         # Run PHPUnit
-        php vendor/bin/phpunit
+        ./vendor/bin/phpunit --disallow-test-output -v
 
     elif [[ "${ACTION}" == "after" ]]; then
         # Build a phar
