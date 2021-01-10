@@ -6,18 +6,14 @@ notifications:
 php:
   - 7.4
   - 8.0
-#  - hhvm
-#  - nightly
+  - nightly
 
 before_script:
-  - composer install --dev
-  - composer phplint
-  - composer build-dev
+  - chmod +x bin/*
+  - bin/travis.sh before
 
-#script:
-#  - php vendor/bin/phpunit --coverage-clover ./test/logs/clover.xml
+script:
+  - bin/travis.sh run
 
 after_script:
-  - php build/xspf.phar version -v
-  - php build/xspf.phar self-update
-  - php build/xspf.phar self-update -f
+  - bin/travis.sh after
