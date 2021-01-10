@@ -35,10 +35,10 @@
         "console": "@php bin/build-console.php",
         "dev": [
             "@composer self-update",
-            "@php composer.phar install --ignore-platform-reqs"
+            "@composer install --ignore-platform-reqs"
         ],
         "build": [
-            "@php composer.phar install --no-dev -o --ignore-platform-reqs",
+            "@composer install --no-dev -o --ignore-platform-reqs",
             "@build-dev"
         ],
         "build-dev": [
@@ -47,7 +47,7 @@
             "@php build/xspf.phar version -v"
         ],
         "phpcs": [
-            "@php composer.phar install --ignore-platform-reqs -q",
+            "@composer install --ignore-platform-reqs -q",
             "bash bin/php-cs-fixer.sh",
             "@php php-cs-fixer.phar fix --config=php_cs.php"
         ]
