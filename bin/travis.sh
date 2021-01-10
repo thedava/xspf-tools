@@ -7,7 +7,7 @@ ACTION=$1
 if [[ "${ACTION}" == "" ]]; then
     echo "No action given!"
     exit 1
-elif [[ "${ACTION}" == "before" ]] || [[ "${ACTION}" == "run" ]] || [[ "${ACTION}" == "after" ]]; then
+elif [[ "${ACTION}" != "before" ]] && [[ "${ACTION}" != "run" ]] && [[ "${ACTION}" != "after" ]]; then
     echo "Action '${ACTION}' is not supported. Use before, run or after"
     exit 1
 fi
