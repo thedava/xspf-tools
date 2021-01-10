@@ -11,11 +11,15 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Xspf\Utils\BytesFormatter;
+use Xspf\Utils\LocalFile;
 
 class ShowDuplicatesCommand extends AbstractDuplicatesCommand
 {
     /** @var bool */
     private $skipInteraction = false;
+
+    /** @var array|string[] */
+    private $deletedFilesList = [];
 
     protected function configure()
     {
@@ -33,9 +37,16 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
      *
      * @return string
      */
-    protected function getFileName(string $file): string
+    private function getFileName(string $file): string
     {
-        return sprintf('%s (%s)', $file, (file_exists($file)) ? BytesFormatter::formatBytes(filesize($file)) : '?');
+        $localFile = new LocalFile($file);
+
+        return sprintf(
+            '%s (%s, %s)',
+            $file,
+            ($localFile->exists()) ? BytesFormatter::formatBytes($localFile->size()) : '? MB',
+            ($localFile->exists()) ? date('Y-m-d', $localFile->mtime()) : '?'
+        );
     }
 
     /**
@@ -53,18 +64,41 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             return;
         }
 
+        $deletedFileCount = 0;
+        foreach ($files as $file) {
+            if (in_array($file, $this->deletedFilesList)) {
+                $deletedFileCount++;
+            }
+        }
+        if ((count($files) - $deletedFileCount) <= 1) {
+            foreach ($files as $file) {
+                if (in_array($file, $this->deletedFilesList)) {
+                    $output->writeln(sprintf('  - [<green>ALREADY DELETED</green>] %s', $this->getFileName($file)));
+                } else {
+                    $output->writeln(sprintf('  - %s', $this->getFileName($file)));
+                }
+            }
+
+            return;
+        }
+
         $choices = [
             's' => '<yellow>Keep all and Skip all following (no delete)</yellow>',
             'k' => '<cyan>Keep all (no delete)</cyan>',
         ];
         $i = 0;
+        $originalFileList = [];
         foreach ($files as $file) {
-            $choices[$i++] = $this->getFileName($file);
+            if (!in_array($file, $this->deletedFilesList)) {
+                $index = ++$i;
+                $originalFileList[$index] = $file;
+                $choices[$index] = $this->getFileName($file);
+            }
         }
         $choiceQuestion = new ChoiceQuestion('Which file do you want to keep?', $choices);
 
         $index = $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
-        if (in_array($index, ['s', 'k']) || !array_key_exists($index, $choices)) {
+        if (in_array($index, ['s', 'k']) || !array_key_exists($index, $choices) || intval($index) <= 0) {
             if ($index === 's') {
                 $this->skipInteraction = true;
                 $output->writeln('  - [<green>KEEP EVERYTHING</green> AND <cyan>SKIP FOLLOWING</cyan>]');
@@ -74,15 +108,20 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
 
             return;
         }
+        $index = (int)$index;
 
-        foreach ($files as $file) {
-            if ($choices[$index] === $file) {
+        foreach ($originalFileList as $i => $file) {
+            if ($index === $i) {
                 $output->writeln(sprintf('  <green>- [KEEP] %s</green>', $file));
                 continue;
             }
 
-            $output->writeln(sprintf('  <red>- [DELETE] %s</red>', $file));
-            unlink($file);
+            if (in_array($file, $this->deletedFilesList) || (new LocalFile($file))->delete()) {
+                $this->deletedFilesList[] = $file;
+                $output->writeln(sprintf('  <red>- [DELETE] %s</red>', $file));
+            } else {
+                $output->writeln(sprintf('  <yellow>- [DELETE FAILED] %s</yellow>', $file));
+            }
         }
     }
 

@@ -19,7 +19,7 @@
         "symfony/console": "^3",
         "davahome/self-update": "^1.1",
         "davahome/console": "@stable",
-        "symfony/yaml": "~3.0",
+        "symfony/yaml": "^3",
         "ext-zlib": "*",
         "ext-json": "*"
     },
@@ -38,7 +38,7 @@
             "@composer install --ignore-platform-reqs"
         ],
         "build": [
-            "@composer install --no-dev -o --ignore-platform-reqs",
+            "@composer install --no-dev -o --ignore-platform-reqs --no-progress --prefer-dist --no-scripts",
             "@build-dev"
         ],
         "build-dev": [
