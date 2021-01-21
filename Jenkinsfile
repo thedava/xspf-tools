@@ -43,14 +43,6 @@ pipeline {
                         step([$class: 'CloverPublisher', cloverReportDir: './test/data', cloverReportFileName: 'clover.xml'])
                     }
                 }
-                stage('Symfony CodeChecker') {
-                    steps {
-                      sh label: 'Download and execute symfony security checker', script:  '''
-                        curl -sS https://get.sensiolabs.org/security-checker.phar -o security-checker.phar
-                        php security-checker.phar security:check composer.lock --no-ansi --format simple
-                      '''
-                    }
-                }
                 stage('Test Phar') {
                     steps {
                         // Build phar
