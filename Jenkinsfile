@@ -9,7 +9,7 @@ pipeline {
             steps {
                 sh 'bash bin/composer.sh'
                 sh 'php composer.phar install --prefer-dist --no-progress --no-ansi'
-                sh 'php composer.phar console'
+                sh 'make build-phar'
             }
         }
         stage('Validate') {
@@ -46,7 +46,7 @@ pipeline {
                 stage('Test Phar') {
                     steps {
                         // Build phar
-                        sh 'php composer.phar build-dev'
+                        sh 'make build-phar'
                         sh 'php build/xspf.phar version -v'
 
                         // Test self-update

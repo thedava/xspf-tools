@@ -36,7 +36,7 @@ if [[ "${PHP_VERSION}" == "${TARGET_VERSION}" ]]; then
 
     elif [[ "${ACTION}" == "after" ]]; then
         # Build a phar
-        composer build
+        make build-phar
 
         # Validate the phar
         php build/xspf.phar version -v
@@ -46,6 +46,6 @@ if [[ "${PHP_VERSION}" == "${TARGET_VERSION}" ]]; then
 
 # Download and run phar on all non-target versions
 else
-    composer build
+    make build-phar
     php build/xspf.phar version -v
 fi

@@ -29,27 +29,5 @@
     },
     "bin": [
         "./bin/xspf.php"
-    ],
-    "scripts": {
-        "phplint": "bin/phplint.sh",
-        "console": "@php bin/build-console.php",
-        "dev": [
-            "@composer self-update",
-            "@composer install --ignore-platform-reqs"
-        ],
-        "build": [
-            "@composer install --no-dev -o --ignore-platform-reqs --no-progress --prefer-dist --no-scripts",
-            "@build-dev"
-        ],
-        "build-dev": [
-            "@console",
-            "php -d phar.readonly=0 bin/build-phar.php",
-            "@php build/xspf.phar version -v"
-        ],
-        "phpcs": [
-            "@composer install --ignore-platform-reqs -q",
-            "bash bin/php-cs-fixer.sh",
-            "@php php-cs-fixer.phar fix --config=php_cs.php"
-        ]
-    }
+    ]
 }
