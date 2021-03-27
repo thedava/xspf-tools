@@ -1,0 +1,14 @@
+{
+    "title": "A simple (interactive) deduplication done with the xspf-tools",
+    "short": "Use the xspf-tools as tool for finding duplicate files and handle them interactively",
+    "usage": [
+        "For Windows: Execute the duplicates.bat",
+        "For Linux/Unix: Execute the duplicates.sh"
+    ],
+    "description": [
+        "This bundle uses the batch feature to execute multiple chained commands (`batch`)",
+        "A new index file named \"Index.xd\" will be created from the current directory (`index:create`)",
+        "A duplicates listing file (\"duplicates.txt\") will be created from that index file (`duplicates:list`)",
+        "The interactive duplicate solving utility will be started (`duplicates:show`)"
+    ]
+}
