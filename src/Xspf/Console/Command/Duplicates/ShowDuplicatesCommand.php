@@ -95,7 +95,13 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
                 $choices[$index] = $this->getFileName($file);
             }
         }
-        $choiceQuestion = new ChoiceQuestion('Which file do you want to keep?', $choices);
+        $choiceQuestion = new ChoiceQuestion('Which file do you want to keep?', $choices, 'k');
+        $originalValidator = $choiceQuestion->getValidator();
+        $choiceQuestion->setValidator(function ($selected) use ($originalValidator, $choiceQuestion) {
+            return empty($selected)
+                ? $choiceQuestion->getDefault()
+                : $originalValidator($selected);
+        });
 
         $index = $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
         if (in_array($index, ['s', 'k']) || !array_key_exists($index, $choices) || intval($index) <= 0) {
