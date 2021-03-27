@@ -46,6 +46,7 @@ if [[ "${PHP_VERSION}" == "${TARGET_VERSION}" ]]; then
 
 # Download and run phar on all non-target versions
 else
+    composer install
     make build-phar
     php build/xspf.phar version -v
 fi
