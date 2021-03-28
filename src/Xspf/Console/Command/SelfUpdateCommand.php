@@ -16,24 +16,41 @@ class SelfUpdateCommand extends AbstractCommand
     {
         $this->setName('self-update')
             ->setDescription('Replace the current version of xspf with the latest from GitHub')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force update');
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force update')
+            ->addOption('beta', 'b', InputOption::VALUE_NONE, 'Include betas');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $force = $input->hasOption('force') && $input->getOption('force');
+        $force = $input->getOption('force');
+        $beta = $input->getOption('beta');
+
+        if ($beta) {
+            $output->writeln('<yellow>BETA Channel</yellow>');
+        }
+
+        $output->writeln('');
+        $currentVersion = Utils::getVersion();
+        $output->writeln('Current Version: ' . $currentVersion);
+        $output->writeln('');
 
         // Parse composer.json
         $composerJson = Utils::getComposerJson();
 
         [$owner, $repository] = explode('/', $composerJson['name']);
         $assetFileDownloader = new AssetFileDownloader($owner, $repository);
-        $releaseInformation = $assetFileDownloader->getReleaseInformation();
-        $date = new DateTime($releaseInformation['published_at']);
-        $output->writeln('Version: ' . $releaseInformation['tag_name']);
-        $output->writeln('Published: ' . $date->format('Y-m-d H:i:s'));
 
-        if (!$force && version_compare(Utils::getVersion(), $releaseInformation['tag_name'], '>=')) {
+        $releaseInformation = ($beta)
+            ? $assetFileDownloader->getMostRecentReleaseInformation()
+            : $assetFileDownloader->getReleaseInformation();
+
+        $date = new DateTime($releaseInformation['published_at']);
+        $output->writeln('Latest available:');
+        $output->writeln('Version: <cyan>' . $releaseInformation['tag_name'] . '</cyan>');
+        $output->writeln('Published: ' . $date->format('Y-m-d H:i:s'));
+        $output->writeln('Stability: ' . ($releaseInformation['prerelease'] ? '<yellow>BETA</yellow>' : '<green>stable</green>'));
+
+        if (!$force && version_compare($currentVersion, $releaseInformation['tag_name'], '>=')) {
             $output->writeln('You are already using the latest version');
 
             return 0;
