@@ -6,10 +6,14 @@ build-phar:
 	$(PHP) -d phar.readonly=0 bin/build-phar.php
 	$(PHP) build/xspf.phar version -v
 
+build-bundles:
+	$(PHP) bin/build-bundles.php
+
 
 release:
 	$(COMPOSER) install --no-dev -o --ignore-platform-reqs --no-progress --prefer-dist --no-scripts
-	$(MAKE) build-phar
+	$(MAKE) build-phar build-bundles
+	cp -f LICENSE build/
 
 
 lint:

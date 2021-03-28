@@ -24,7 +24,7 @@ class LocalFile
         $this->reset();
     }
 
-    private function reset(): void
+    public function reset(): void
     {
         $this->fileMetaData = [];
 

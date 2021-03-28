@@ -1,5 +1,8 @@
 <?php
 
+use Xspf\File\File;
+use Xspf\Track;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 chdir(__DIR__ . '/../src/');
@@ -10,9 +13,9 @@ call_user_func(function ($files) {
     sort($files, SORT_ASC);
     $tracks = [];
     foreach ($files as $file) {
-        $tracks[] = new \Xspf\Track(realpath($file));
+        $tracks[] = new Track(realpath($file));
     }
-    (new \Xspf\File\File(__DIR__ . '/../test/fixtures/asc.xspf'))
+    (new File(__DIR__ . '/../test/fixtures/asc.xspf'))
         ->setTracks($tracks)
         ->save(false);
 }, $files);
@@ -22,9 +25,9 @@ call_user_func(function ($files) {
     sort($files, SORT_DESC);
     $tracks = [];
     foreach ($files as $file) {
-        $tracks[] = new \Xspf\Track(realpath($file));
+        $tracks[] = new Track(realpath($file));
     }
-    (new \Xspf\File\File(__DIR__ . '/../test/fixtures/desc.xspf'))
+    (new File(__DIR__ . '/../test/fixtures/desc.xspf'))
         ->setTracks($tracks)
         ->save(false);
 }, $files);
@@ -38,9 +41,9 @@ call_user_func(function ($files) {
         if ($i++ % 2 == 0) {
             $location .= '.missing';
         }
-        $tracks[] = new \Xspf\Track($location);
+        $tracks[] = new Track($location);
     }
-    (new \Xspf\File\File(__DIR__ . '/../test/fixtures/missing.xspf'))
+    (new File(__DIR__ . '/../test/fixtures/missing.xspf'))
         ->setTracks($tracks)
         ->save(false);
 }, $files);

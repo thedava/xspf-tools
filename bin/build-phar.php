@@ -1,21 +1,24 @@
 <?php
 
+use Xspf\Utils;
+use Xspf\Utils\LocalFile;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$pharFile = __DIR__ . '/../build/xspf.phar';
-$version = Xspf\Utils::getVersion();
+$pharFile = new LocalFile(__DIR__ . '/../build/xspf.phar');
+$version = Utils::getVersion();
 
 // Dirty checks
 if (is_dir(__DIR__ . '/../vendor/phpunit')) {
     echo 'Attention: dev-dependencies detected!', PHP_EOL;
 }
-if (Xspf\Utils::PERFORMANCE_TRACKING_ENABLED) {
+if (Utils::PERFORMANCE_TRACKING_ENABLED) {
     echo 'Attention: Performance tracking is enabled!', PHP_EOL;
 }
 
-if (file_exists($pharFile)) {
-    echo 'Old file size: ', round(filesize($pharFile) / 1024, 2), ' kB', PHP_EOL;
-    unlink($pharFile);
+if ($pharFile->exists()) {
+    echo 'Old file size: ', $pharFile->sizeReadable(), PHP_EOL;
+    $pharFile->delete();
 }
 
 $baseDir = dirname(__DIR__);
@@ -50,10 +53,11 @@ $iterator = new RecursiveIteratorIterator(
 
 );
 
-$phar = new Phar($pharFile);
+$phar = new Phar($pharFile->path());
 $phar->setMetadata(['version' => $version]);
 $phar->buildFromIterator($iterator, $baseDir);
 $phar->setStub($phar->createDefaultStub('console.php'));
-$phar->compressFiles(Phar::GZ);
+$phar->compressFiles(Phar::BZ2);
+$pharFile->reset();
 
-echo 'File size: ', round(filesize($pharFile) / 1024, 2), ' kB', PHP_EOL;
+echo 'File size: ', $pharFile->sizeReadable(), PHP_EOL;
