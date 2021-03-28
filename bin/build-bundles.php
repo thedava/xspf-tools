@@ -1,14 +1,15 @@
 <?php
 
 use Xspf\Utils;
+use Xspf\Utils\LocalFile;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Validate that a xspf.phar exists and can be bundled
 $buildBasePath = __DIR__ . '/../build';
-$binary = $buildBasePath . '/xspf.phar';
-if (!file_exists($binary)) {
-    echo 'Cannot create bundles: binary ("', basename($binary), '") is missing!', PHP_EOL;
+$binary = new LocalFile($buildBasePath . '/xspf.phar');
+if (!$binary->exists()) {
+    echo 'Cannot create bundles: binary ("', $binary->basename(), '") is missing!', PHP_EOL;
 
     return 1;
 }
@@ -18,6 +19,7 @@ $bundleBasePath = __DIR__ . '/../bundles';
 $templateBundle = '_template';
 $bundleConfig = 'bundle.json';
 $comment = 'Bundled with xspf-tools version ' . Utils::getVersion() . ' at ' . (new DateTime())->format('c');
+$readmeFile = new LocalFile($bundleBasePath . '/' . $templateBundle . '/README.md');
 foreach (glob($bundleBasePath . '/*') as $bundleFolder) {
     // Skip template bundle and files
     if (!is_dir($bundleFolder) || ($bundleName = basename($bundleFolder)) === $templateBundle) {
@@ -28,7 +30,7 @@ foreach (glob($bundleBasePath . '/*') as $bundleFolder) {
     echo 'Creating bundle "', $bundleName, '"...', PHP_EOL;
     $zip = new ZipArchive();
     $zip->open($buildBasePath . '/' . $bundleName . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
-    $zip->addFile($binary, basename($binary));
+    $zip->addFile($binary->path(), $binary->basename());
     foreach (glob($bundleFolder . '/*') as $file) {
         if (($fileName = basename($file)) === $bundleConfig) {
             continue;
@@ -38,8 +40,8 @@ foreach (glob($bundleBasePath . '/*') as $bundleFolder) {
     }
 
     // Enrich the README.md of the template bundle with everything from the bundle.json
-    $readme = file_get_contents($bundleBasePath . '/' . $templateBundle . '/README.md');
-    $config = json_decode(file_get_contents($bundleFolder . '/' . $bundleConfig), true);
+    $readme = $readmeFile->read();
+    $config = json_decode((new LocalFile($bundleFolder . '/' . $bundleConfig))->read(), true);
     foreach ($config as $key => $value) {
         if (is_array($value)) {
             $list = '';

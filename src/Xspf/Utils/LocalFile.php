@@ -1,25 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Xspf\Utils;
+
+use Closure;
+use Exception;
+use Xspf\File\File;
 
 class LocalFile
 {
-    /** @var string */
-    protected $originalPath;
+    private string $originalPath;
 
-    /** @var string */
-    protected $confirmedPath;
+    private ?string $confirmedPath = null;
 
-    /** @var array */
-    protected $fileMetaData;
+    private ?string $absolutePath = null;
 
-    public function __construct($file)
+    private array $fileMetaData = [];
+
+    public function __construct(string $file)
     {
         $this->originalPath = $file;
         $this->reset();
     }
 
-    private function reset()
+    private function reset(): void
     {
         $this->fileMetaData = [];
 
@@ -27,53 +32,89 @@ class LocalFile
         $this->confirmedPath = null;
         if (file_exists($this->originalPath)) {
             $this->confirmedPath = $this->originalPath;
-        } elseif (($path = realpath($this->originalPath)) !== false && file_exists($path)) {
-            $this->confirmedPath = $path;
+        }
+
+        // Determine absolute path
+        if (
+            $this->absolutePath === null
+            && $this->confirmedPath !== null
+            && ($path = realpath($this->confirmedPath)) !== false
+            && file_exists($path)
+        ) {
+            $this->absolutePath = $path;
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function exists()
+    private function fromMetadata(string $key, Closure $callback)
     {
-        if (!array_key_exists('exists', $this->fileMetaData)) {
-            $this->fileMetaData['exists'] = ($this->confirmedPath !== null && file_exists($this->confirmedPath));
-        }
-
-        return $this->fileMetaData['exists'];
+        return (!array_key_exists($key, $this->fileMetaData))
+            ? $this->fileMetaData[$key] = $callback()
+            : $this->fileMetaData[$key];
     }
 
-    /**
-     * @return int
-     */
-    public function size()
+    public function toXspfFile(bool $disableSanitizing = false): File
     {
-        if (!array_key_exists('size', $this->fileMetaData)) {
-            $this->fileMetaData['size'] = ($this->exists()) ? filesize($this->confirmedPath) : false;
+        return new File($this->originalPath, $disableSanitizing);
+    }
 
-            if ($this->fileMetaData['size'] === false) {
-                $this->fileMetaData['size'] = -1;
+    public function validate(): void
+    {
+        if (!$this->exists()) {
+            throw new Exception('File "' . $this->basename() . '" could not be found!');
+        } elseif (!is_writable($this->path())) {
+            throw new Exception('File "' . $this->basename() . '" is not writable!');
+        } elseif (!is_readable($this->path())) {
+            throw new Exception('File "' . $this->basename() . '" is not readable!');
+        }
+    }
+
+    public function exists(): bool
+    {
+        return $this->fromMetadata('exists', function () {
+            return $this->confirmedPath !== null && file_exists($this->confirmedPath);
+        });
+    }
+
+    public function size(): ?int
+    {
+        return $this->fromMetadata('size', function () {
+            $size = ($this->exists()) ? filesize($this->confirmedPath) : null;
+            if ($size === false) {
+                $size = null;
             }
-        }
 
-        return $this->fileMetaData['size'];
+            return $size;
+        });
     }
 
-    public function mtime()
+    public function sizeReadable(): string
     {
-        if (!array_key_exists('mtime', $this->fileMetaData)) {
-            $this->fileMetaData['mtime'] = ($this->exists()) ? filemtime($this->confirmedPath) : null;
-
-            if ($this->fileMetaData['mtime'] === false) {
-                $this->fileMetaData['mtime'] = null;
-            }
-        }
-
-        return $this->fileMetaData['mtime'];
+        return (($size = $this->size()) !== null)
+            ? BytesFormatter::formatBytes($size)
+            : '? MB';
     }
 
-    public function delete()
+    public function mtime(): ?int
+    {
+        return $this->fromMetadata('mtime', function () {
+            $mtime = ($this->exists()) ? filemtime($this->confirmedPath) : null;
+
+            if ($mtime === false) {
+                $mtime = null;
+            }
+
+            return $mtime;
+        });
+    }
+
+    public function mtimeReadable(): string
+    {
+        return (($mtime = $this->mtime()) !== null)
+            ? date('Y-m-d', $mtime)
+            : '?';
+    }
+
+    public function delete(): bool
     {
         $result = false;
         if ($this->exists()) {
@@ -90,7 +131,7 @@ class LocalFile
      *
      * @return bool
      */
-    public function put($content)
+    public function put($content): bool
     {
         if (file_put_contents($this->originalPath, $content) !== false) {
             $this->reset();
@@ -104,12 +145,60 @@ class LocalFile
     /**
      * @return string|null
      */
-    public function read()
+    public function read(): ?string
     {
         if ($this->exists() && ($result = file_get_contents($this->confirmedPath)) !== false) {
             return $result;
         }
 
         return null;
+    }
+
+    public function basename(): string
+    {
+        return $this->fromMetadata('basename', function () {
+            return basename($this->path());
+        });
+    }
+
+    public function touch(): bool
+    {
+        if (touch($this->path())) {
+            $this->reset();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function force(): bool
+    {
+        if ($this->absolutePath === null) {
+            $this->touch();
+            $this->delete();
+        }
+
+        return $this->absolutePath !== null;
+    }
+
+    public function __toString(): string
+    {
+        return $this->path();
+    }
+
+    public function path(): string
+    {
+        return $this->fromMetadata('path', function () {
+            if ($this->absolutePath !== null) {
+                return $this->absolutePath;
+            }
+
+            if ($this->confirmedPath !== null) {
+                return $this->confirmedPath;
+            }
+
+            return $this->originalPath;
+        });
     }
 }

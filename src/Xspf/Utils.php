@@ -81,6 +81,7 @@ class Utils
      * @param array $path
      *
      * @return string
+     * @deprecated
      */
     public static function buildPath(array $path)
     {
@@ -90,6 +91,7 @@ class Utils
     }
 
     /**
+     * @deprecated
      * Tries to determine the correct path for the given file
      *
      * @param string $fileName

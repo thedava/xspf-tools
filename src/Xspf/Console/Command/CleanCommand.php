@@ -2,9 +2,9 @@
 
 namespace Xspf\Console\Command;
 
+use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Xspf\File\File;
 use Xspf\Utils;
 
 class CleanCommand extends AbstractCommand
@@ -21,18 +21,18 @@ class CleanCommand extends AbstractCommand
      *
      * @return int
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $path = Utils::determinePath('./');
-        foreach (glob($path . DIRECTORY_SEPARATOR . '*.bak') as $file) {
+        foreach (glob('*.bak') as $file) {
+            $localFile = new Utils\LocalFile($file);
             try {
-                (new File($file))->load();
-                unlink($file);
-                echo 'Removed "', basename($file), PHP_EOL;
-            } catch (\Exception $error) {
-                echo 'Skipped file "', basename($file), '"', PHP_EOL;
+                $localFile->toXspfFile()->load();
+                $localFile->delete();
+                echo 'Removed "', $localFile->basename(), PHP_EOL;
+            } catch (Exception $error) {
+                echo 'Skipped file "', $localFile->basename(), '"', PHP_EOL;
             }
         }
 

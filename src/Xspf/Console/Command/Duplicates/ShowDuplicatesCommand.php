@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Xspf\Utils\BytesFormatter;
 use Xspf\Utils\LocalFile;
 
 class ShowDuplicatesCommand extends AbstractDuplicatesCommand
@@ -44,8 +43,8 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         return sprintf(
             '%s (%s, %s)',
             $file,
-            ($localFile->exists()) ? BytesFormatter::formatBytes($localFile->size()) : '? MB',
-            ($localFile->exists()) ? date('Y-m-d', $localFile->mtime()) : '?'
+            $localFile->sizeReadable(),
+            $localFile->mtimeReadable()
         );
     }
 
