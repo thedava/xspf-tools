@@ -41,19 +41,20 @@
         },
         {
             "name": "davahome/self-update",
-            "version": "1.1.1",
+            "version": "1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DavaHome/self-update.git",
-                "reference": "13ce3a25e9a725a683d3cca4f9f51baf541e7600"
+                "reference": "eea4fcc04b247586b74186069bdc3ff963f5cb2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DavaHome/self-update/zipball/13ce3a25e9a725a683d3cca4f9f51baf541e7600",
-                "reference": "13ce3a25e9a725a683d3cca4f9f51baf541e7600",
+                "url": "https://api.github.com/repos/DavaHome/self-update/zipball/eea4fcc04b247586b74186069bdc3ff963f5cb2a",
+                "reference": "eea4fcc04b247586b74186069bdc3ff963f5cb2a",
                 "shasum": ""
             },
             "require": {
+                "ext-json": "*",
                 "php": ">=5.4"
             },
             "type": "library",
@@ -66,11 +67,12 @@
             "license": [
                 "GPL-3.0-or-later"
             ],
+            "description": "Simple self update library using github api",
             "support": {
                 "issues": "https://github.com/DavaHome/self-update/issues",
-                "source": "https://github.com/DavaHome/self-update/tree/master"
+                "source": "https://github.com/DavaHome/self-update/tree/1.2"
             },
-            "time": "2018-03-30T22:30:18+00:00"
+            "time": "2021-03-28T17:39:38+00:00"
         },
         {
             "name": "psr/log",
