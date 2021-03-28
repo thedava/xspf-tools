@@ -76,12 +76,11 @@ pipeline {
 
                 stage('Self-Update Phar') {
                     steps {
+                        // Create copy (so other tests won't be affected)
+                        sh 'mkdir -p build/self-update/'
                         sh 'cp -f build/xspf.phar build/self-update/'
 
                         dir('build/self-update/') {
-                            // Create copy (so other tests won't be affected)
-                            sh 'cp -f ./../xspf.phar ./'
-
                             // Test self-update
                             sh 'php xspf.phar self-update'
                             sh 'php xspf.phar self-update -f'
@@ -91,12 +90,11 @@ pipeline {
 
                 stage('Self-Update Phar (BETA)') {
                     steps {
+                        // Create copy (so other tests won't be affected)
                         sh 'mkdir -p build/self-update-beta/'
+                        sh 'cp -f build/xspf.phar build/self-update-beta/'
 
                         dir('build/self-update-beta/') {
-                            // Create copy (so other tests won't be affected)
-                            sh 'cp -f ./../xspf.phar ./'
-
                             // Test self-update
                             sh 'php beta/xspf.phar self-update -b'
                             sh 'php beta/xspf.phar self-update -b -f'
