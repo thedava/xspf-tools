@@ -96,8 +96,8 @@ pipeline {
 
                         dir('build/self-update-beta/') {
                             // Test self-update
-                            sh 'php beta/xspf.phar self-update -b'
-                            sh 'php beta/xspf.phar self-update -b -f'
+                            sh 'php xspf.phar self-update -b'
+                            sh 'php xspf.phar self-update -b -f'
                         }
                     }
                 }
