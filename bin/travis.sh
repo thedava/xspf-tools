@@ -42,6 +42,9 @@ if [[ "${PHP_VERSION}" == "${TARGET_VERSION}" ]]; then
         php build/xspf.phar version -v
         php build/xspf.phar self-update
         php build/xspf.phar self-update -f
+
+        # Build bundles
+        make build-bundles
     fi
 
 # Download and run phar on all non-target versions
@@ -49,4 +52,5 @@ else
     composer install
     make build-phar
     php build/xspf.phar version -v
+    make build-bundles
 fi
