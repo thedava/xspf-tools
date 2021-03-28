@@ -86,6 +86,18 @@ pipeline {
                     }
                 }
 
+                stage('Self-Update Phar (BETA)') {
+                    steps {
+                        // Create copy (so other tests won't be affected)
+                        sh 'mkdir -p build/self-update-beta/'
+                        sh 'cp -f build/xspf.phar build/self-update-beta/'
+
+                        // Test self-update
+                        sh 'php build/self-update-beta/xspf.phar self-update -b'
+                        sh 'php build/self-update-beta/xspf.phar self-update -b -f'
+                    }
+                }
+
                 stage('Create index') {
                     steps {
                         sh 'php build/xspf.phar index:create ./ -o build/index.xd'
