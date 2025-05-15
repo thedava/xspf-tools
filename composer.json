@@ -16,8 +16,8 @@
     },
     "require": {
         "php": ">=7.4",
-        "symfony/console": "^3",
-        "davahome/self-update": "^1.1",
+        "symfony/console": "^4",
+        "davahome/self-update": "@stable",
         "davahome/console": "@stable",
         "symfony/yaml": "^3",
         "ext-zlib": "*",

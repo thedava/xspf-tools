@@ -19,7 +19,7 @@ class ExtractIndexCommand extends AbstractCommand
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, '', '-');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $indexModel = IndexModelFactory::factory($input->getArgument('index-file'));
         $indexModel->load();
@@ -37,5 +37,7 @@ class ExtractIndexCommand extends AbstractCommand
         }
 
         file_put_contents($target, implode(PHP_EOL, $files));
+        
+        return 0;
     }
 }

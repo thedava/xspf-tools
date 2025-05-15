@@ -27,7 +27,7 @@ class ConvertIndexCommand extends CreateCommand
         WhiteAndBlacklistService::appendOptionsToCommand($this);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $whiteAndBlacklistService = WhiteAndBlacklistService::createFromCommandInput($input);
         $indexModel = IndexModelFactory::factory($input->getArgument('index-file'));
@@ -75,5 +75,7 @@ class ConvertIndexCommand extends CreateCommand
             $indexModel->delete();
             $output->writeln('Deleted index file');
         }
+        
+        return 0;
     }
 }

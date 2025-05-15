@@ -30,7 +30,7 @@ class CreateIndexPlaylistCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $app = $this->getApplication();
         $playlistFile = $input->getArgument('playlist-file');

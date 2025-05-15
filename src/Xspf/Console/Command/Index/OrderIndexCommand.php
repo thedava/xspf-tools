@@ -22,7 +22,7 @@ class OrderIndexCommand extends CreateCommand
             ->addOption('distinct', 't', InputOption::VALUE_NONE, 'Remove duplicates from index file');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $indexModel = IndexModelFactory::factory($input->getArgument('index-file'));
         $indexModel->load();
@@ -50,5 +50,7 @@ class OrderIndexCommand extends CreateCommand
         $orderType = AbstractOrderType::factory($input->getArgument('order-type'));
         $orderType->orderIndex($indexModel);
         $indexModel->save();
+        
+        return 0;
     }
 }

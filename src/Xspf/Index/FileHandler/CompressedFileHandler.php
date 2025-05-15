@@ -9,11 +9,11 @@ class CompressedFileHandler extends AbstractYamlFileHandler
     /**
      * @return bool
      */
-    public function save()
+    public function save(bool $absolutePaths = false): bool
     {
         Utils::trackPerformance('Index', 'Saving compressed...');
         $handle = gzopen($this->indexModel->getIndexFile(), 'w9');
-        gzwrite($handle, $this->encode());
+        gzwrite($handle, $this->encode($absolutePaths));
         gzclose($handle);
         Utils::trackPerformance('Index', 'Saving finished');
 

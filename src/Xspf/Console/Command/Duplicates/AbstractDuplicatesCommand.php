@@ -68,7 +68,7 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
                 foreach ($values as $fileOrFolder) {
                     foreach ($this->getFiles($fileOrFolder, $output) as $indexFile) {
                         $indexModel = IndexModelFactory::factory($indexFile);
-                        $indexModel->load(false, true);
+                        $indexModel->load(false, false);
 
                         foreach ($indexModel->getFiles() as $file) {
                             $files[] = $file;
@@ -178,6 +178,11 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
     {
         $checksums = $checksums ?? new ArrayObject();
         foreach ($this->getFiles($file, $output) as $file) {
+            if (!file_exists($file)) {
+                $output->writeln(sprintf('<red>File "%s" does not exist. Skipping.</red>', $file), OutputInterface::VERBOSITY_DEBUG);
+                continue;
+            }
+
             foreach (file($file) as $line) {
                 $result = explode(': ', $line);
 

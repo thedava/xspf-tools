@@ -9,9 +9,9 @@ abstract class AbstractYamlFileHandler extends AbstractFileHandler
     /**
      * @return string
      */
-    public function encode()
+    public function encode(bool $absolutePaths = false): string
     {
-        return Yaml::dump($this->getData());
+        return Yaml::dump($this->getData($absolutePaths));
     }
 
     /**

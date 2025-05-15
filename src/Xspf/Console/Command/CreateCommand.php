@@ -26,7 +26,7 @@ class CreateCommand extends AbstractCommand
         WhiteAndBlacklistService::appendOptionsToCommand($this);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Creating ' . $input->getArgument('playlist-file'), $output::VERBOSITY_VERBOSE);
         $whiteAndBlacklistService = WhiteAndBlacklistService::createFromCommandInput($input);
@@ -48,6 +48,8 @@ class CreateCommand extends AbstractCommand
         }
 
         $this->createPlaylist($input, $output, $tracks, $input->getOption('order'));
+        
+        return 0;
     }
 
     /**

@@ -28,15 +28,15 @@ class CreateIndexCommand extends AbstractCommand
                 'stores all paths relative to provide cross-system-support)',
             ]))
             ->addArgument('file-or-folder', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'Files and folders that should be added')
-            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.' . IndexModel::EXT_COMPRESSED);
-//            ->addOption('append', 'a', InputOption::VALUE_NONE, 'Append to index instead of overriding it')
+            ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'The path of the file', 'index.' . IndexModel::EXT_COMPRESSED)
+            ->addOption('absolute', 'a', InputOption::VALUE_NONE, 'Keep absolute paths');
         WhiteAndBlacklistService::appendOptionsToCommand($this);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Creating index. This may take a while...');
         $whiteAndBlacklistService = WhiteAndBlacklistService::createFromCommandInput($input);
@@ -55,9 +55,11 @@ class CreateIndexCommand extends AbstractCommand
         $output->writeln('Added ' . $indexModel->count() . ' files to index');
         $output->writeln('');
 
-        $indexModel->save();
+        $indexModel->save($input->getOption('absolute'));
         $output->writeln('Index file successfully created');
         $output->writeln('Path: ' . realpath($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
         $output->writeln('File: ' . basename($indexModel->getIndexFile()), OutputInterface::VERBOSITY_VERBOSE);
+
+        return 0;
     }
 }

@@ -21,7 +21,7 @@ class UpdateCommand extends AbstractCommand
             ->addArgument('playlist-file', InputArgument::REQUIRED, 'The playlist file');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $file = new File($input->getArgument('playlist-file'));
         $file->load();
@@ -41,5 +41,7 @@ class UpdateCommand extends AbstractCommand
 
         $progress->finish();
         $file->save();
+        
+        return 0;
     }
 }

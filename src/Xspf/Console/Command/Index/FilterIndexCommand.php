@@ -24,7 +24,7 @@ class FilterIndexCommand extends AbstractCommand
         WhiteAndBlacklistService::appendOptionsToCommand($this);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $source = $input->getArgument('index-file');
         $target = $input->getArgument('target-file');
@@ -74,5 +74,7 @@ class FilterIndexCommand extends AbstractCommand
         } else {
             $output->writeln(sprintf('Created new index with %d file(s) (initially was %d)', $targetIndex->count(), $indexModel->count()));
         }
+
+        return 0;
     }
 }

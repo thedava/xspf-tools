@@ -23,7 +23,7 @@ class MergeCommand extends AbstractCommand
             ->addArgument('source', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'The source files', []);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $tracks = [];
         foreach ($input->getArgument('source') as $source) {
@@ -50,5 +50,7 @@ class MergeCommand extends AbstractCommand
         }
 
         (new File($target))->setTracks($tracks)->save(false);
+        
+        return 0;
     }
 }

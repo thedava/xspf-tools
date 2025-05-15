@@ -25,16 +25,22 @@ abstract class AbstractFileHandler implements FileHandlerInterface
      *
      * @throws \Exception
      */
-    final protected function getData()
+    final protected function getData(bool $absolutePaths = false)
     {
         $cwd = realpath(dirname(Utils::determinePath($this->indexModel->getIndexFile())));
         $length = strlen($cwd);
 
         $data = new \ArrayObject();
         foreach ($this->indexModel->getData() as $file) {
-            $file = Utils::determinePath($file);
-            if (strpos($file, $cwd) === 0) {
-                $file = mb_substr($file, $length + 1);
+            if ($absolutePaths) {
+                if (($rp = realpath($file)) !== false) {
+                    $file = $rp;
+                }
+            } else {
+                $file = Utils::determinePath($file);
+                if (strpos($file, $cwd) === 0) {
+                    $file = mb_substr($file, $length + 1);
+                }
             }
 
             $data[] = $file;

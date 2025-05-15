@@ -7,9 +7,9 @@ class PlainFileHandler extends AbstractYamlFileHandler
     /**
      * @return bool
      */
-    public function save()
+    public function save(bool $absolutePaths = false): bool
     {
-        return file_put_contents($this->indexModel->getIndexFile(), $this->encode()) !== false;
+        return file_put_contents($this->indexModel->getIndexFile(), $this->encode($absolutePaths)) !== false;
     }
 
     /**

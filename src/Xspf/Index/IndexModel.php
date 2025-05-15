@@ -115,10 +115,10 @@ class IndexModel implements IndexModelInterface
     /**
      * @return $this
      */
-    public function save()
+    public function save(bool $absolutePaths = false)
     {
         $this->sort();
-        $this->fileHandler->save();
+        $this->fileHandler->save($absolutePaths);
 
         return $this;
     }
