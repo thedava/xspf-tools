@@ -1,0 +1,172 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, zip
+          coverage: xdebug
+          
+      - name: Install Composer
+        run: bash bin/composer.sh
+        
+      - name: Install dependencies
+        run: php composer.phar install --prefer-dist --no-progress --no-ansi
+        
+      - name: Build Phar
+        run: make build-phar
+        
+  test-console:
+    name: Test Console
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          
+      - name: Install Composer
+        run: bash bin/composer.sh
+        
+      - name: Install dependencies
+        run: php composer.phar install --prefer-dist --no-progress --no-ansi
+        
+      - name: Test Console
+        run: php console.php version -v
+        
+  php-lint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          
+      - name: PHP Lint
+        run: find . -name "*.php" -not -path "./vendor/*" -print0 | xargs -l1 -0 php -l
+        
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+        
+      - name: Install jsonlint
+        run: npm install -g jsonlint
+        
+      - name: Install yamllint
+        run: pip install yamllint
+        
+      - name: Lint Shell Scripts
+        run: find . -name "*.sh" -not -path "*vendor*" -print0 | xargs -l1 -0 shellcheck -s bash
+        
+      - name: Lint JSON Files
+        run: find . -name "*.json" -not -path "*vendor*" -print0 | xargs -l1 -0 jsonlint
+        
+      - name: Lint YAML Files
+        run: find . -name "*.yml" -not -path "*vendor*" -print0 | xargs -l1 -0 yamllint
+        
+  phpunit:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, xml, zip
+          coverage: xdebug
+          
+      - name: Install Composer
+        run: bash bin/composer.sh
+        
+      - name: Install dependencies
+        run: php composer.phar install --prefer-dist --no-progress --no-ansi
+        
+      - name: Run PHPUnit
+        run: php -d xdebug.mode=coverage vendor/bin/phpunit --disallow-test-output --log-junit "./test/data/junit.xml" --coverage-clover "./test/data/clover.xml"
+        
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: ./test/data/junit.xml
+          
+      - name: Upload coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-results
+          path: ./test/data/clover.xml
+          
+  test-phar:
+    name: Test Phar
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          
+      - name: Install Composer
+        run: bash bin/composer.sh
+        
+      - name: Install dependencies
+        run: php composer.phar install --prefer-dist --no-progress --no-ansi
+        
+      - name: Build Phar
+        run: make build-phar
+        
+      - name: Test Phar Version
+        run: php build/xspf.phar version -v
+        
+      - name: Test Self-Update
+        run: |
+          php build/xspf.phar self-update
+          php build/xspf.phar self-update -f
+          
+      - name: Cleanup
+        run: rm -f build/xspf.phar
