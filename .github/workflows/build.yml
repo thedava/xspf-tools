@@ -125,18 +125,6 @@ jobs:
         
       - name: Run PHPUnit
         run: php -d xdebug.mode=coverage vendor/bin/phpunit --disallow-test-output --log-junit "./test/data/junit.xml" --coverage-clover "./test/data/clover.xml"
-        
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: ./test/data/junit.xml
-          
-      - name: Upload coverage results
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-results
-          path: ./test/data/clover.xml
           
   test-phar:
     name: Test Phar
