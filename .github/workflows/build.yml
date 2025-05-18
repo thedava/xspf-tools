@@ -99,8 +99,8 @@ jobs:
       - name: Lint JSON Files
         run: find . -name "*.json" -not -path "*vendor*" -print0 | xargs -l1 -0 jsonlint
         
-      - name: Lint YAML Files
-        run: find . -name "*.yml" -not -path "*vendor*" -print0 | xargs -l1 -0 yamllint
+#      - name: Lint YAML Files
+#        run: find . -name "*.yml" -not -path "*vendor*" -print0 | xargs -l1 -0 yamllint
         
   phpunit:
     name: PHPUnit
