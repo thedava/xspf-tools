@@ -17,6 +17,9 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
     /** @var bool */
     private $skipInteraction = false;
 
+    /** @var bool */
+    private $alwaysChooseFirst = false;
+
     /** @var array|string[] */
     private $deletedFilesList = [];
 
@@ -84,6 +87,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         $choices = [
             's' => '<yellow>Keep all and Skip all following (no delete)</yellow>',
             'k' => '<cyan>Keep all (no delete)</cyan>',
+            'f' => '<green>Always use first match for all following</green>',
         ];
         $i = 0;
         $originalFileList = [];
@@ -102,11 +106,16 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
                 : $originalValidator($selected);
         });
 
-        $index = $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
-        if (in_array($index, ['s', 'k']) || !array_key_exists($index, $choices) || intval($index) <= 0) {
+        $index = $this->alwaysChooseFirst
+            ? 1
+            : $this->getQuestionHelper()->ask($input, $output, $choiceQuestion);
+        if (in_array($index, ['s', 'f', 'k']) || !array_key_exists($index, $choices) || intval($index) <= 0) {
             if ($index === 's') {
                 $this->skipInteraction = true;
                 $output->writeln('  - [<green>KEEP EVERYTHING</green> AND <cyan>SKIP FOLLOWING</cyan>]');
+            } elseif ($index === 'f') {
+                $this->alwaysChooseFirst = true;
+                $output->writeln('  - [<green>ALWAYS CHOOSE FIRST OPTION</green> FOR <cyan>ALL FOLLOWING</cyan>]');
             } else {
                 $output->writeln('  - [<green>KEEP EVERYTHING</green>]');
             }
