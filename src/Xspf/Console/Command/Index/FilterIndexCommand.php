@@ -43,7 +43,7 @@ class FilterIndexCommand extends AbstractCommand
         }
 
         $skipCount = 0;
-        $history = new \ArrayObject();
+        $history = [];
         $distinct = $input->getOption('distinct');
 
         $this->trackPerformance('Checking files (white-/blacklist)');

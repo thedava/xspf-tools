@@ -13,7 +13,7 @@ class PlainFileHandler extends AbstractYamlFileHandler
     }
 
     /**
-     * @return \ArrayObject
+     * @return array
      */
     public function load()
     {

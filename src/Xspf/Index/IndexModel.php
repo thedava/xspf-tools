@@ -13,7 +13,7 @@ class IndexModel implements IndexModelInterface
     /** @var FileHandlerInterface */
     protected $fileHandler;
 
-    /** @var \ArrayObject */
+    /** @var array */
     protected $data;
 
     /**
@@ -29,7 +29,7 @@ class IndexModel implements IndexModelInterface
     }
 
     /**
-     * @return \ArrayObject
+     * @return array
      */
     public function getData()
     {
@@ -43,7 +43,7 @@ class IndexModel implements IndexModelInterface
      */
     public function clear()
     {
-        $this->data = new \ArrayObject();
+        $this->data = [];
 
         return $this;
     }
@@ -84,7 +84,7 @@ class IndexModel implements IndexModelInterface
      */
     public function load($force = false, $ignoreErrors = false)
     {
-        if ($force || $this->data->count() <= 0) {
+        if ($force || count($this->data) <= 0) {
             $this->clear();
             $cwd = Utils::determinePath($this->getIndexFile(), true);
             foreach ($this->fileHandler->load() as $l => $file) {
@@ -171,7 +171,7 @@ class IndexModel implements IndexModelInterface
     public function sort()
     {
         Utils::trackPerformance('Index', 'Sorting...');
-        $this->data->asort();
+        asort($this->data);
         Utils::trackPerformance('Index', 'Sorting finished');
 
         return $this;
@@ -182,7 +182,7 @@ class IndexModel implements IndexModelInterface
      */
     public function count()
     {
-        return $this->data->count();
+        return count($this->data);
     }
 
     /**
@@ -200,6 +200,6 @@ class IndexModel implements IndexModelInterface
      */
     public function getFiles()
     {
-        return $this->getData()->getArrayCopy();
+        return $this->getData();
     }
 }

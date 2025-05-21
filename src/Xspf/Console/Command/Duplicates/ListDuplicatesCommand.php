@@ -2,7 +2,6 @@
 
 namespace Xspf\Console\Command\Duplicates;
 
-use ArrayObject;
 use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -51,9 +50,9 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
             $outputFile = $append;
         }
 
-        $checksumList = new ArrayObject();
+        $checksumList = [];
         $files = $this->getFilesByAction($input, $output);
-        $output->writeln(sprintf('Found %s files in given location', $files->count()));
+        $output->writeln(sprintf('Found %s files in given location', count($files)));
 
         if (!$this->parseInputFile($files, $checksumList, $output, $inputFile, $ignoreInput, $removeMissing)) {
             return 1;
@@ -63,7 +62,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         foreach ($files as $file) {
             $checksumList[$file] = self::SEPARATOR . $file;
         }
-        $checksumList->ksort();
+        ksort($checksumList);
         $this->saveChecksums($checksumList, $output, $outputFile);
 
         // Extend checksum list file by file
@@ -77,34 +76,34 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
                 $lastSave = time();
             }
         }
-        $checksumList->ksort();
+        ksort($checksumList);
         $this->saveChecksums($checksumList, $output, $outputFile, true);
 
         return 0;
     }
 
     /**
-     * @param ArrayObject     $checksumList
+     * @param array     $checksumList
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @param bool            $final
      */
-    protected function saveChecksums(ArrayObject $checksumList, OutputInterface $output, string $outputFile, $final = false)
+    protected function saveChecksums(array $checksumList, OutputInterface $output, string $outputFile, $final = false)
     {
         if ($outputFile === '-') {
             return;
         }
 
-        file_put_contents($outputFile, implode(PHP_EOL, $checksumList->getArrayCopy()) . PHP_EOL);
+        file_put_contents($outputFile, implode(PHP_EOL, $checksumList) . PHP_EOL);
 
         if ($final) {
-            $output->writeln('Saved <green>' . $checksumList->count() . '</green> files to <cyan>' . $outputFile . '</cyan>');
+            $output->writeln('Saved <green>' . count($checksumList) . '</green> files to <cyan>' . $outputFile . '</cyan>');
         }
     }
 
     /**
-     * @param ArrayObject     $files
-     * @param ArrayObject     $checksumList
+     * @param array     $files
+     * @param array     $checksumList
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
@@ -112,7 +111,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
      *
      * @throws Exception
      */
-    protected function parseInputFile(ArrayObject $files, ArrayObject $checksumList, OutputInterface $output, string $inputFile = null, bool $ignoreInput = false, bool $removeMissing = false): bool
+    protected function parseInputFile(array $files, array &$checksumList, OutputInterface $output, string $inputFile = null, bool $ignoreInput = false, bool $removeMissing = false): bool
     {
         if (!$inputFile) {
             return true;

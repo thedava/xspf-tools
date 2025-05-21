@@ -29,7 +29,7 @@ class OrderIndexCommand extends CreateCommand
 
         if ($input->getOption('distinct')) {
             $skipCount = 0;
-            $history = new \ArrayObject();
+            $history = [];
             $files = $indexModel->getFiles();
             $indexModel->clear();
             foreach ($files as $file) {

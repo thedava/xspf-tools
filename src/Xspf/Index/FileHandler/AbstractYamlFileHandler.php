@@ -17,10 +17,10 @@ abstract class AbstractYamlFileHandler extends AbstractFileHandler
     /**
      * @param string $content
      *
-     * @return \ArrayObject
+     * @return array
      */
     public function decode($content)
     {
-        return new \ArrayObject(Yaml::parse($content));
+        return Yaml::parse($content);
     }
 }

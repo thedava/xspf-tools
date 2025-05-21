@@ -2,7 +2,6 @@
 
 namespace Xspf\Console\Command\Duplicates;
 
-use ArrayObject;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -142,7 +141,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $filePathList = (array)$input->getArgument('files');
-        $files = new ArrayObject();
+        $files = [];
         foreach ($filePathList as $file) {
             $this->parseChecksumsFromFile($file, $output, $files);
         }
@@ -150,15 +149,15 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
             $output->writeln(sprintf('Fetched checksums from %d duplicate list files', count($filePathList)));
         }
 
-        $duplicateChecksum = new ArrayObject();
-        $duplicateFilename = new ArrayObject();
+        $duplicateChecksum = [];
+        $duplicateFilename = [];
         $skipCount = $this->determineDuplicates($input, $output, $files, $duplicateChecksum, $duplicateFilename);
 
         if ($skipCount > 0) {
             $output->writeln(sprintf('<yellow>%d files were skipped!</yellow>', $skipCount));
         }
 
-        if ($duplicateChecksum->count() <= 0 && $duplicateFilename->count() <= 0) {
+        if (count($duplicateChecksum) <= 0 && count($duplicateFilename) <= 0) {
             $output->writeln('');
             $output->writeln('<green>No duplicates found!</green>');
             $output->writeln('');
@@ -170,7 +169,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         $this->skipInteraction = !$input->getOption('interactive');
 
         // Display checksums
-        if ($duplicateChecksum->count() > 0) {
+        if (count($duplicateChecksum) > 0) {
             $output->writeln('<green>Duplicate files by checksum:</green>');
             foreach ($duplicateChecksum as $checksum => $files) {
                 $output->writeln('');
@@ -181,7 +180,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         }
 
         // Display filenames
-        if ($duplicateFilename->count() > 0) {
+        if (count($duplicateFilename) > 0) {
             $output->writeln('<green>Duplicate files by filename:</green>');
             foreach ($duplicateFilename as $filename => $files) {
                 $output->writeln('');
@@ -197,27 +196,27 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
-     * @param ArrayObject     $files
-     * @param ArrayObject     $duplicateChecksum
-     * @param ArrayObject     $duplicateFilename
+     * @param array     $files
+     * @param array     $duplicateChecksum
+     * @param array     $duplicateFilename
      *
      * @return int
      */
     protected function determineDuplicates(
         InputInterface $input,
         OutputInterface $output,
-        ArrayObject $files,
-        ArrayObject $duplicateChecksum,
-        ArrayObject $duplicateFilename
+        array $files,
+        array &$duplicateChecksum,
+        array &$duplicateFilename
     )
     {
-        $progressBar = new ProgressBar(($input->getOption('no-progress')) ? new NullOutput() : $output, $files->count());
+        $progressBar = new ProgressBar(($input->getOption('no-progress')) ? new NullOutput() : $output, count($files));
         $progressBar->setRedrawFrequency(2);
         $progressBar->setFormat('debug');
         $progressBar->start();
 
-        $compareChecksum = new ArrayObject();
-        $compareFilename = new ArrayObject();
+        $compareChecksum = [];
+        $compareFilename = [];
 
         $onlyChecksum = $input->getOption('checksum-only');
 

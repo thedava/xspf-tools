@@ -17,7 +17,7 @@ interface FileHandlerInterface
     public function save(bool $absolutePaths = false);
 
     /**
-     * @return \ArrayObject
+     * @return array
      */
     public function load();
 }

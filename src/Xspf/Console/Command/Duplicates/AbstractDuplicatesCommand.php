@@ -2,7 +2,6 @@
 
 namespace Xspf\Console\Command\Duplicates;
 
-use ArrayObject;
 use Closure;
 use Exception;
 use Generator;
@@ -45,7 +44,7 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return array|ArrayObject
+     * @return array
      *
      * @throws Exception
      */
@@ -54,7 +53,7 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
         $action = $input->getArgument('action');
         $values = (array)$input->getArgument('value');
 
-        $files = new ArrayObject();
+        $files = [];
         switch ($action) {
             case 'path':
                 foreach ($values as $fileOrFolder) {
@@ -99,24 +98,24 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
                 throw new Exception('Invalid action');
         }
 
-        $array = array_unique($files->getArrayCopy());
+        $array = array_unique($files);
 
-        return new ArrayObject(array_combine($array, $array));
+        return array_combine($array, $array);
     }
 
     /**
-     * @param ArrayObject    $files
+     * @param array    $files
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
      * @return Generator
      */
-    protected function getChecksums(ArrayObject $files, InputInterface $input, OutputInterface $output)
+    protected function getChecksums(array $files, InputInterface $input, OutputInterface $output)
     {
         $algo = $this->getAlgo($input, $output);
 
         $progressOutput = ($input->getOption('progress')) ? $output : new NullOutput();
-        $progressBar = new ProgressBar($progressOutput, $files->count());
+        $progressBar = new ProgressBar($progressOutput, count($files));
         $progressBar->setFormat('debug');
         $progressBar->setRedrawFrequency(2);
         $progressBar->start();
@@ -170,13 +169,13 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
     /**
      * @param string           $file
      * @param OutputInterface  $output
-     * @param ArrayObject|null $checksums
+     * @param array|null $checksums
      *
-     * @return ArrayObject
+     * @return array
      */
-    protected function parseChecksumsFromFile($file, OutputInterface $output, ArrayObject $checksums = null)
+    protected function parseChecksumsFromFile($file, OutputInterface $output, array $checksums = null)
     {
-        $checksums = $checksums ?? new ArrayObject();
+        $checksums = $checksums ?? [];
         foreach ($this->getFiles($file, $output) as $file) {
             if (!file_exists($file)) {
                 $output->writeln(sprintf('<red>File "%s" does not exist. Skipping.</red>', $file), OutputInterface::VERBOSITY_DEBUG);

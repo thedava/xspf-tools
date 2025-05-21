@@ -8,7 +8,7 @@ interface IndexModelInterface
     const EXT_COMPRESSED = 'xdc';
 
     /**
-     * @return \ArrayObject
+     * @return array
      */
     public function getData();
 

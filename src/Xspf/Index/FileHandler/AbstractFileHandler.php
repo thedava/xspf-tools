@@ -30,7 +30,7 @@ abstract class AbstractFileHandler implements FileHandlerInterface
         $cwd = realpath(dirname(Utils::determinePath($this->indexModel->getIndexFile())));
         $length = strlen($cwd);
 
-        $data = new \ArrayObject();
+        $data = [];
         foreach ($this->indexModel->getData() as $file) {
             if ($absolutePaths) {
                 if (($rp = realpath($file)) !== false) {
@@ -46,6 +46,6 @@ abstract class AbstractFileHandler implements FileHandlerInterface
             $data[] = $file;
         }
 
-        return $data->getArrayCopy();
+        return $data;
     }
 }
