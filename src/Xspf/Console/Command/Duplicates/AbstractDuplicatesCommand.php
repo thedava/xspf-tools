@@ -173,7 +173,7 @@ abstract class AbstractDuplicatesCommand extends AbstractCommand
      *
      * @return array
      */
-    protected function parseChecksumsFromFile($file, OutputInterface $output, array $checksums = null)
+    protected function parseChecksumsFromFile($file, OutputInterface $output, array &$checksums = null)
     {
         $checksums = $checksums ?? [];
         foreach ($this->getFiles($file, $output) as $file) {
