@@ -41,7 +41,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
         $ignoreInput = $input->getOption('ignore-input');
         $outputFile = $input->getOption('output');
         $removeMissing = $input->getOption('remove-missing');
-        
+
         // Override --input and --output with --append
         $append = $input->getOption('append');
         if ($append !== null) {
@@ -60,7 +60,9 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
 
         // Fill checksum list with empty values
         foreach ($files as $file) {
-            $checksumList[$file] = self::SEPARATOR . $file;
+            if (!isset($checksumList[$file])) {
+                $checksumList[$file] = self::SEPARATOR . $file;
+            }
         }
         ksort($checksumList);
         $this->saveChecksums($checksumList, $output, $outputFile);
@@ -111,7 +113,7 @@ class ListDuplicatesCommand extends AbstractDuplicatesCommand
      *
      * @throws Exception
      */
-    protected function parseInputFile(array $files, array &$checksumList, OutputInterface $output, string $inputFile = null, bool $ignoreInput = false, bool $removeMissing = false): bool
+    protected function parseInputFile(array &$files, array &$checksumList, OutputInterface $output, string $inputFile = null, bool $ignoreInput = false, bool $removeMissing = false): bool
     {
         if (!$inputFile) {
             return true;

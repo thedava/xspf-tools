@@ -143,7 +143,7 @@ class ShowDuplicatesCommand extends AbstractDuplicatesCommand
         $filePathList = (array)$input->getArgument('files');
         $files = [];
         foreach ($filePathList as $file) {
-            $this->parseChecksumsFromFile($file, $output, $files);
+            $files = $this->parseChecksumsFromFile($file, $output, $files);
         }
         if (count($filePathList) > 1) {
             $output->writeln(sprintf('Fetched checksums from %d duplicate list files', count($filePathList)));
